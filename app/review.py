@@ -32,6 +32,10 @@ SRC_PAIRING = "Added by pairing"
 SRC_MANUAL = "Mapped by user"
 SRC_SAVED = "Saved part # rule"
 SRC_CUSTOM = "Custom device"
+SRC_CPR = "Not on SO – add to SO"
+
+REASON_CPR_NO_DRD = "From CPR – not on SO, not in DRD"
+REASON_CPR_OPTION = "From CPR system options – powered, needs amps"
 
 
 @dataclass

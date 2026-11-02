@@ -28,6 +28,15 @@ Current data: **DRD v1.1.1**, **StyleGuide v2.2.3**, **CSV schema 2.0**.
 
 Yellow rows still need an amperage.
 
+#### Optional: SO vs CPR check
+* Reads `SalesOrderConfirmation_SO-xxxx.xlsx` files directly (other `.xlsx` orders go through the generic parser).
+* Pick the CPR `.docx` and click **Run CPR check**. The comparison table between the two lists shows every line and its status.
+* Every CPR device whose OTP # is not on the SO is added to **Relevant for diagram** as **"Not on SO – add to SO"** (red) when its OTP # matches the DRD; otherwise it lands in **Not part of diagram** with reason **"From CPR – not on SO, not in DRD"** so you can **Map as custom**.
+* Powered system options are handled too: the instrument (platform) adds a default pipettor when none is selected, the rest (HEPA/UV/CAP, AC box, logistics cabinet, fans) are listed in **Not part of diagram** for **Map as custom** with their amps.
+* A device listed N times in the CPR counts as quantity N.
+* When the SO and CPR quantities disagree the row is orange and the analysis is blocked until you pick the final number with **Resolve qty...**.
+* The check needs `python-docx` (bundled in the `.exe` build).
+
 ### 2. Power analysis
 Options: project name, 15 A / 20 A circuits, main PC (from order, or pick one; no PC = Customer-supplied PC values), HHS connection method (automatic, HHS Control Box, STAR TCC ports, VANTAGE Periphery Box), keep a C19 VANTAGE on its own circuit, approve going over 80 %.
 
@@ -69,6 +78,8 @@ Shows the loaded DRD and StyleGuide versions, issues found while importing the D
 | `app/csv_io.py` | CSV schema 2.0 reader/writer (reads 1.0 too) |
 | `app/drd.py` | DRD HTML parser and lookups |
 | `app/xlsx_parser.py` | Sales Order / Quote reader |
+| `app/cpr_check.py` | Optional "SO vs CPR" check for the Review tab |
+| `app/so_cpr_check/` | Vendored from the SO_CPR_Check tool (SO / CPR readers, comparison) |
 | `app/pn_overrides.py` | Saved part # rules |
 | `app/user_devices.py` | Saved custom devices |
 | `data/` | Shipped (read-only): `drd.json`, newest DRD + StyleGuide HTML |

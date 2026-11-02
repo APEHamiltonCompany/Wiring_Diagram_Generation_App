@@ -37,7 +37,7 @@ echo.
 echo === Installing build dependencies ===
 %PY% -m pip install --upgrade pip
 if errorlevel 1 set "WARNINGS=!WARNINGS! [pip upgrade failed]"
-%PY% -m pip install pyinstaller openpyxl
+%PY% -m pip install pyinstaller openpyxl python-docx
 if errorlevel 1 (
     echo ERROR: dependency installation failed.
     goto :fail

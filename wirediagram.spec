@@ -2,7 +2,7 @@
 """PyInstaller spec for Wire Diagram Builder.
 
 Build (on Windows):
-    pip install pyinstaller openpyxl
+    pip install pyinstaller openpyxl python-docx
     pyinstaller wirediagram.spec
 
 Produces a single windowed executable: dist/WireDiagramBuilder.exe
@@ -44,7 +44,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=datas,
-    hiddenimports=["openpyxl"],
+    hiddenimports=["openpyxl", "docx"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

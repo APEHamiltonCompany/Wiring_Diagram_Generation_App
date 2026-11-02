@@ -25,6 +25,8 @@ from .drd import (DRD, bundled_data_dir, user_data_dir, find_latest_html, build_
 from .xlsx_parser import parse_xlsx
 from .pn_overrides import PNOverrides
 from . import review as rv
+from . import cpr_check as cc
+from .so_cpr_check import so_reader
 from .power_engine import PowerEngine, EngineOptions, HHS_MODES, HHS_MODE_LABELS
 from .csv_io import write_csv, read_csv
 from .drawio_gen import generate_drawio
@@ -89,6 +91,9 @@ class Session:
         self.state = rv.ReviewState()
         self.options = EngineOptions(app_version=APP_VERSION)
         self.order_path = ""
+        self.so_lines = []
+        self.cpr = None
+        self._cpr_keys = set()
         self.result = None
         self.messages = []
 
@@ -111,13 +116,28 @@ class Session:
 
     # ---- order ----------------------------------------------------------
     def load_order(self, path):
-        items = parse_xlsx(path)
-        lines = [rv.OrderLine(i.part_number or "", i.name or "", int(i.qty or 1)) for i in items]
         keep_pips = list(self.state.pipettors)
+        if so_reader.is_confirmation(path):
+            self.so_lines = so_reader.read_so(path)
+            lines = []
+            for l in self.so_lines:
+                if l.quantity > 0:
+                    lines.append(rv.OrderLine(l.product_number or "", l.product_name or "",
+                                              max(1, int(round(l.quantity)))))
+                for c in l.components:
+                    if c.quantity > 0:
+                        lines.append(rv.OrderLine(c.item_number or "", c.description or "",
+                                                  max(1, int(round(c.quantity * l.quantity)))))
+        else:
+            items = parse_xlsx(path)
+            self.so_lines = cc.so_lines_from_items(items)
+            lines = [rv.OrderLine(i.part_number or "", i.name or "", int(i.qty or 1)) for i in items]
         self.state = rv.sort_order(lines, self.drd, self.overrides)
         self.state.pipettors = keep_pips
         self.order_path = path
         self.result = None
+        self.cpr = None
+        self._cpr_keys = set()
         self.options.project_name = os.path.splitext(os.path.basename(path))[0]
         self.options.manual_circuits.clear()
         return self.state
@@ -126,6 +146,9 @@ class Session:
         self.state = rv.ReviewState()
         self.result = None
         self.order_path = ""
+        self.so_lines = []
+        self.cpr = None
+        self._cpr_keys = set()
 
     # ---- review actions -------------------------------------------------
     def amps_text(self, d):
@@ -225,9 +248,98 @@ class Session:
             self.state.pipettors.pop(index)
         self.result = None
 
+    # ---- CPR check ------------------------------------------------------
+    def run_cpr_check(self, cpr_path):
+        return self.apply_cpr_check(cc.run_check(cpr_path, self.so_lines))
+
+    def apply_cpr_check(self, chk):
+        msgs = []
+        self.clear_cpr_check()
+        lines = [rv.OrderLine(d.otp, d.name, d.cpr_qty) for d in chk.missing]
+        tmp = rv.sort_order(lines, self.drd, self.overrides)
+        for d in tmp.relevant:
+            d.key = self.state.next_key("D")
+            if d.source == rv.SRC_ORDER:
+                d.source = rv.SRC_CPR
+            d.note = "From CPR"
+            self.state.relevant.append(d)
+            self._cpr_keys.add(d.key)
+        for e in tmp.excluded:
+            e.key = self.state.next_key("X")
+            if e.reason == "No DRD part number match":
+                e.reason = rv.REASON_CPR_NO_DRD
+            self.state.excluded.append(e)
+            self._cpr_keys.add(e.key)
+        for opt in chk.powered:
+            if opt.kind == "Instrument":
+                if not self.state.pipettors:
+                    model = "VANTAGEline" if "VANTAGE" in chk.family.upper() else "STARline"
+                    if model in self.pipettor_models():
+                        self.add_pipettor(model)
+                        msgs.append(f"Added pipettor {model} from the CPR platform ({opt.label}). "
+                                    "Check its power/amps.")
+                else:
+                    msgs.append(f"CPR platform: {opt.label} (pipettor already selected).")
+            else:
+                entry = rv.ExcludedEntry(
+                    key=self.state.next_key("X"),
+                    line=rv.OrderLine("", f"{opt.kind} - {opt.label}"
+                                      + (" (existing system)" if opt.upgrade else ""), 1),
+                    reason=rv.REASON_CPR_OPTION)
+                self.state.excluded.append(entry)
+                self._cpr_keys.add(entry.key)
+        rv._sort_relevant(self.state, self.drd)
+        self.cpr = chk
+        self.result = None
+        powered_count = len([o for o in chk.powered if o.kind != "Instrument"])
+        msgs.append(f"CPR check {os.path.basename(chk.cpr_path)}: {len(chk.missing)} device(s) "
+                    f"not on SO, {len(chk.conflicts)} qty conflict(s), {powered_count} powered "
+                    "system option(s) to map.")
+        for c in chk.conflicts:
+            msgs.append(f"Qty conflict: {c.part_number} {c.description} - SO {c.so_qty} vs "
+                        f"CPR {c.cpr_qty}. Pick the final number.")
+        for w in chk.warnings:
+            msgs.append("Warning: " + w)
+        return msgs
+
+    def clear_cpr_check(self):
+        keys = getattr(self, "_cpr_keys", set())
+        self.state.relevant = [d for d in self.state.relevant if d.key not in keys]
+        self.state.excluded = [e for e in self.state.excluded if e.key not in keys]
+        self._cpr_keys = set()
+        self.cpr = None
+        self.result = None
+
+    def resolve_qty(self, key, qty):
+        conflict = self.cpr.find_conflict(key)
+        if conflict is None:
+            raise ValueError(f"No quantity conflict {key}")
+        qty = max(1, int(qty))
+        conflict.final = qty
+        pk = cc._pn_key(conflict.part_number)
+        matches = self.drd.find_part(conflict.part_number)
+        kit = len(matches) > 1
+        for d in self.state.relevant:
+            if len(d.lines) == 1 and cc._pn_key(d.lines[0]) == pk and not d.is_custom:
+                rec = self.drd.get(d.name) or {}
+                d.qty = max(1, qty * (rec.get("kit_qty", 1) if kit else 1))
+        for e in self.state.excluded:
+            if e.line and cc._pn_key(e.line.part_number) == pk:
+                e.line.qty = qty
+        self.result = None
+        return conflict
+
+    def cpr_issues(self):
+        if self.cpr is None:
+            return []
+        return [f"SO vs CPR qty conflict for {c.part_number} {c.description}: SO {c.so_qty} vs "
+                f"CPR {c.cpr_qty}. Pick the final quantity on the Review tab (Resolve qty...)."
+                for c in self.cpr.unresolved()]
+
     # ---- analysis -------------------------------------------------------
     def run_analysis(self):
         self.result = PowerEngine(self.drd, self.options).analyze(self.state)
+        self.result.issues.extend(self.cpr_issues())
         return self.result
 
     def pin_load(self, load_key, circuit_num):

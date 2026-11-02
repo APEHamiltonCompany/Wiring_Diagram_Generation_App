@@ -4,7 +4,8 @@ gui.py - Tkinter front end for Wire Diagram Builder.
 Tabs
   1. Review    - load a Sales Order / Quote, sort it into "Relevant for diagram"
                  and "Not part of diagram", move/map lines, add customer-supplied
-                 or custom devices, pick pipettors, apply DRD §7 pairing.
+                 or custom devices, pick pipettors, apply DRD §7 pairing, and
+                 optionally check the order against a CPR document.
   2. Analysis  - options (15A/20A, main PC, HHS method, VANTAGE isolation,
                  over-80% approval), run, pin loads to circuits, blocking
                  issues, export the Power Distribution CSV / report.
@@ -335,6 +336,56 @@ class PipettorDialog(_Dialog):
         self.destroy()
 
 
+class QtyResolveDialog(_Dialog):
+    def __init__(self, master, conflict):
+        super().__init__(master, "Resolve quantity")
+        self.conflict = conflict
+        ttk.Label(self.body, text=f"{conflict.part_number} {conflict.description}\n"
+                                  "The Sales Order and the CPR disagree. Pick the final quantity.",
+                  wraplength=460).pack(anchor="w", pady=(0, 8))
+        self.choice = tk.StringVar(value="")
+        grp = ttk.Frame(self.body)
+        grp.pack(anchor="w")
+        ttk.Radiobutton(grp, text=f"Sales Order: {conflict.so_qty}", value="so",
+                        variable=self.choice).pack(anchor="w")
+        ttk.Radiobutton(grp, text=f"CPR: {conflict.cpr_qty}", value="cpr",
+                        variable=self.choice).pack(anchor="w")
+        row = ttk.Frame(grp)
+        row.pack(anchor="w")
+        ttk.Radiobutton(row, text="Other:", value="other",
+                        variable=self.choice).pack(side="left")
+        self.other = tk.StringVar(value=str(conflict.final) if conflict.final is not None else "1")
+        ttk.Spinbox(row, from_=1, to=999, width=6, textvariable=self.other).pack(side="left", padx=4)
+        if conflict.final == conflict.so_qty:
+            self.choice.set("so")
+        elif conflict.final == conflict.cpr_qty:
+            self.choice.set("cpr")
+        elif conflict.final is not None:
+            self.choice.set("other")
+        self.buttons()
+
+    def _ok(self):
+        c = self.choice.get()
+        if not c:
+            messagebox.showinfo("Pick one option", "Pick one option.", parent=self)
+            return
+        if c == "so":
+            qty = self.conflict.so_qty
+        elif c == "cpr":
+            qty = self.conflict.cpr_qty
+        else:
+            try:
+                qty = int(self.other.get())
+            except ValueError:
+                messagebox.showwarning("Quantity", "Enter a whole number.", parent=self)
+                return
+            if qty < 1:
+                messagebox.showwarning("Quantity", "Quantity must be at least 1.", parent=self)
+                return
+        self.result = qty
+        self.destroy()
+
+
 # ==========================================================================
 # Tab 1 - Review
 # ==========================================================================
@@ -358,6 +409,16 @@ class ReviewTab(ttk.Frame):
         ttk.Button(top, text="Load order", command=self._load).pack(side="left", padx=4)
         ttk.Button(top, text="Start without order", command=self._blank).pack(side="left")
 
+        top2 = ttk.Frame(self)
+        top2.pack(fill="x", pady=(4, 0))
+        ttk.Label(top2, text="CPR (.docx, optional):").pack(side="left")
+        self.cpr_path = tk.StringVar()
+        ttk.Entry(top2, textvariable=self.cpr_path, width=60).pack(side="left", padx=4)
+        ttk.Button(top2, text="Browse...", command=self._browse_cpr).pack(side="left")
+        ttk.Button(top2, text="Run CPR check", command=self._run_cpr).pack(side="left", padx=4)
+        ttk.Button(top2, text="Resolve qty...", command=self._resolve_qty).pack(side="left", padx=4)
+        ttk.Button(top2, text="Clear CPR check", command=self._clear_cpr).pack(side="left", padx=4)
+
         pw = ttk.PanedWindow(self, orient="horizontal")
         pw.pack(fill="both", expand=True, pady=6)
 
@@ -368,6 +429,7 @@ class ReviewTab(ttk.Frame):
         f.pack(fill="both", expand=True)
         self.rel.tag_configure("need", background="#fff2cc")
         self.rel.tag_configure("paired", foreground="#6a1b9a")
+        self.rel.tag_configure("cpr", background="#f8d7da")
         self.rel.bind("<Double-1>", lambda e: self._edit())
         lb = ttk.Frame(left)
         lb.pack(fill="x", pady=(4, 0))
@@ -389,6 +451,7 @@ class ReviewTab(ttk.Frame):
                                      (110, 230, 40, 150))
         f.pack(fill="both", expand=True)
         self.exc.tag_configure("dev", foreground="#1565c0")
+        self.exc.tag_configure("cpr", foreground="#c62828")
         rb = ttk.Frame(right)
         rb.pack(fill="x", pady=(4, 0))
         ttk.Button(rb, text="<  Map to DRD device...", command=self._map_drd).pack(side="left")
@@ -398,6 +461,18 @@ class ReviewTab(ttk.Frame):
         rb2.pack(fill="x", pady=(4, 0))
         ttk.Button(rb2, text="Always ignore this part #", command=self._ignore).pack(side="left")
         pw.add(right, weight=2)
+
+        cprf = ttk.LabelFrame(self, text="SO vs CPR check (optional)", padding=4)
+        cprf.pack(fill="x", pady=(0, 6))
+        f, self.cprt = _scrolled_tree(cprf, ("Status", "Type", "CPR item", "CPR qty", "SO item",
+                                             "SO qty", "Note"), (100, 70, 230, 60, 200, 60, 300),
+                                      height=6, selectmode="browse")
+        f.pack(fill="both", expand=True)
+        self.cprt.tag_configure("missing", background="#f8d7da")
+        self.cprt.tag_configure("qty", background="#ffe0b2")
+        self.cprt.tag_configure("qtyok", background="#e2f0d9")
+        self.cprt.tag_configure("info", foreground="gray")
+        self.cprt.bind("<Double-1>", lambda e: self._resolve_qty())
 
         # ---- bottom: pipettors + log
         bot = ttk.Frame(self)
@@ -416,7 +491,9 @@ class ReviewTab(ttk.Frame):
         f.pack(fill="both", expand=True)
         ttk.Label(self, text="Yellow rows need an amperage (double-click to edit). Purple rows "
                              "were added by DRD §7 pairing. Only part numbers are matched "
-                             "automatically.", foreground="gray").pack(anchor="w")
+                             "automatically. Red rows came from the CPR and are not on the SO "
+                             "(add them to the SO). Orange rows in the CPR check need a final "
+                             "quantity.", foreground="gray").pack(anchor="w")
 
     # ---- helpers
     def say(self, *lines):
@@ -433,6 +510,8 @@ class ReviewTab(ttk.Frame):
             tags = []
             if self.s.needs_amps(d):
                 tags.append("need")
+            if d.source == rv.SRC_CPR:
+                tags.append("cpr")
             if d.source == rv.SRC_PAIRING:
                 tags.append("paired")
             name = d.name + ("  [custom]" if d.is_custom else "")
@@ -442,14 +521,44 @@ class ReviewTab(ttk.Frame):
         for e in st.excluded:
             if e.device is not None:
                 vals = (", ".join(e.device.lines), e.device.name, e.device.qty, e.reason)
-                self.exc.insert("", "end", iid=e.key, tags=("dev",), values=vals)
+                tags = ["dev"]
+                if (e.reason or "").startswith("From CPR"):
+                    tags.append("cpr")
+                self.exc.insert("", "end", iid=e.key, tags=tuple(tags), values=vals)
             else:
                 ln = e.line
-                self.exc.insert("", "end", iid=e.key,
+                tags = ("cpr",) if (e.reason or "").startswith("From CPR") else ()
+                self.exc.insert("", "end", iid=e.key, tags=tags,
                                 values=(ln.part_number, ln.description, ln.qty, e.reason))
         self.pip.delete(0, "end")
         for p in st.pipettors:
             self.pip.insert("end", f"{p.model} - {p.label()}")
+        self.cprt.delete(*self.cprt.get_children())
+        chk = self.s.cpr
+        if chk is not None:
+            for r in chk.rows:
+                cpr_item = " ".join(x for x in (r.cpr_sk_pn, r.cpr_part_name) if x)
+                so_item = " ".join(x for x in (r.so_product_number, r.so_product_name) if x)
+                cpr_qty = f"{r.cpr_qty:g}" if r.cpr_qty is not None else ""
+                so_qty = f"{r.so_qty:g}" if r.so_qty is not None else ""
+                vals = (r.status, r.type, cpr_item, cpr_qty, so_item, so_qty, r.note)
+                conflict = None
+                if r.status == "Qty mismatch" and r.type == "Device" and r.cpr_sk_pn:
+                    conflict = next((c for c in chk.conflicts if c.part_number == r.cpr_sk_pn), None)
+                if conflict is not None and conflict.resolved:
+                    vals = (f"Resolved: {conflict.final}", r.type, cpr_item, cpr_qty,
+                            so_item, so_qty, r.note)
+                    self.cprt.insert("", "end", iid=conflict.key, tags=("qtyok",), values=vals)
+                elif conflict is not None:
+                    self.cprt.insert("", "end", iid=conflict.key, tags=("qty",), values=vals)
+                elif r.status == "Qty mismatch":
+                    self.cprt.insert("", "end", tags=("qty",), values=vals)
+                elif r.status == "Only in CPR":
+                    self.cprt.insert("", "end", tags=("missing",), values=vals)
+                elif r.status in ("Info", "Out of scope"):
+                    self.cprt.insert("", "end", tags=("info",), values=vals)
+                else:
+                    self.cprt.insert("", "end", values=vals)
         self.app.mark_stale()
 
     def _sel(self, tree):
@@ -579,6 +688,50 @@ class ReviewTab(ttk.Frame):
         if sel:
             self.s.remove_pipettor(sel[0])
             self.refresh()
+
+    def _browse_cpr(self):
+        p = filedialog.askopenfilename(title="CPR",
+                                       filetypes=[("Word", "*.docx"), ("All", "*.*")])
+        if p:
+            self.cpr_path.set(p)
+
+    def _run_cpr(self):
+        p = self.cpr_path.get().strip()
+        if not p or not os.path.exists(p):
+            messagebox.showwarning("CPR", "Choose a CPR .docx file first.", parent=self)
+            return
+        try:
+            msgs = self.s.run_cpr_check(p)
+        except Exception as ex:
+            _err(self, "Could not run the CPR check", ex)
+            return
+        self.refresh()
+        self.say(*msgs)
+
+    def _resolve_qty(self):
+        chk = self.s.cpr
+        if chk is None:
+            return
+        c = None
+        sel = self.cprt.selection()
+        if sel:
+            c = chk.find_conflict(sel[0])
+        if c is None and chk.unresolved():
+            c = chk.unresolved()[0]
+        if c is None:
+            messagebox.showinfo("No quantity conflicts", "No quantity conflicts to resolve.",
+                                parent=self)
+            return
+        r = QtyResolveDialog(self, c).run()
+        if r is not None:
+            self.s.resolve_qty(c.key, r)
+            self.refresh()
+            self.say(f"{c.part_number}: final quantity {r}.")
+
+    def _clear_cpr(self):
+        self.s.clear_cpr_check()
+        self.refresh()
+        self.say("CPR check cleared.")
 
 
 # ==========================================================================
