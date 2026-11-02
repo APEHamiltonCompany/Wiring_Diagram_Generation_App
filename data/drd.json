@@ -1,0 +1,3982 @@
+{
+  "version": "1.1.1",
+  "source": "DeviceReferenceDatabase_v1.1.1.html",
+  "color_typo_note": "Colour typo normalisation applied: 4-digit hex codes in the source documents were expanded to valid 6-digit hex (#FFFF->#FFFFFF, #0000->#000000, #CCCC->#CCCCCC, #3333->#333333, #6666->#666666, #dddd->#DDDDDD). These corrections are applied only in the app's generated output and are never written back into the source DRD / StyleGuide files.",
+  "pipettors": {
+    "STARline": {
+      "name": "STARline",
+      "amperage": 6.3,
+      "amperage_raw": "6.3",
+      "amperage_status": "ok",
+      "power_cable": "C13",
+      "comm_cable": "USB B",
+      "type": "STAR"
+    },
+    "VANTAGEline": {
+      "name": "VANTAGEline",
+      "amperage": null,
+      "amperage_raw": "Varies",
+      "amperage_status": "varies",
+      "power_cable": "L14-20/L21-20/C19",
+      "comm_cable": "USB B, Ethernet",
+      "type": "VANTAGE"
+    }
+  },
+  "pcs": {
+    "AIO PC (All-in-One)": {
+      "name": "AIO PC (All-in-One)",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3.0",
+      "amperage_status": "ok",
+      "power_cable": "1x C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": true
+    },
+    "L3 PC": {
+      "name": "L3 PC",
+      "part_numbers": [
+        "63251-04",
+        "6611762-01"
+      ],
+      "role": "powered",
+      "amperage": 12.0,
+      "amperage_raw": "12",
+      "amperage_status": "ok",
+      "power_cable": "2x C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": true
+    },
+    "Industrial PC": {
+      "name": "Industrial PC",
+      "part_numbers": [
+        "6603542-01"
+      ],
+      "role": "powered",
+      "amperage": 4.5,
+      "amperage_raw": "4.5",
+      "amperage_status": "ok",
+      "power_cable": "2x C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": true
+    },
+    "Standard PC": {
+      "name": "Standard PC",
+      "part_numbers": [
+        "63251-02",
+        "6611761-01"
+      ],
+      "role": "powered",
+      "amperage": 4.5,
+      "amperage_raw": "4.5",
+      "amperage_status": "ok",
+      "power_cable": "2x C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": true
+    },
+    "Customer-supplied PC": {
+      "name": "Customer-supplied PC",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 9.5,
+      "amperage_raw": "9.5",
+      "amperage_status": "ok",
+      "power_cable": "2x C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": true
+    },
+    "Celigo PC": {
+      "name": "Celigo PC",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "110x60",
+      "width": 110,
+      "height": 60,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": false
+    },
+    "Cell Metric PC": {
+      "name": "Cell Metric PC",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "110x60",
+      "width": 110,
+      "height": 60,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": false
+    },
+    "Cellavista PC & Peripheries": {
+      "name": "Cellavista PC & Peripheries",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 9.5,
+      "amperage_raw": "9.5",
+      "amperage_status": "ok",
+      "power_cable": "2x C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": false
+    },
+    "Waters PC": {
+      "name": "Waters PC",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 15.0,
+      "amperage_raw": "15",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "140x60",
+      "width": 140,
+      "height": 60,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": false
+    },
+    "XM30 Laptop": {
+      "name": "XM30 Laptop",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.7,
+      "amperage_raw": "1.7",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "",
+      "dimensions": "110x60",
+      "width": 110,
+      "height": 60,
+      "notes": "",
+      "section": "section3",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "pc",
+      "is_main_pc": false
+    }
+  },
+  "hubs": {
+    "Mikrotik Router Switch": {
+      "name": "Mikrotik Router Switch",
+      "part_numbers": [
+        "96228-01"
+      ],
+      "role": "powered",
+      "amperage": 1.5,
+      "amperage_raw": "1.5",
+      "amperage_status": "ok",
+      "power_cable": "External power adapter",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x50",
+      "width": 120,
+      "height": 50,
+      "notes": "",
+      "section": "section4",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "hub"
+    },
+    "NetGear Router": {
+      "name": "NetGear Router",
+      "part_numbers": [
+        "6611974-01"
+      ],
+      "role": "powered",
+      "amperage": 1.7,
+      "amperage_raw": "1.7",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x50",
+      "width": 120,
+      "height": 50,
+      "notes": "",
+      "section": "section4",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "hub"
+    },
+    "Serial Hub": {
+      "name": "Serial Hub",
+      "part_numbers": [
+        "OTP-CDWC-0001",
+        "OTP-CDWC-0007"
+      ],
+      "role": "none",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "USB A to B",
+      "dimensions": "140x50",
+      "width": 140,
+      "height": 50,
+      "notes": "",
+      "section": "section4",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "hub"
+    },
+    "USB Hub": {
+      "name": "USB Hub",
+      "part_numbers": [
+        "OTP-CDWC-0009"
+      ],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3.0",
+      "amperage_status": "ok",
+      "power_cable": "External power adapter",
+      "comm_cable": "USB A 3.0 to B 3.0",
+      "dimensions": "170x50",
+      "width": 170,
+      "height": 50,
+      "notes": "",
+      "section": "section4",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "hub"
+    }
+  },
+  "devices": {
+    "BZ Decapper Module": {
+      "name": "BZ Decapper Module",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "Div to STAR",
+      "dimensions": "100x70",
+      "width": 100,
+      "height": 70,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Covaris R230 Deck Module": {
+      "name": "Covaris R230 Deck Module",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "See \u00a77 (WCS 3 and eBox)",
+      "dimensions": "110x60",
+      "width": 110,
+      "height": 60,
+      "notes": "Liquids In/Out",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "CR Wash Station Deck Module": {
+      "name": "CR Wash Station Deck Module",
+      "part_numbers": [
+        "186360"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "RS-232 DB25 M to F",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "Paired with CR Wash Station Pump Module (\u00a77)",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Dispense Module": {
+      "name": "Dispense Module",
+      "part_numbers": [
+        "96160-07",
+        "96160-09",
+        "96160-10",
+        "96160-12"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "RS-232 D9 M to D9 F",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "easyCodeIII Plus Barcode Reader": {
+      "name": "easyCodeIII Plus Barcode Reader",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "Power Cable to DIV",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "EasyCodeXL 2D/1D Barcode Reader (DIV/USB)": {
+      "name": "EasyCodeXL 2D/1D Barcode Reader (DIV/USB)",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "Cable to DIV",
+      "comm_cable": "2x USB A M to USB B M",
+      "dimensions": "120x110",
+      "width": 120,
+      "height": 110,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "EasyCodeXL 2D/1D Barcode Reader (P1/P2/Ethernet)": {
+      "name": "EasyCodeXL 2D/1D Barcode Reader (P1/P2/Ethernet)",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "Cable to P1 or P2",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x110",
+      "width": 120,
+      "height": 110,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Evaporator Module": {
+      "name": "Evaporator Module",
+      "part_numbers": [
+        "96160-04",
+        "96160-06",
+        "96160-10",
+        "96160-12"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "Molex Power/COM Cable",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton [MPE] Deck Module": {
+      "name": "Hamilton [MPE] Deck Module",
+      "part_numbers": [
+        "96160-xx"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "RS-232 D15M to D15M",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton Centrifuge": {
+      "name": "Hamilton Centrifuge",
+      "part_numbers": [
+        "199700"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "CAN-BUS to split COM and Power",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "Use two lines to denote the split power/com cable with the same connector point on the Centrifuge-side.",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton Heater Cooler": {
+      "name": "Hamilton Heater Cooler",
+      "part_numbers": [
+        "6601900-01"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "USB micro B to A\n12-pin barrel to RS-232 DB9 (or DB15)",
+      "dimensions": "170x70",
+      "width": 170,
+      "height": 70,
+      "notes": "",
+      "section": "section5",
+      "former_names": [
+        "Hamilton HHC (Hamilton Heater Cooler)"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton Heater Shaker": {
+      "name": "Hamilton Heater Shaker",
+      "part_numbers": [
+        "199034"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "USB A M to USB B M\nRS-232 DB9",
+      "dimensions": "100x60",
+      "width": 100,
+      "height": 60,
+      "notes": "",
+      "section": "section5",
+      "former_names": [
+        "Hamilton Heater Shaker (HHS)"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton MFX Tilt Module": {
+      "name": "Hamilton MFX Tilt Module",
+      "part_numbers": [
+        "188061"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "RS-232 DB25",
+      "dimensions": "100x60",
+      "width": 100,
+      "height": 60,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton MFM Deck Module": {
+      "name": "Hamilton MFM Deck Module",
+      "part_numbers": [
+        "95145-01",
+        "95147-01"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "- Pigtail Turck 3P F",
+      "dimensions": "130x100",
+      "width": 130,
+      "height": 100,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton Plate Sealer": {
+      "name": "Hamilton Plate Sealer",
+      "part_numbers": [
+        "94724-01 PS"
+      ],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M or Ethernet or CAN",
+      "dimensions": "130x90",
+      "width": 130,
+      "height": 90,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Powered"
+    },
+    "Inheco CPAC": {
+      "name": "Inheco CPAC",
+      "part_numbers": [
+        "OTP-7900070"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "RS-232 DB15",
+      "dimensions": "70x60",
+      "width": 70,
+      "height": 60,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Inheco ODTC": {
+      "name": "Inheco ODTC",
+      "part_numbers": [
+        "OTP-INHC-0001",
+        "OTP-INHC-0002",
+        "OTP-INHC-0003",
+        "OTP-INHC-0055",
+        "OTP-INHC-0154",
+        "OTP-INHC-0156",
+        "OTP-INHC-0160",
+        "OTP-INHC-0165"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "ODTC Connector",
+      "dimensions": "90x60",
+      "width": 90,
+      "height": 60,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Inheco ODTC XL": {
+      "name": "Inheco ODTC XL",
+      "part_numbers": [
+        "OTP-INHC-0172",
+        "OTP-INHC-0173",
+        "OTP-INHC-0174",
+        "OTP-INHC-0175"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "ODTC Connector",
+      "dimensions": "90x60",
+      "width": 90,
+      "height": 60,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Inheco TeleShake": {
+      "name": "Inheco TeleShake",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "RS232 DB15",
+      "dimensions": "90x60",
+      "width": 90,
+      "height": 60,
+      "notes": "Paired with MTEC (\u00a77)",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Inheco ThermoShake": {
+      "name": "Inheco ThermoShake",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "RS232 DB15",
+      "dimensions": "90x60",
+      "width": 90,
+      "height": 60,
+      "notes": "Paired with MTEC (\u00a77)",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Pelco Camera": {
+      "name": "Pelco Camera",
+      "part_numbers": [
+        "10162477"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "TCP",
+      "dimensions": "70x60",
+      "width": 70,
+      "height": 60,
+      "notes": "2x per kit",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 2,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Qinstruments BioShake D30 ELM": {
+      "name": "Qinstruments BioShake D30 ELM",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.1,
+      "amperage_raw": "3.1",
+      "amperage_status": "ok",
+      "power_cable": "Barrel/C13 to NEMA 5-15",
+      "comm_cable": "RS-232 DB9 F",
+      "dimensions": "130x100",
+      "width": 130,
+      "height": 100,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Powered"
+    },
+    "Qinstruments BioShake Q1": {
+      "name": "Qinstruments BioShake Q1",
+      "part_numbers": [
+        "OTP-QINS-0056"
+      ],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1.0",
+      "amperage_status": "ok",
+      "power_cable": "Barrel/C13 to NEMA 5-15",
+      "comm_cable": "RS-232 DB9 F",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Powered"
+    },
+    "Qinstruments ColdPlate": {
+      "name": "Qinstruments ColdPlate",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1.0",
+      "amperage_status": "ok",
+      "power_cable": "Barrel/C13 to NEMA 5-15",
+      "comm_cable": "RS232 DB9 F",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton SCAP": {
+      "name": "Hamilton SCAP",
+      "part_numbers": [
+        "92173-xx"
+      ],
+      "role": "powered",
+      "amperage": 2.5,
+      "amperage_raw": "2.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Powered"
+    },
+    "Qinstruments HeatPlate": {
+      "name": "Qinstruments HeatPlate",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1.0",
+      "amperage_status": "ok",
+      "power_cable": "Barrel/C13 to NEMA 5-15",
+      "comm_cable": "RS-232 DB9 F",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Powered"
+    },
+    "Qinstruments TurnStation": {
+      "name": "Qinstruments TurnStation",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1.0",
+      "amperage_status": "ok",
+      "power_cable": "Barrel/C13 to NEMA 5-15",
+      "comm_cable": "RS-232 DB9 F",
+      "dimensions": "140x90",
+      "width": 140,
+      "height": 90,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Powered"
+    },
+    "STAR UV": {
+      "name": "STAR UV",
+      "part_numbers": [
+        "97310-xx"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "Periphery to P1, P2, and Div3",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Thermo Variomag Teleshake": {
+      "name": "Thermo Variomag Teleshake",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "Barrel cable",
+      "dimensions": "110x60",
+      "width": 110,
+      "height": 60,
+      "notes": "Paired with Shake Module Control Unit (\u00a77)",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Wash Station 96": {
+      "name": "Wash Station 96",
+      "part_numbers": [
+        "190248"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "C13R to C13P",
+      "comm_cable": "-",
+      "dimensions": "90x60",
+      "width": 90,
+      "height": 60,
+      "notes": "Paired with WashStation 96 Control Box (\u00a77)",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "XM30 Satellite": {
+      "name": "XM30 Satellite",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "-",
+      "dimensions": "80x50",
+      "width": 80,
+      "height": 50,
+      "notes": "Paired with XcytoMatic 30 (\u00a77)",
+      "section": "section5",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "on_deck",
+      "role_raw": "Child"
+    },
+    "Agilent Centrifuge": {
+      "name": "Agilent Centrifuge",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 7.0,
+      "amperage_raw": "7.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9F",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Agilent Centrifuge w/Loader": {
+      "name": "Agilent Centrifuge w/Loader",
+      "part_numbers": [
+        "OTP-AGLT-0019"
+      ],
+      "role": "powered",
+      "amperage": 7.0,
+      "amperage_raw": "7.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "2x RS-232 D9 M to D9F",
+      "dimensions": "120x110",
+      "width": 120,
+      "height": 110,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Agilent FA 5400": {
+      "name": "Agilent FA 5400",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.3,
+      "amperage_raw": "1.3",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "2x USB A M to USB B M",
+      "dimensions": "120x100",
+      "width": 120,
+      "height": 100,
+      "notes": "PC (optional)",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Agilent PlateLoc": {
+      "name": "Agilent PlateLoc",
+      "part_numbers": [
+        "OTP-AGLT-0025"
+      ],
+      "role": "powered",
+      "amperage": 5.0,
+      "amperage_raw": "5.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9F",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Analytik TRobot": {
+      "name": "Analytik TRobot",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": 4.6,
+      "amperage_raw": "4.6",
+      "amperage_status": "ok",
+      "power_cable": "DSub 12 supply",
+      "comm_cable": "DSub 24W7 signal",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "Powered through Analytik TRobot Control Box (\u00a77)",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "Azenta Roll Heat Sealer": {
+      "name": "Azenta Roll Heat Sealer",
+      "part_numbers": [
+        "OTP-FTTD-0001"
+      ],
+      "role": "powered",
+      "amperage": 7.0,
+      "amperage_raw": "7.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "Same device as the Azenta A4S",
+      "section": "section6",
+      "former_names": [
+        "Azanta Roll Heat Sealer"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Azenta XPeel": {
+      "name": "Azenta XPeel",
+      "part_numbers": [
+        "OTP-BRKS-0001"
+      ],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 DB 9 M to F",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [
+        "Azanta XPeel"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Bionex HiG3": {
+      "name": "Bionex HiG3",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 15.0,
+      "amperage_raw": "15",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M\n5pin DIN to Estop",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Bionex HiG4": {
+      "name": "Bionex HiG4",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 15.0,
+      "amperage_raw": "15",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M\n5pin DIN to Estop",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "BioTek 405": {
+      "name": "BioTek 405",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 9.0,
+      "amperage_raw": "9.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9F",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "All BioTek 405 configurations wire identically",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "BioTek Cytation5": {
+      "name": "BioTek Cytation5",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.2,
+      "amperage_raw": "1.2",
+      "amperage_status": "ok",
+      "power_cable": "4pin to barrel/C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "BioTek EL406": {
+      "name": "BioTek EL406",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 5.0,
+      "amperage_raw": "5.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "150x110",
+      "width": 150,
+      "height": 110,
+      "notes": "2ft tubing/buffer bottle, 6ft tubing/waste bottle, 6ft liquid level sensor cable. Paired with BioTek Pump (\u00a77).",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "BioTek Buffer Switching Module": {
+      "name": "BioTek Buffer Switching Module",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "8 pin barrel to BioTek EL406",
+      "dimensions": "90x70",
+      "width": 90,
+      "height": 70,
+      "notes": "Paired with BioTek EL406 (\u00a77)",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "BioTek Epoch 2": {
+      "name": "BioTek Epoch 2",
+      "part_numbers": [
+        "OTP-BITK-0083"
+      ],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1",
+      "amperage_status": "ok",
+      "power_cable": "External Supply to C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "Microplate reader. Amperage 1A (< 120W @ 120V) per Epoch 2 IFU 1771011I Rev. C; power cable matches BioTek Synergy NEO2. USB to host PC.",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "BioTek Pump": {
+      "name": "BioTek Pump",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "C13R to C13P",
+      "comm_cable": "-",
+      "dimensions": "90x60",
+      "width": 90,
+      "height": 60,
+      "notes": "Required paired pump for all BioTek 405 configurations",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "BioTek Synergy NEO2": {
+      "name": "BioTek Synergy NEO2",
+      "part_numbers": [
+        "OTP-BITK-0192",
+        "OTP-BITK-0199",
+        "OTP-BITK-0200"
+      ],
+      "role": "powered",
+      "amperage": 2.1,
+      "amperage_raw": "2.1",
+      "amperage_status": "ok",
+      "power_cable": "External Supply to C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Blue Cat Bio BlueWasher XL": {
+      "name": "Blue Cat Bio BlueWasher XL",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "BMG PheraSTAR FSX": {
+      "name": "BMG PheraSTAR FSX",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 2.0,
+      "amperage_raw": "2.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "BMG SpectroSTAR Nano": {
+      "name": "BMG SpectroSTAR Nano",
+      "part_numbers": [
+        "OTP-BMGL-0004"
+      ],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1.0",
+      "amperage_status": "ok",
+      "power_cable": "External Supply to C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Covaris R230 eBox": {
+      "name": "Covaris R230 eBox",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 4.4,
+      "amperage_raw": "4.4",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet\n25-pin d-sub MF\n44-pin d-sub M\nCoaxial cable",
+      "dimensions": "110x120",
+      "width": 110,
+      "height": 120,
+      "notes": "Connectors per \u00a77",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Covaris R230 WCS 3": {
+      "name": "Covaris R230 WCS 3",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 9.0,
+      "amperage_raw": "9.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "25-pin d-sub MF\n44-pin d-sub MF",
+      "dimensions": "110x110",
+      "width": 110,
+      "height": 110,
+      "notes": "Liquids In/Out. Connectors per \u00a77",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "CR Wash Station Pump Module": {
+      "name": "CR Wash Station Pump Module",
+      "part_numbers": [
+        "186360"
+      ],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F\nRS-232 DB25 M to F\nSensor x3",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Curiox Buffer Exchange Module": {
+      "name": "Curiox Buffer Exchange Module",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "Mini DIN Connector x2",
+      "dimensions": "130x80",
+      "width": 130,
+      "height": 80,
+      "notes": "Liquid In x4. Paired with Curiox HT2000 Plate Washer (\u00a77)",
+      "section": "section6",
+      "former_names": [
+        "Curiax Buffer Exchange Module"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "Curiox HT2000 Plate Washer": {
+      "name": "Curiox HT2000 Plate Washer",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3.0",
+      "amperage_status": "ok",
+      "power_cable": "Barrel to AC/DC block\nC13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F",
+      "dimensions": "130x130",
+      "width": 130,
+      "height": 130,
+      "notes": "Liquid In/Out",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Cytomat 10": {
+      "name": "Cytomat 10",
+      "part_numbers": [
+        "OTP-TMOI-0117"
+      ],
+      "role": "powered",
+      "amperage": 12.0,
+      "amperage_raw": "12.0",
+      "amperage_status": "ok",
+      "power_cable": "2x C19 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Cytomat 2C450-LIN": {
+      "name": "Cytomat 2C450-LIN",
+      "part_numbers": [
+        "OTP-TMOI-013x"
+      ],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Cytomat 5": {
+      "name": "Cytomat 5",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13/C19 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Cytomat Skyline": {
+      "name": "Cytomat Skyline",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Formulatrix Mantis": {
+      "name": "Formulatrix Mantis",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.3,
+      "amperage_raw": "1.3",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB 3.0 A M to USB 3.0 B M",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [
+        "Formulatrix Maris"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "GloMax Discover": {
+      "name": "GloMax Discover",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton MFX Liquid Supply Control Box": {
+      "name": "Hamilton MFX Liquid Supply Control Box",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "15 pin parallel COM\nRS-232 DB25 M to F\nRS-232 D9 M to D9 F",
+      "dimensions": "120x130",
+      "width": 120,
+      "height": 130,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton Storage Verso R10": {
+      "name": "Hamilton Storage Verso R10",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 20.0,
+      "amperage_raw": "20",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 6-20",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hettich 460R": {
+      "name": "Hettich 460R",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 20.0,
+      "amperage_raw": "20",
+      "amperage_status": "ok",
+      "power_cable": "C19 to NEMA 5-20",
+      "comm_cable": "RS-232 D9 M to D9F",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "HMotion": {
+      "name": "HMotion",
+      "part_numbers": [
+        "OTP-97091-xx"
+      ],
+      "role": "powered",
+      "amperage": 3.2,
+      "amperage_raw": "3.2",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet COM",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton [MPE] ACME Box": {
+      "name": "Hamilton [MPE] ACME Box",
+      "part_numbers": [
+        "96160-04",
+        "96160-06",
+        "96160-07",
+        "96160-09",
+        "96160-10",
+        "96160-12"
+      ],
+      "role": "powered",
+      "amperage": 2.5,
+      "amperage_raw": "2.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Barrel Connector",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton [MPE] Control Box": {
+      "name": "Hamilton [MPE] Control Box",
+      "part_numbers": [
+        "96160-xx"
+      ],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "140x110",
+      "width": 140,
+      "height": 110,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton Centrifuge Control Box": {
+      "name": "Hamilton Centrifuge Control Box",
+      "part_numbers": [
+        "199700"
+      ],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "-",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton DeckWatch": {
+      "name": "Hamilton DeckWatch",
+      "part_numbers": [
+        "10162477"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "Ethernet (POE)",
+      "dimensions": "100x60",
+      "width": 100,
+      "height": 60,
+      "notes": "Part of the DeckWatch Kit",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton Incubator Shaker (HIS)": {
+      "name": "Hamilton Incubator Shaker (HIS)",
+      "part_numbers": [
+        "96486-02"
+      ],
+      "role": "powered",
+      "amperage": 3.5,
+      "amperage_raw": "3.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "130x80",
+      "width": 130,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "HHS Control Box": {
+      "name": "HHS Control Box",
+      "part_numbers": [
+        "190755"
+      ],
+      "role": "powered",
+      "amperage": null,
+      "amperage_raw": "varies",
+      "amperage_status": "varies",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "-",
+      "dimensions": "120x60",
+      "width": 120,
+      "height": 60,
+      "notes": "See StyleGuide \u00a75.3 for amperage formula",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton MFM Control Box": {
+      "name": "Hamilton MFM Control Box",
+      "part_numbers": [
+        "95145-01"
+      ],
+      "role": "powered",
+      "amperage": 2.5,
+      "amperage_raw": "2.5",
+      "amperage_status": "ok",
+      "power_cable": "Barrel to AC/DC block\nC13 to NEMA 5-15",
+      "comm_cable": "Turck 3P M to F\nTurck 4P M to F\nUSB A M to USB B M",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton MFM Pump": {
+      "name": "Hamilton MFM Pump",
+      "part_numbers": [
+        "95145-01",
+        "95147-01"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "- Pigtail Turck 4P F",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "Hamilton MFX Tilt Module Control Box": {
+      "name": "Hamilton MFX Tilt Module Control Box",
+      "part_numbers": [
+        "188061"
+      ],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton ML600": {
+      "name": "Hamilton ML600",
+      "part_numbers": [
+        "ML6xx"
+      ],
+      "role": "powered",
+      "amperage": 1.5,
+      "amperage_raw": "1.5",
+      "amperage_status": "ok",
+      "power_cable": "Barrel to NEMA 1-15",
+      "comm_cable": "Ethernet COM",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Hamilton Pre-Heat Module": {
+      "name": "Hamilton Pre-Heat Module",
+      "part_numbers": [
+        "188221"
+      ],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "-",
+      "dimensions": "120x110",
+      "width": 120,
+      "height": 110,
+      "notes": "Powered the same way as the Hamilton Heater Shaker and Hamilton Heater Cooler: through the STAR TCC ports or an HHS Control Box (\u00a77). Adds 1A to the HHS Control Box amperage. No communication cable.",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": {
+        "amps": 1.0,
+        "to": "HHS Control Box"
+      },
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "Hettich SBS300R": {
+      "name": "Hettich SBS300R",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 6-15",
+      "comm_cable": "RS-232 DB9 M to F",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Huber Minichiller 280": {
+      "name": "Huber Minichiller 280",
+      "part_numbers": [
+        "OTP-HUBR-0001"
+      ],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "130x90",
+      "width": 130,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Huber Ministat": {
+      "name": "Huber Ministat",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 11.5,
+      "amperage_raw": "11.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x60",
+      "width": 120,
+      "height": 60,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Inheco Incubator Shaker": {
+      "name": "Inheco Incubator Shaker",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 2.3,
+      "amperage_raw": "2.3",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15 and Power Supply to Terminal Block",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "150x110",
+      "width": 150,
+      "height": 110,
+      "notes": "Source lists power kit OTP-2400121",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Inheco ODTC Control Box": {
+      "name": "Inheco ODTC Control Box",
+      "part_numbers": [
+        "OTP-INHC-0001",
+        "OTP-INHC-0002",
+        "OTP-INHC-0003",
+        "OTP-INHC-0055",
+        "OTP-INHC-0154",
+        "OTP-INHC-0156",
+        "OTP-INHC-0160",
+        "OTP-INHC-0165",
+        "OTP-INHC-0172",
+        "OTP-INHC-0173",
+        "OTP-INHC-0174",
+        "OTP-INHC-0175"
+      ],
+      "role": "powered",
+      "amperage": 10.0,
+      "amperage_raw": "10.0",
+      "amperage_status": "ok",
+      "power_cable": "C19 to 5-15",
+      "comm_cable": "Ethernet Crossover",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Inheco SCILA MP-4": {
+      "name": "Inheco SCILA MP-4",
+      "part_numbers": [
+        "OTP-INHC-0177"
+      ],
+      "role": "powered",
+      "amperage": 2.5,
+      "amperage_raw": "2.5",
+      "amperage_status": "ok",
+      "power_cable": "External to C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "InMotion Flex Autosampler": {
+      "name": "InMotion Flex Autosampler",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 0.6,
+      "amperage_raw": "0.6",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "IntelliXcap Decapper": {
+      "name": "IntelliXcap Decapper",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 4.2,
+      "amperage_raw": "4.2",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "iQue 3 Flow Cytometer": {
+      "name": "iQue 3 Flow Cytometer",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet\nDVI M to F",
+      "dimensions": "120x120",
+      "width": 120,
+      "height": 120,
+      "notes": "Liquid In/Out. PC (optional)",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "iQue Fluidics Station": {
+      "name": "iQue Fluidics Station",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "DVI M to F",
+      "dimensions": "120x60",
+      "width": 120,
+      "height": 60,
+      "notes": "Liquid In/Out. Paired with iQue 3 Flow Cytometer (\u00a77)",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "iQue UPS": {
+      "name": "iQue UPS",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "-",
+      "dimensions": "110x70",
+      "width": 110,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Julabo Magic MX-2500F": {
+      "name": "Julabo Magic MX-2500F",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 16.0,
+      "amperage_raw": "16",
+      "amperage_status": "ok",
+      "power_cable": "C19 to NEMA 6-20",
+      "comm_cable": "RS-232 DB9 M to F",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "KingFisher Presto": {
+      "name": "KingFisher Presto",
+      "part_numbers": [
+        "OTP-TMOI-0027",
+        "OTP-TMOI-0028",
+        "OTP-TMOI-0030",
+        "OTP-TMOI-0039"
+      ],
+      "role": "powered",
+      "amperage": 1.6,
+      "amperage_raw": "1.6",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "150x80",
+      "width": 150,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Kuhner MP-Z": {
+      "name": "Kuhner MP-Z",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 10.0,
+      "amperage_raw": "10.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Kuhner MPS-Z": {
+      "name": "Kuhner MPS-Z",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 8.7,
+      "amperage_raw": "8.7",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [
+        "Kuhner MPS-2"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Kuhner Nemiri Clamp Module": {
+      "name": "Kuhner Nemiri Clamp Module",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Lab Elite 96 ID Capper": {
+      "name": "Lab Elite 96 ID Capper",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.8,
+      "amperage_raw": "1.8",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet COM, USB A M to USB B M",
+      "dimensions": "120x100",
+      "width": 120,
+      "height": 100,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Lab Elite Decapper": {
+      "name": "Lab Elite Decapper",
+      "part_numbers": [
+        "HST-193600",
+        "HST-193602"
+      ],
+      "role": "powered",
+      "amperage": 1.8,
+      "amperage_raw": "1.8",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet COM",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Lab Elite ID Capper": {
+      "name": "Lab Elite ID Capper",
+      "part_numbers": [
+        "HST-193601"
+      ],
+      "role": "powered",
+      "amperage": 1.8,
+      "amperage_raw": "1.8",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet COM, USB A M to USB B M",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Lab Elite Integrated ID Capper": {
+      "name": "Lab Elite Integrated ID Capper",
+      "part_numbers": [
+        "HST-193608"
+      ],
+      "role": "powered",
+      "amperage": 1.8,
+      "amperage_raw": "1.8",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet COM, USB A M to USB B M",
+      "dimensions": "120x100",
+      "width": 120,
+      "height": 100,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Labcyte Echo": {
+      "name": "Labcyte Echo",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 10.0,
+      "amperage_raw": "10.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x110",
+      "width": 120,
+      "height": 110,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Liconic LPX": {
+      "name": "Liconic LPX",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.6,
+      "amperage_raw": "1.6",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F, RS-232 Null Modem D9 F to D9 F",
+      "dimensions": "130x90",
+      "width": 130,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Liconic STX-IC": {
+      "name": "Liconic STX-IC",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9 F, RS-232 D9 F Null Modem D9 F",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Lonza Nucleofector Core Unit": {
+      "name": "Lonza Nucleofector Core Unit",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.2,
+      "amperage_raw": "1.2",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "130x90",
+      "width": 130,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Lonza Nucleofector Functional Unit": {
+      "name": "Lonza Nucleofector Functional Unit",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "Lonza Connector to Core Unit",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "LVL SAFE 48XT Decapper": {
+      "name": "LVL SAFE 48XT Decapper",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9M to D9F",
+      "dimensions": "130x100",
+      "width": 130,
+      "height": 100,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "LVL SAFE 96XT Decapper": {
+      "name": "LVL SAFE 96XT Decapper",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9M to D9F",
+      "dimensions": "130x100",
+      "width": 130,
+      "height": 100,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "MD AquaMax 4000": {
+      "name": "MD AquaMax 4000",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.75,
+      "amperage_raw": "1.75",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A to USB B",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "MD SpectraMax iD5": {
+      "name": "MD SpectraMax iD5",
+      "part_numbers": [
+        "OTP-MLDV-0113"
+      ],
+      "role": "powered",
+      "amperage": 2.0,
+      "amperage_raw": "2.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet COM",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "MD SpectraMax i3X": {
+      "name": "MD SpectraMax i3X",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.5,
+      "amperage_raw": "3.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A to USB B",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "MD SpectraMax M2": {
+      "name": "MD SpectraMax M2",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.5,
+      "amperage_raw": "3.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A to USB B",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "Uses same specs as M2e",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "MD SpectraMax M2e": {
+      "name": "MD SpectraMax M2e",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.5,
+      "amperage_raw": "3.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A to USB B",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "MD SpectraMax M3": {
+      "name": "MD SpectraMax M3",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.5,
+      "amperage_raw": "3.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Serial RS232 8-pin to DB9",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "Added from BMS_SO-263483 confirmed wiring specifications.",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Micronic 700 Series Decapper": {
+      "name": "Micronic 700 Series Decapper",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "MSD QuickPlex": {
+      "name": "MSD QuickPlex",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 2.0,
+      "amperage_raw": "2.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to B M",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "MTEC": {
+      "name": "MTEC",
+      "part_numbers": [
+        "OTP-8900030"
+      ],
+      "role": "powered",
+      "amperage": 5.5,
+      "amperage_raw": "5.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Nexcelom Celigo": {
+      "name": "Nexcelom Celigo",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 5.5,
+      "amperage_raw": "5.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [
+        "Nescelom Celigo"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Revvity VICTOR Nivo": {
+      "name": "Revvity VICTOR Nivo",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "Amperage per CPR (120W @ 120V)",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Sci-Print MV2": {
+      "name": "Sci-Print MV2",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.4,
+      "amperage_raw": "3.4",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "RS-232 D9 M to D9F",
+      "dimensions": "120x100",
+      "width": 120,
+      "height": 100,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Sci-Print VX2": {
+      "name": "Sci-Print VX2",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Shake Module Control Unit": {
+      "name": "Shake Module Control Unit",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.0,
+      "amperage_raw": "1",
+      "amperage_status": "ok",
+      "power_cable": "NEMA 5-15 Plug",
+      "comm_cable": "Barrel to RS-232 DB9 M",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "Daisy-chain capable (\u00a77)",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Soletim Cell Metric": {
+      "name": "Soletim Cell Metric",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "140x80",
+      "width": 140,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "STAR Active Plate Handoff": {
+      "name": "STAR Active Plate Handoff",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": null,
+      "amperage_raw": "-",
+      "amperage_status": "none",
+      "power_cable": "-",
+      "comm_cable": "Periphery to Div2 port",
+      "dimensions": "90x60",
+      "width": 90,
+      "height": 60,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "Synentec CellaVista": {
+      "name": "Synentec CellaVista",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3.0",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Fiber Optic Cable\nUSB A M to USB B M\nUSB 3.0 A M to USB B M",
+      "dimensions": "140x100",
+      "width": 140,
+      "height": 100,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Thermo Arctic SC150": {
+      "name": "Thermo Arctic SC150",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 11.7,
+      "amperage_raw": "11.7",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "-",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Thermo KingFisher Flex": {
+      "name": "Thermo KingFisher Flex",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.6,
+      "amperage_raw": "1.6",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "170x100",
+      "width": 170,
+      "height": 100,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Thermo LightCycler": {
+      "name": "Thermo LightCycler",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 12.5,
+      "amperage_raw": "12.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 6-20",
+      "comm_cable": "Ethernet",
+      "dimensions": "130x60",
+      "width": 130,
+      "height": 60,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Thermo QuantStudio 7": {
+      "name": "Thermo QuantStudio 7",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 8.0,
+      "amperage_raw": "8",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Ethernet",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Unchained Lunatic": {
+      "name": "Unchained Lunatic",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.5,
+      "amperage_raw": "1.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M or Ethernet or CAN",
+      "dimensions": "130x90",
+      "width": 130,
+      "height": 90,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Vacubrand Pump": {
+      "name": "Vacubrand Pump",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 4.0,
+      "amperage_raw": "4",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "Coaxial cable",
+      "dimensions": "120x90",
+      "width": 120,
+      "height": 90,
+      "notes": "Vacuum In",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "WashStation 96 Control Box": {
+      "name": "WashStation 96 Control Box",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 2.5,
+      "amperage_raw": "2.5",
+      "amperage_status": "ok",
+      "power_cable": "External Supply to C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x110",
+      "width": 120,
+      "height": 110,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Waters Pump": {
+      "name": "Waters Pump",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 16.0,
+      "amperage_raw": "16",
+      "amperage_status": "ok",
+      "power_cable": "C19 to NEMA L6-15P",
+      "comm_cable": "-",
+      "dimensions": "120x60",
+      "width": 120,
+      "height": 60,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Waters XEVO-G2 XS Mass Spec": {
+      "name": "Waters XEVO-G2 XS Mass Spec",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 16.0,
+      "amperage_raw": "16",
+      "amperage_status": "ok",
+      "power_cable": "NEMA L6-15P",
+      "comm_cable": "Ethernet",
+      "dimensions": "120x100",
+      "width": 120,
+      "height": 100,
+      "notes": "",
+      "section": "section6",
+      "former_names": [
+        "Waters XEVO-02 XS Mass Spec"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "XcytoMatic 30": {
+      "name": "XcytoMatic 30",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 1.5,
+      "amperage_raw": "1.5",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB 3.0 Micro to USB A",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [
+        "Xcytomatic 30"
+      ],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Ziath Control Unit": {
+      "name": "Ziath Control Unit",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 3.0,
+      "amperage_raw": "3",
+      "amperage_status": "ok",
+      "power_cable": "External Supply to C13 to NEMA 5-15",
+      "comm_cable": "USB3 A M to USB3 B M",
+      "dimensions": "140x70",
+      "width": 140,
+      "height": 70,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    },
+    "Ziath Express Barcode Scanner": {
+      "name": "Ziath Express Barcode Scanner",
+      "part_numbers": [],
+      "role": "child",
+      "amperage": 4.0,
+      "amperage_raw": "4",
+      "amperage_status": "ok",
+      "power_cable": "DIN power",
+      "comm_cable": "HDMI",
+      "dimensions": "120x80",
+      "width": 120,
+      "height": 80,
+      "notes": "",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Child"
+    },
+    "Ziath Mirage": {
+      "name": "Ziath Mirage",
+      "part_numbers": [],
+      "role": "powered",
+      "amperage": 0.1,
+      "amperage_raw": "0.1",
+      "amperage_status": "ok",
+      "power_cable": "C13 to NEMA 5-15",
+      "comm_cable": "USB A M to USB B M",
+      "dimensions": "120x70",
+      "width": 120,
+      "height": 70,
+      "notes": "Amperage per CPR (<10W)",
+      "section": "section6",
+      "former_names": [],
+      "kit_qty": 1,
+      "adds_load": null,
+      "category": "off_deck",
+      "role_raw": "Powered"
+    }
+  },
+  "pipettor_connected": [
+    {
+      "device_raw": "EasyCode II",
+      "pipettor": "STAR",
+      "required": true,
+      "cables": "Periphery to Div1",
+      "device": null
+    },
+    {
+      "device_raw": "EasyCode II",
+      "pipettor": "VANTAGE",
+      "required": true,
+      "cables": "Periphery Div1 to General",
+      "device": null
+    },
+    {
+      "device_raw": "EasyCode III",
+      "pipettor": "STAR",
+      "required": true,
+      "cables": "Periphery to P1 or P2",
+      "device": null
+    },
+    {
+      "device_raw": "EasyCode III",
+      "pipettor": "VANTAGE",
+      "required": true,
+      "cables": "Periphery to Medium",
+      "device": null
+    },
+    {
+      "device_raw": "Fluoreye",
+      "pipettor": "VANTAGE",
+      "required": true,
+      "cables": "Periphery to Medium",
+      "device": null
+    },
+    {
+      "device_raw": "Hamilton Centrifuge",
+      "pipettor": "STAR",
+      "required": true,
+      "cables": "Periphery to DIV2 or DIV3",
+      "device": "Hamilton Centrifuge"
+    },
+    {
+      "device_raw": "Hamilton Centrifuge",
+      "pipettor": "VANTAGE",
+      "required": true,
+      "cables": "Periphery to General",
+      "device": "Hamilton Centrifuge"
+    },
+    {
+      "device_raw": "Hamilton Heater Cooler",
+      "pipettor": "STAR",
+      "required": false,
+      "cables": "Periphery to TCC1 or TCC2",
+      "device": "Hamilton Heater Cooler"
+    },
+    {
+      "device_raw": "Hamilton Heater Cooler",
+      "pipettor": "VANTAGE",
+      "required": false,
+      "cables": "Periphery to High or Medium port",
+      "device": "Hamilton Heater Cooler"
+    },
+    {
+      "device_raw": "Hamilton Heater Shaker",
+      "pipettor": "STAR",
+      "required": false,
+      "cables": "Periphery to TCC1 or TCC2",
+      "device": "Hamilton Heater Shaker"
+    },
+    {
+      "device_raw": "Hamilton Heater Shaker",
+      "pipettor": "VANTAGE",
+      "required": false,
+      "cables": "Periphery to High or Medium port",
+      "device": "Hamilton Heater Shaker"
+    },
+    {
+      "device_raw": "Hamilton Mag Door Lock",
+      "pipettor": "STAR",
+      "required": true,
+      "cables": "Cable to Int. Board\nCable to EX IO",
+      "device": null
+    },
+    {
+      "device_raw": "STAR Active Plate Handoff",
+      "pipettor": "STAR",
+      "required": true,
+      "cables": "Periphery to STAR Div2 port",
+      "device": "STAR Active Plate Handoff"
+    },
+    {
+      "device_raw": "STAR UV",
+      "pipettor": "STAR",
+      "required": true,
+      "cables": "Periphery to P1, P2, and Div3",
+      "device": "STAR UV"
+    },
+    {
+      "device_raw": "STAR Vibratory Waste",
+      "pipettor": "STAR",
+      "required": true,
+      "cables": "Periphery to DIV2 or DIV3",
+      "device": null
+    },
+    {
+      "device_raw": "VANTAGE Active Plate Handoff",
+      "pipettor": "VANTAGE",
+      "required": true,
+      "cables": "Periphery to General",
+      "device": null
+    }
+  ],
+  "raw_pairings": [
+    {
+      "primary_raw": "BioTek Buffer Switching Module",
+      "partners_raw": [
+        "BioTek EL406"
+      ],
+      "connections": [
+        "8 pin barrel"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "BioTek Pump",
+      "partners_raw": [
+        "BioTek Washer"
+      ],
+      "connections": [
+        "C13R to C13P"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "BioTek Pump",
+      "partners_raw": [
+        "BioTek EL406"
+      ],
+      "connections": [
+        "C13R to C13P"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Covaris R230 Deck Module",
+      "partners_raw": [
+        "WCS 3"
+      ],
+      "connections": [
+        "25-pin d-sub MF",
+        "44-pin d-sub MF"
+      ],
+      "notes": "2 connections"
+    },
+    {
+      "primary_raw": "Covaris R230 Deck Module",
+      "partners_raw": [
+        "eBox"
+      ],
+      "connections": [
+        "25-pin d-sub MF",
+        "44-pin d-sub M",
+        "Coaxial cable"
+      ],
+      "notes": "3 connections"
+    },
+    {
+      "primary_raw": "CR Wash Station Deck Module",
+      "partners_raw": [
+        "CR Wash Station Pump Module"
+      ],
+      "connections": [
+        "RS-232 DB25 M to F",
+        "Sensor x3"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Curiox Buffer Exchange Module",
+      "partners_raw": [
+        "Curiox HT2000 Plate Washer"
+      ],
+      "connections": [
+        "Mini DIN Connector x2"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Dispense Module",
+      "partners_raw": [
+        "ACME Box"
+      ],
+      "connections": [
+        "RS-232 D9 M to D9 F"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Evaporator Module",
+      "partners_raw": [
+        "ACME Box"
+      ],
+      "connections": [
+        "Molex Power/COM Cable"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Hamilton DeckWatch",
+      "partners_raw": [
+        "NetGear Router"
+      ],
+      "connections": [
+        "Ethernet (POE)"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Hamilton Centrifuge",
+      "partners_raw": [
+        "Hamilton Centrifuge Control Box",
+        "STAR DIV port"
+      ],
+      "connections": [
+        "CAN-BUS split cable"
+      ],
+      "notes": "Single cable from Centrifuge splits to Control Box and STAR DIV port. Represented as two lines with shared coordinates at Centrifuge connection point."
+    },
+    {
+      "primary_raw": "Hamilton Heater Cooler",
+      "partners_raw": [
+        "HHS Ctrl Box"
+      ],
+      "connections": [
+        "12Pin Barrel to RS-232 DB9"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Hamilton Heater Shaker",
+      "partners_raw": [
+        "HHS Ctrl Box"
+      ],
+      "connections": [
+        "RS-232 DB9"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Inheco CPAC",
+      "partners_raw": [
+        "MTEC"
+      ],
+      "connections": [
+        "RS232 DB15"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Inheco Teleshake",
+      "partners_raw": [
+        "MTEC"
+      ],
+      "connections": [
+        "RS232 DB15"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Inheco ThermoShake",
+      "partners_raw": [
+        "MTEC"
+      ],
+      "connections": [
+        "RS232 DB15"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "iQue 3 Flow Cytometer",
+      "partners_raw": [
+        "iQue UPS"
+      ],
+      "connections": [
+        "C13 to NEMA 5-15"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "iQue Fluidics Station",
+      "partners_raw": [
+        "iQue 3 Flow Cytometer"
+      ],
+      "connections": [
+        "DVI M to F",
+        "Liquid In/Out"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Lonza Nucleofector Functional Unit",
+      "partners_raw": [
+        "Lonza Nucleofector Core Unit"
+      ],
+      "connections": [
+        "Lonza Connector"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "MFM Deck Module",
+      "partners_raw": [
+        "Hamilton MFM Control Box"
+      ],
+      "connections": [
+        "Pigtail Turck 3P F"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "MFM Preheat Module",
+      "partners_raw": [
+        "HHS Ctrl Box"
+      ],
+      "connections": [
+        "RS-232 DB9"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "MFM Pump",
+      "partners_raw": [
+        "Hamilton MFM Control Box"
+      ],
+      "connections": [
+        "Pigtail Turck 4P F"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "MPE ACME Box",
+      "partners_raw": [
+        "MPE Ctrl Box"
+      ],
+      "connections": [
+        "Barrel Connector"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "MPE Deck Module",
+      "partners_raw": [
+        "MPE Ctrl Box"
+      ],
+      "connections": [
+        "RS-232 D15M to D15M"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Pelco Camera",
+      "partners_raw": [
+        "Hamilton Deck Watch"
+      ],
+      "connections": [
+        "TCP"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Shake Module Ctrl Unit",
+      "partners_raw": [
+        "Subsequent Ctrl Unit"
+      ],
+      "connections": [
+        "Barrel cable"
+      ],
+      "notes": "Daisy-chain capable"
+    },
+    {
+      "primary_raw": "Thermo Variomag Teleshake",
+      "partners_raw": [
+        "Shake Module Ctrl Unit"
+      ],
+      "connections": [
+        "Barrel cable"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Tilt Ctrl Box",
+      "partners_raw": [
+        "Subsequent Tilt Ctrl Box"
+      ],
+      "connections": [
+        "RS-232 D9 M to D9 F"
+      ],
+      "notes": "Daisy-chain capable"
+    },
+    {
+      "primary_raw": "Tilt Module",
+      "partners_raw": [
+        "Tilt Ctrl Box"
+      ],
+      "connections": [
+        "RS-232 DB25 M"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "Wash Station 96",
+      "partners_raw": [
+        "WashStation 96 Control Box"
+      ],
+      "connections": [
+        "C13R to C13P"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "XM30 Laptop",
+      "partners_raw": [
+        "XcytoMatic 30"
+      ],
+      "connections": [
+        "USB 3.0 Micro to USB A"
+      ],
+      "notes": ""
+    },
+    {
+      "primary_raw": "XM30 Satellite",
+      "partners_raw": [
+        "XcytoMatic 30"
+      ],
+      "connections": [
+        "-"
+      ],
+      "notes": "Connection type not specified in source"
+    },
+    {
+      "primary_raw": "Ziath Express Barcode Scanner",
+      "partners_raw": [
+        "Ziath ctrl unit"
+      ],
+      "connections": [
+        "DIN power",
+        "HDMI"
+      ],
+      "notes": ""
+    }
+  ],
+  "skipped_struck_rows": 8,
+  "pairings": [
+    {
+      "primary": "BioTek Buffer Switching Module",
+      "partner": "BioTek EL406",
+      "partner_raw": "BioTek EL406",
+      "connections": [
+        "8 pin barrel"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "BioTek Pump",
+      "partner": "BioTek 405",
+      "partner_raw": "BioTek Washer",
+      "connections": [
+        "C13R to C13P"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "BioTek Pump",
+      "partner": "BioTek EL406",
+      "partner_raw": "BioTek EL406",
+      "connections": [
+        "C13R to C13P"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Covaris R230 Deck Module",
+      "partner": "Covaris R230 WCS 3",
+      "partner_raw": "WCS 3",
+      "connections": [
+        "25-pin d-sub MF",
+        "44-pin d-sub MF"
+      ],
+      "notes": "2 connections",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Covaris R230 Deck Module",
+      "partner": "Covaris R230 eBox",
+      "partner_raw": "eBox",
+      "connections": [
+        "25-pin d-sub MF",
+        "44-pin d-sub M",
+        "Coaxial cable"
+      ],
+      "notes": "3 connections",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "CR Wash Station Deck Module",
+      "partner": "CR Wash Station Pump Module",
+      "partner_raw": "CR Wash Station Pump Module",
+      "connections": [
+        "RS-232 DB25 M to F",
+        "Sensor x3"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Curiox Buffer Exchange Module",
+      "partner": "Curiox HT2000 Plate Washer",
+      "partner_raw": "Curiox HT2000 Plate Washer",
+      "connections": [
+        "Mini DIN Connector x2"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Dispense Module",
+      "partner": "Hamilton [MPE] ACME Box",
+      "partner_raw": "ACME Box",
+      "connections": [
+        "RS-232 D9 M to D9 F"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Evaporator Module",
+      "partner": "Hamilton [MPE] ACME Box",
+      "partner_raw": "ACME Box",
+      "connections": [
+        "Molex Power/COM Cable"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton DeckWatch",
+      "partner": "NetGear Router",
+      "partner_raw": "NetGear Router",
+      "connections": [
+        "Ethernet (POE)"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton Centrifuge",
+      "partner": "Hamilton Centrifuge Control Box",
+      "partner_raw": "Hamilton Centrifuge Control Box",
+      "connections": [
+        "CAN-BUS split cable"
+      ],
+      "notes": "Single cable from Centrifuge splits to Control Box and STAR DIV port. Represented as two lines with shared coordinates at Centrifuge connection point.",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton Centrifuge",
+      "partner": null,
+      "partner_raw": "STAR DIV port",
+      "connections": [
+        "CAN-BUS split cable"
+      ],
+      "notes": "Single cable from Centrifuge splits to Control Box and STAR DIV port. Represented as two lines with shared coordinates at Centrifuge connection point.",
+      "relation": "pipettor",
+      "pipettor": "STAR"
+    },
+    {
+      "primary": "Hamilton Heater Cooler",
+      "partner": "HHS Control Box",
+      "partner_raw": "HHS Ctrl Box",
+      "connections": [
+        "12Pin Barrel to RS-232 DB9"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton Heater Shaker",
+      "partner": "HHS Control Box",
+      "partner_raw": "HHS Ctrl Box",
+      "connections": [
+        "RS-232 DB9"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Inheco CPAC",
+      "partner": "MTEC",
+      "partner_raw": "MTEC",
+      "connections": [
+        "RS232 DB15"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Inheco TeleShake",
+      "partner": "MTEC",
+      "partner_raw": "MTEC",
+      "connections": [
+        "RS232 DB15"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Inheco ThermoShake",
+      "partner": "MTEC",
+      "partner_raw": "MTEC",
+      "connections": [
+        "RS232 DB15"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "iQue 3 Flow Cytometer",
+      "partner": "iQue UPS",
+      "partner_raw": "iQue UPS",
+      "connections": [
+        "C13 to NEMA 5-15"
+      ],
+      "notes": "",
+      "relation": "link",
+      "pipettor": ""
+    },
+    {
+      "primary": "iQue Fluidics Station",
+      "partner": "iQue 3 Flow Cytometer",
+      "partner_raw": "iQue 3 Flow Cytometer",
+      "connections": [
+        "DVI M to F",
+        "Liquid In/Out"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Lonza Nucleofector Functional Unit",
+      "partner": "Lonza Nucleofector Core Unit",
+      "partner_raw": "Lonza Nucleofector Core Unit",
+      "connections": [
+        "Lonza Connector"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton MFM Deck Module",
+      "partner": "Hamilton MFM Control Box",
+      "partner_raw": "Hamilton MFM Control Box",
+      "connections": [
+        "Pigtail Turck 3P F"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton MFM Pump",
+      "partner": "Hamilton MFM Control Box",
+      "partner_raw": "Hamilton MFM Control Box",
+      "connections": [
+        "Pigtail Turck 4P F"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton [MPE] ACME Box",
+      "partner": "Hamilton [MPE] Control Box",
+      "partner_raw": "MPE Ctrl Box",
+      "connections": [
+        "Barrel Connector"
+      ],
+      "notes": "",
+      "relation": "link",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton [MPE] Deck Module",
+      "partner": "Hamilton [MPE] Control Box",
+      "partner_raw": "MPE Ctrl Box",
+      "connections": [
+        "RS-232 D15M to D15M"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Pelco Camera",
+      "partner": "Hamilton DeckWatch",
+      "partner_raw": "Hamilton Deck Watch",
+      "connections": [
+        "TCP"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Shake Module Control Unit",
+      "partner": "Shake Module Control Unit",
+      "partner_raw": "Subsequent Ctrl Unit",
+      "connections": [
+        "Barrel cable"
+      ],
+      "notes": "Daisy-chain capable",
+      "relation": "daisy_chain",
+      "pipettor": ""
+    },
+    {
+      "primary": "Thermo Variomag Teleshake",
+      "partner": "Shake Module Control Unit",
+      "partner_raw": "Shake Module Ctrl Unit",
+      "connections": [
+        "Barrel cable"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton MFX Tilt Module Control Box",
+      "partner": "Hamilton MFX Tilt Module Control Box",
+      "partner_raw": "Subsequent Tilt Ctrl Box",
+      "connections": [
+        "RS-232 D9 M to D9 F"
+      ],
+      "notes": "Daisy-chain capable",
+      "relation": "daisy_chain",
+      "pipettor": ""
+    },
+    {
+      "primary": "Hamilton MFX Tilt Module",
+      "partner": "Hamilton MFX Tilt Module Control Box",
+      "partner_raw": "Tilt Ctrl Box",
+      "connections": [
+        "RS-232 DB25 M"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Wash Station 96",
+      "partner": "WashStation 96 Control Box",
+      "partner_raw": "WashStation 96 Control Box",
+      "connections": [
+        "C13R to C13P"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "XM30 Laptop",
+      "partner": "XcytoMatic 30",
+      "partner_raw": "XcytoMatic 30",
+      "connections": [
+        "USB 3.0 Micro to USB A"
+      ],
+      "notes": "",
+      "relation": "link",
+      "pipettor": ""
+    },
+    {
+      "primary": "XM30 Satellite",
+      "partner": "XcytoMatic 30",
+      "partner_raw": "XcytoMatic 30",
+      "connections": [
+        "-"
+      ],
+      "notes": "Connection type not specified in source",
+      "relation": "child_of",
+      "pipettor": ""
+    },
+    {
+      "primary": "Ziath Express Barcode Scanner",
+      "partner": "Ziath Control Unit",
+      "partner_raw": "Ziath ctrl unit",
+      "connections": [
+        "DIN power",
+        "HDMI"
+      ],
+      "notes": "",
+      "relation": "child_of",
+      "pipettor": ""
+    }
+  ],
+  "validation": [
+    "\u00a72: 'EasyCode II' does not match any \u00a75/\u00a76 device name, so its pipettor connection cannot be used.",
+    "\u00a72: 'EasyCode II' does not match any \u00a75/\u00a76 device name, so its pipettor connection cannot be used.",
+    "\u00a72: 'EasyCode III' does not match any \u00a75/\u00a76 device name, so its pipettor connection cannot be used.",
+    "\u00a72: 'EasyCode III' does not match any \u00a75/\u00a76 device name, so its pipettor connection cannot be used.",
+    "\u00a72: 'Fluoreye' does not match any \u00a75/\u00a76 device name, so its pipettor connection cannot be used.",
+    "\u00a72: 'Hamilton Mag Door Lock' does not match any \u00a75/\u00a76 device name, so its pipettor connection cannot be used.",
+    "\u00a72: 'STAR Vibratory Waste' does not match any \u00a75/\u00a76 device name, so its pipettor connection cannot be used.",
+    "\u00a72: 'VANTAGE Active Plate Handoff' does not match any \u00a75/\u00a76 device name, so its pipettor connection cannot be used.",
+    "\u00a77: primary device 'MFM Preheat Module' does not match any DRD device name; pairing ignored.",
+    "iQue UPS: Powered, but amperage '-' is not a number. An amperage must be entered when it is used."
+  ]
+}

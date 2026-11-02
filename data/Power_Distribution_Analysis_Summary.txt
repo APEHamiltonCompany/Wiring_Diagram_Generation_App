@@ -1,0 +1,197 @@
+POWER DISTRIBUTION ANALYSIS - EXPECTED METHOD AND OUTPUT
+Summary of three analyses (Sanofi, AstraZeneca, Exact Sciences)
+==========================================================================
+
+INPUTS
+------
+Sales Order or Quote (.xlsx), CPR (.docx), DRD (amperage, cables, comms),
+StyleGuide (circuit rules).
+
+
+STEPS
+-----
+1. Parse the devices.
+   - Match Sales Order/Quote line items to DRD entries, then add any
+     customer-supplied devices from the CPR.
+
+2. Sort out unpowered items.
+   - Leave out anything powered through a control box or cable: HHS/HHC,
+     Inheco ODTC, MPE Deck Module, the Centrifuge (powered by its CAN-BUS
+     split cable), and the BioTek Pump (plugs into the washer).
+   - Leave out anything with no power at all: baseplates, carriers,
+     adapters, tables, Ergotron carts and kits, software, services,
+     APE MISC.
+   - APE MISC is unpowered unless the CPR lists it as a custom item.
+   - Internal VANTAGE accessories, such as the Power Socket with Safety,
+     are out of scope.
+
+3. Set the amperage for each device.
+   - The DRD is the source of truth. If the CPR gives a different value,
+     use the DRD value and point out the difference.
+   - Devices not in the DRD use the CPR wattage divided by 120V. Ask
+     before adding them to the DRD.
+   - HHS Control Box draw is 0.3A plus 1A per connected HHS or HHC, up to
+     8.3A.
+   - For swappable devices, use the larger draw so nothing needs rewiring
+     later. This is only when the user says so for that project.
+   - If no PC is on the order, use the Customer-Supplied PC (9.5A) and
+     don't assume a router or hub.
+
+4. Check hubs.
+   - Count the PC's USB, RS-232 and RJ45 ports. Add a Serial Hub or router
+     only when the PC runs out of ports, and never for a customer-supplied
+     PC.
+
+5. Assign circuits.
+   - Usable load is 80% of the circuit: 12A on a 15A circuit, 16A on a
+     20A circuit.
+   - Use as few circuits as possible. Show the math: total load / usable
+     amps, rounded up.
+   - The PC goes on Circuit 1.
+   - The VANTAGE gets its own circuit. Number it last if it's a 20A
+     L14-20 or L21-20 circuit. Single-phase C19 is 10A.
+   - Group devices by location where possible (off-deck together, on-deck
+     control boxes together).
+   - Add a power strip only when a circuit has more than 2 connections.
+     If two placements both work, pick the one that avoids a power strip.
+   - The user may approve going over the 80% limit. Flag it, but don't
+     propose it unprompted.
+
+6. List questions for anything unclear, and don't make the diagram until
+   the user approves.
+
+
+OUTPUT FORMAT
+-------------
+1. A powered devices table: Device (DRD name), Part #, Qty, Amperage (A),
+   Power Cable, Comms, Source.
+2. A list of items left out because they draw no power, with the reason
+   for each.
+3. The hub check result.
+4. A distribution table: Circuit, Rating/Outlet, Devices, Connections,
+   Load (A), Headroom (A), Power Strip, plus a total row.
+5. Rationale bullets: why this is the minimum number of circuits, and why
+   each device sits where it does.
+6. Places where the CPR and DRD disagree.
+7. Numbered questions, ending with a request for approval.
+
+
+==========================================================================
+EXAMPLE 1: SANOFI SO-292921 (VANTAGE, DUAL-PHASE)
+==========================================================================
+
+Devices:
+  VANTAGE 2.0 (L14-20), L3 PC 12.0A, Inheco ODTC Control Box 10.0A
+  (C19 to 5-15), HHS Control Box 4.3A (4 HHS), MPE Control Box 4.0A.
+  The CPR added a customer-supplied BioTek Epoch 2 at 1.0A.
+
+Questions asked, and the answers:
+  - VANTAGE phase: dual-phase, so L14-20.
+  - Power Socket with Safety: out of scope.
+  - Ergotron: unpowered.
+  - APE MISC: unpowered.
+  - CPACs: none.
+  - MPE ACME Box: not needed.
+
+CPR vs. DRD:
+  The CPR gave 4A for the Epoch 2 and 4A for the ODTC + MPE combined.
+  The DRD values were used.
+
+Circuit              | Devices                           | Load (A) | Power Strip
+---------------------+-----------------------------------+----------+------------
+1: 15A NEMA 5-15R    | L3 PC (2x C13)                    | 12.0     | No
+2: 15A NEMA 5-15R    | ODTC Control Box, Epoch 2         | 11.0     | No
+3: 15A NEMA 5-15R    | HHS Control Box, MPE Control Box  | 8.3      | No
+4: 20A L14-20R       | VANTAGE 2.0 (on its own)          | Varies   | No
+
+Rationale:
+  31.3A on the 15A circuits means at least 3 circuits. The Epoch 2 also
+  fit on Circuit 3, but that would have meant 3 connections and a power
+  strip, so it went on Circuit 2.
+
+
+==========================================================================
+EXAMPLE 2: ASTRAZENECA QTE-056533 (VANTAGE, SINGLE-PHASE, 80% RULE BROKEN)
+==========================================================================
+
+Instructions:
+  VANTAGE is single-phase, C19, 10A, and should be on its own circuit if
+  possible.
+
+First draft (later corrected):
+  Assumed a Standard PC and a Mikrotik router, giving 3 circuits.
+
+Answers:
+  - No PC on the order, so use the Customer-Supplied PC at 9.5A, with no
+    router.
+  - The VICTOR Nivo is sized at the i3X's 3.5A so the later swap needs no
+    rewiring (this project only).
+  - HHS USB goes to the VANTAGE Periphery Box, and the VANTAGE connects
+    to the PC by USB.
+  - The integration kit quantity is 1.
+
+Devices:
+  Customer-Supplied PC 9.5A, BioTek 405 9.0A (the pump plugs into the
+  washer), Nivo 3.5A, Ziath Mirage 0.1A, VANTAGE 10.0A. Total 32.1A.
+
+Options compared:
+  - 15A, 80% rule: 4 circuits. The Nivo couldn't share a circuit with the
+    PC (13.0A), the BioTek (12.5A) or the VANTAGE (13.5A).
+  - 20A circuits (16A usable): 3 circuits. PC + Nivo + Mirage 13.1A on a
+    20A-rated strip, BioTek 9.0A, VANTAGE 10.0A.
+  - APPROVED: 15A, 80% rule broken by user choice (table below).
+
+Circuit              | Devices                           | Load (A)              | Power Strip
+---------------------+-----------------------------------+-----------------------+------------------------
+1: 15A NEMA 5-15R    | Customer-Supplied PC (2x C13)     | 9.5                   | No (only 2 connections)
+2: 15A NEMA 5-15R    | BioTek 405, Nivo, Mirage          | 12.6 (over 12A limit, | Yes
+                     |                                   | approved)             |
+3: 15A NEMA 5-15R    | VANTAGE 2.0 (C19, on its own)     | 10.0                  | No
+
+Lesson:
+  Check the user's math. Circuit 2 was requested as 13.6A, but it
+  actually adds up to 12.6A.
+
+
+==========================================================================
+EXAMPLE 3: EXACT SCIENCES SO-294012 (STAR UPGRADE)
+==========================================================================
+
+Devices:
+  - STAR 6.3A
+  - Standard PC 4.5A
+  - HHS Control Box 4.3A (4 HHC)
+  - Centrifuge Control Box 4.0A
+  - Agilent PlateLoc 5.0A (from the CPR)
+  - Azenta IntelliXcap Decapper 4.2A (from the CPR)
+  Total 28.3A.
+
+Hub check:
+  The Standard PC has only 1 RS-232 port, and the PlateLoc and Decapper
+  each need one. A Serial Hub was added.
+
+Questions asked, and the answers:
+  - HHS units: leave them out for now, since it's unclear what the
+    adapters are for. The analysis showed the alternatives: 2 HHS would
+    bring Circuit 3 to 10.3A, and 4 HHS to 12.3A, which would need a 4th
+    circuit.
+  - HHCs connect through the control box, because the STAR has only 2 TCC
+    ports. Confirmed.
+  - Ergotron: unpowered.
+
+Circuit              | Devices                                  | Load (A) | Power Strip
+---------------------+------------------------------------------+----------+-------------------
+1: 15A NEMA 5-15R    | Standard PC (2x C13), STAR               | 10.8     | Yes (3 connections)
+2: 15A NEMA 5-15R    | PlateLoc, Decapper (off-deck)            | 9.2      | No
+3: 15A NEMA 5-15R    | HHS Control Box, Centrifuge Control Box  | 8.3      | No
+
+
+==========================================================================
+PATTERNS ACROSS ALL THREE
+==========================================================================
+- Every analysis ended with numbered questions. The answers then became
+  rules, either for that project only or as DRD/StyleGuide updates.
+- When an answer changes the circuit count, show the alternatives side by
+  side (amp values and how many circuits each needs).
+- Keep project-specific overrides out of the DRD and StyleGuide: the swap
+  sizing, the broken 80% rule, and the HHS exclusion.

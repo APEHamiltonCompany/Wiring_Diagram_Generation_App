@@ -1,0 +1,5 @@
+Step,How the app would do it
+Parse the sales order (.xlsx),"Match part numbers against a local device database built from the DRD (amperage, cables, comms, block sizes)."
+Power analysis,"Add up the loads and check them against the limit for 15A or 20A circuits (80% rule, with an option to override). Group devices onto circuits by location (on-deck vs. off-deck) and add power strips when needed."
+Hub check,Count the PC's USB and serial ports and add a Serial Hub when they run out.
+Diagram generation,"Write the `.drawio` XML directly from the StyleGuide rules. That covers column layout and expansion, the 10px clearance, connecting lines to device faces by source/target, the color codes, and the legend. The draw.io desktop app also runs fully offline for review."

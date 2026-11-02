@@ -1,0 +1,65 @@
+# WireDiagram Power Distribution CSV
+# schema_version=2.0
+# Edit by hand or regenerate. Section markers are '# [SECTION]'. Other '#' lines are ignored. Mode 2 draws only the CONNECTIONS rows.
+
+# [META]
+key,value
+schema_version,2.0
+project_name,Sanofi
+facility_circuit,15A
+pipettor,VANTAGE
+pipettors,VANTAGE=VANTAGEline|VANTAGE|L14-20|
+vantage_phase,L14-20
+pc_type,L3 PC
+main_pc_id,L3 PC
+hhs_mode,control_box
+over_80_approved,no
+drd_version,1.1.1
+styleguide_version,
+generated_by,WireDiagram App
+generated_on,2026-10-30 22:20
+
+# [DEVICES]
+id,name,drd_name,part_number,qty,amperage,plugs,power_cable,comm_cable,category,role,parent,section,width,height,circuit,source,powered,unpowered_reason,notes,connect_power_to,connect_comm_to
+VANTAGE,VANTAGEline,VANTAGEline,,1,,1,L14-20,,pipettor,pipettor,,,,,4,Pipettor picker,yes,,,Circuit 4,
+L3 PC,L3 PC,L3 PC,6611762-01,1,12,2,2x C13 to NEMA 5-15,,pc,powered,,section3,120,80,1,Sales Order,yes,,,Circuit 1,
+BioTek Epoch 2,BioTek Epoch 2,BioTek Epoch 2,,1,1,1,External Supply to C13 to NEMA 5-15,USB A M to USB B M,off_deck,powered,,section6,120,70,2,Customer-supplied,yes,,,Circuit 2,
+Hamilton [MPE] Control Box,Hamilton [MPE] Control Box,Hamilton [MPE] Control Box,96160-01,1,4,1,C13 to NEMA 5-15,USB A M to USB B M,off_deck,powered,,section6,140,110,3,Sales Order,yes,,,Circuit 3,
+HHS Control Box,HHS Control Box,HHS Control Box,190755,1,4.3,1,C13 to NEMA 5-15,-,off_deck,powered,,section6,120,60,3,Sales Order,yes,,,Circuit 3,
+Inheco ODTC Control Box,Inheco ODTC Control Box,Inheco ODTC Control Box,OTP-INHC-0002,1,10,1,C19 to 5-15,Ethernet Crossover,off_deck,powered,,section6,120,80,2,Sales Order,yes,,,Circuit 2,
+Hamilton [MPE] Deck Module,Hamilton [MPE] Deck Module,Hamilton [MPE] Deck Module,96160-01,1,,0,-,RS-232 D15M to D15M,on_deck,child,Hamilton [MPE] Control Box,section5,140,70,,Sales Order,no,Child of Hamilton [MPE] Control Box,,Hamilton [MPE] Control Box,
+Hamilton Heater Shaker #1,Hamilton Heater Shaker,Hamilton Heater Shaker,199034,1,,0,-,USB A M to USB B M / RS-232 DB9,on_deck,child,HHS Control Box,section5,100,60,,Sales Order,no,Child of HHS Control Box,,HHS Control Box,
+Hamilton Heater Shaker #2,Hamilton Heater Shaker,Hamilton Heater Shaker,199034,1,,0,-,USB A M to USB B M / RS-232 DB9,on_deck,child,HHS Control Box,section5,100,60,,Sales Order,no,Child of HHS Control Box,,HHS Control Box,
+Hamilton Heater Shaker #3,Hamilton Heater Shaker,Hamilton Heater Shaker,199034,1,,0,-,USB A M to USB B M / RS-232 DB9,on_deck,child,HHS Control Box,section5,100,60,,Sales Order,no,Child of HHS Control Box,,HHS Control Box,
+Hamilton Heater Shaker #4,Hamilton Heater Shaker,Hamilton Heater Shaker,199034,1,,0,-,USB A M to USB B M / RS-232 DB9,on_deck,child,HHS Control Box,section5,100,60,,Sales Order,no,Child of HHS Control Box,,HHS Control Box,
+Inheco ODTC,Inheco ODTC,Inheco ODTC,OTP-INHC-0002,1,,0,-,ODTC Connector,on_deck,child,Inheco ODTC Control Box,section5,90,60,,Sales Order,no,Child of Inheco ODTC Control Box,,Inheco ODTC Control Box,
+
+# [CIRCUITS]
+circuit,rating,voltage_outlet,load_a,headroom_a,power_strip,devices
+1,15A,120V NEMA 5-15R,12,3,No,L3 PC
+2,15A,120V NEMA 5-15R,11,4,No,BioTek Epoch 2; Inheco ODTC Control Box
+3,15A,120V NEMA 5-15R,8.3,6.7,No,HHS Control Box; Hamilton [MPE] Control Box
+4,20A,208V L14-20R,0,20,No,VANTAGE
+
+# [CONNECTIONS]
+source,source_port,target,target_port,type,label
+Hamilton Heater Shaker #1,,HHS Control Box,,serial,RS-232 DB9
+Hamilton Heater Shaker #1,,L3 PC,,usb,USB A M to USB B M
+Hamilton Heater Shaker #2,,HHS Control Box,,serial,RS-232 DB9
+Hamilton Heater Shaker #3,,HHS Control Box,,serial,RS-232 DB9
+Hamilton Heater Shaker #4,,HHS Control Box,,serial,RS-232 DB9
+Hamilton [MPE] Deck Module,,Hamilton [MPE] Control Box,,serial,RS-232 D15M to D15M
+Inheco ODTC,,Inheco ODTC Control Box,,periphery,ODTC Connector
+L3 PC,,VANTAGE,Ext RJ45,ethernet,Ethernet
+L3 PC,,VANTAGE,Ext USB B,usb,USB A to B
+BioTek Epoch 2,,L3 PC,,usb,USB A M to USB B M
+Hamilton [MPE] Control Box,,L3 PC,,usb,USB A M to USB B M
+Inheco ODTC Control Box,,L3 PC,,ethernet,Ethernet Crossover
+Circuit 1,,L3 PC,,power,C13 to NEMA 5-15
+Circuit 1,,L3 PC,,power,C13 to NEMA 5-15
+Circuit 2,,BioTek Epoch 2,,power,External Supply to C13 to NEMA 5-15
+Circuit 2,,Inheco ODTC Control Box,,power,C19 to 5-15
+Circuit 3,,HHS Control Box,,power,C13 to NEMA 5-15
+Circuit 3,,Hamilton [MPE] Control Box,,power,C13 to NEMA 5-15
+Circuit 4,,VANTAGE,power,power,L14-20
+

@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Draw.io Wiring Diagram Style Guide v2.2.3</title>
+<style>
+/* ============================================
+   STYLEGUIDE CSS IMPLEMENTATION
+   Version: 2.2.3
+   Last Updated: October 26, 2026
+   ============================================ */
+
+/* Page Setup */
+@page {
+    size: letter;
+    margin: 0.75in 0.9in;
+}
+
+/* Base Typography */
+body {
+    font-family: 'Liberation Sans', Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.4;
+    color: #000000;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Heading Hierarchy */
+h1 {
+    font-size: 24pt;
+    color: #1a1a1a;
+    margin-bottom: 5px;
+}
+
+h2 {
+    font-size: 19pt;
+    color: #292929;
+    margin-top: 30px;
+    page-break-after: avoid;
+}
+
+h3 {
+    font-size: 16pt;
+    color: #3a3a3a;
+    margin-top: 25px;
+    page-break-after: avoid;
+}
+
+h4 {
+    font-size: 13pt;
+    color: #4a4a4a;
+    margin-top: 20px;
+    page-break-after: avoid;
+}
+
+h5 {
+    font-size: 11pt;
+    color: #5a5a5a;
+    margin-top: 15px;
+    page-break-after: avoid;
+}
+
+/* Version Info Block */
+.version-info {
+    font-size: 12pt;
+    color: #333333;
+    margin-bottom: 30px;
+}
+
+/* Table Formatting */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 15px 0;
+    font-size: 8pt;
+}
+
+th, td {
+    border: 1px solid #000000;
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background-color: #E0E0E0;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Lists */
+ul, ol {
+    margin-left: 28px;
+}
+
+ul ul, ol ol {
+    margin-left: 28px;
+}
+
+/* Code and Pre-formatted Text */
+code, pre {
+    font-family: 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 8pt;
+    background-color: #f4f4f4;
+    padding: 2px 5px;
+}
+
+pre {
+    padding: 10px;
+    overflow-x: visible;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Special Classes */
+.critical {
+    font-weight: bold;
+}
+
+.highlight-new {
+    background-color: #FFFF00;
+}
+
+
+/* Table of Contents */
+.toc {
+    margin: 20px 0;
+}
+
+.toc a {
+    color: #0000ed;
+    text-decoration: none;
+}
+
+.toc li {
+    margin: 5px 0;
+}
+
+/* Page Breaks */
+.page-break {
+    page-break-before: always;
+}
+
+/* CSS Code Block Styling */
+.css-code-block {
+    font-family: 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 8pt;
+    background-color: #f4f4f4;
+    padding: 15px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    overflow-x: visible;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+}
+    </style>
+</head>
+<body><h1>Draw.io Wiring Diagram Style Guide</h1><div class="version-info"><p class="highlight-new"><strong>Version:</strong> v2.2.3</p><p class="highlight-new"><strong>Date:</strong> October 26, 2026</p></div><h2>Table of Contents</h2><ol class="toc"><li><a href="#section1">Document Guide</a></li><li><a href="#section2">Layout Structure</a></li><li><a href="#section3">Power Distribution</a></li><li><a href="#section4">PC Specifications</a></li><li><a href="#section5">Device Specifications</a></li><li><a href="#section6">Pipettor Structures</a></li><li><a href="#section7">Legend Box</a></li><li><a href="#section8">Diagram Creation Workflow</a></li><li><a href="#section9">Line Spacing &amp; Routing Rules</a></li><li><a href="#section10">Block Styles</a></li><li><a href="#section11">Changelog</a></li></ol><div class="page-break"></div><h2 id="section1">1. Document Guide</h2><h3>1.1 Rules for Using This Guide - For Humans</h3><p>This StyleGuide is a comprehensive reference for Large Language Models (LLMs) to generate wiring diagrams. They are not perfect and will need modification afterwards. The first prompt is to let the LLM learn the specifications for generating wiring diagrams, the second and subsequent prompts are to give the system details.</p><h4>1.1.1 Prompt Instructions</h4><p><strong>Prompt 1 - Initial Setup:</strong></p><p><del class="highlight-new">Read through and analyze the uploaded document completely. Follow the Rules for Using This Guide - For LLMs. After you finish, I will ask you to generate diagrams. Thoroughly read all sections.</del></p><p class="highlight-new">Read through and analyze the uploaded documents completely. Follow the "Rules for Using This Guide - For LLMs" section in the StyleGuide for using and updating both documents. After you finish, I will ask you to generate draw.io diagrams. Thoroughly read all sections. Give me a summary once finished that consolidates all rules from the StyleGuide for easy reference when generating diagrams.</p><p><strong>Prompt 2 - Diagram Generation:</strong></p><p class="highlight-new">Use one of the following options:</p><p class="highlight-new"><strong>Option A - Manual Device Entry:</strong></p><pre>Generate a draw.io wiring diagram with the following information:
+Filename:
+Pipettor:
+Devices:
+PC:
+Facility:</pre><p class="highlight-new"><strong>Option B - Sales Order/Quote and CPR:</strong> Upload the Sales Order/Quote and the CPR with the following prompt:</p><pre class="highlight-new">Parse out the devices and generate a power distribution analysis for this system considering 15A (or 20A) circuits. Do not generate a wiring diagram until the power distribution analysis is approved.</pre><h4>1.1.2 Input Field Guidelines</h4><p><strong>Filename:</strong></p><ul>
+<li>Make sure to include the extension.drawio so the LLM knows exactly what you want the end result to be</li>
+<li>Sometimes it tries to make a PNG or other visual representation - we need to modify these after, so we'll need it to be a.drawio file</li>
+</ul><p><strong>Pipettor:</strong></p><ul>
+<li>The LLM will decide which pipettor structure to use based on this name</li>
+<li>If there's no AC box in the VANTAGE, just remove it (these sorts of exception conditions can break other things, so avoid adding complexity)</li>
+<li>All STARline names (STAR, STARplus, STAR-2) use the same pipettor structure</li>
+</ul><p><strong>Devices:</strong></p><ul>
+<li>Accepts a comma-separated list of devices</li>
+<li>The LLM will look through the <span>Device Reference Database (DRD)</span> for device information</li>
+<li>If a device is not in the <span>DRD</span>, the LLM should prompt you to input the details</li>
+<li>NOTE: There are still many devices missing and some information may be incorrect - keep this in mind</li>
+<li>Eventually, all we'll need to do is input a Sales Order number</li>
+</ul><p><strong>PC:</strong></p><ul>
+<li>Accepts: <span>Standard</span>, Industrial, L3, or Customer-supplied PC</li>
+<li>All these have different rules for when to use hubs - the LLM will decide when they are needed</li>
+<li>PC types can also be specified if they're on the Sales Order</li>
+</ul><p><strong>Facility:</strong></p><ul>
+<li>Currently supports 20A or 15A circuits</li>
+<li>There are rules for using power strips and optimizing power distribution</li>
+<li>The LLM handles this well, but there may be trouble with other circuit requirements (e.g. European 220V)</li>
+</ul><h4>1.1.3 Workflow and Tips</h4><p><strong>Approval Process:</strong></p><ul>
+<li>After taking in all information, the LLM will provide a summary and wait for approval before generating the diagram</li>
+<li>This is when the LLM will ask for missing device information</li>
+<li>Be sure to check the summary - this is when you catch mistakes</li>
+<li>If there are mistakes or new information is given after generation, the LLM will update the document and provide a new version</li>
+</ul><p><strong>Post-Generation:</strong></p><ul>
+<li>Open up the.drawio file and adjust how some lines are laid out</li>
+<li>The diagram is then complete</li>
+</ul><p><strong>Performance Note:</strong></p><ul>
+<li>The first time will take a while to analyze the document</li>
+<li>Keep using the same chat and you'll be cutting wiring diagram creation time to just a few minutes</li>
+</ul><h3>1.2 Rules for Using This Guide - For LLMs</h3><p>This StyleGuide is a comprehensive reference for generating wiring diagrams. Follow these rules when using this guide:</p><ol>
+<li><strong>PRESERVE ALL EXISTING CONTENT:</strong> Do NOT delete, remove, or omit any sections, subsections, paragraphs, specifications, or content from this document unless the user explicitly instructs you to remove specific content. You may only ADD new content or MODIFY existing content when explicitly requested. All existing specifications, sections, and details must remain intact and unchanged.</li>
+<li>Maintain consistent formatting using the CSS Implementation Reference. Section 1.4.10 contains the complete CSS implementation for this document and remains the authoritative source for styling decisions. Keep a detailed changelog of all updates at the bottom of this document. Document what was changed, why it was changed, and when. Include version numbers for each update. <strong>When making changes, highlight new or modified information in yellow.</strong><ul><li><strong>Strikethrough usage for removals:</strong> Use strikethrough for content being removed in the current version so reviewers can see exactly what changed before cleanup in the next version.</li><li><strong>Strikethrough + highlight combination:</strong> When the removed content should stand out in version tracking, combine both styles.</li><li><strong>Example:</strong> <code>&lt;del&gt;Removed text&lt;/del&gt;</code></li></ul></li>
+<li>If any devices are specified but are not in <span>the Device Reference Database (DRD)</span>:
+    <ul>
+<li>Ask the user for the required information: Amperage (amps used), Power cable(s), Communication cable(s), Other requirements, Device category (on-deck or off-deck)</li>
+<li>Add this device to the appropriate section of the DRD (§5 On Deck Devices or §6 Off Deck Devices).</li>
+<li>Update the DRD version number.</li>
+<li>When adding new devices to the Device Reference Database, also check if the device requires pairing with other devices (control boxes, pumps, modules, etc.). If device pairings are identified, add them to <span>the Device Pairings table (DRD §7)</span> with the appropriate connection types.</li>
+</ul>
+</li>
+<li>Update the filename to include the current version number. Format: <strong>StyleGuide_v[VERSION].html</strong>. Example: StyleGuide_v2.2.1.html</li>
+<li>When generating wiring diagrams:
+    <ul>
+<li>Use ONLY the specifications in this guide.</li>
+<li>Do not make assumptions about devices not listed.</li>
+<li>Follow all layout, spacing, color, and connection rules precisely.</li>
+<li>Generate a device summary table with device details and circuit power distribution. Ask for user approval before continuing to generate diagram.</li>
+</ul>
+</li>
+</ol><h4>1.2.1 Product Naming Conventions</h4><p>This section defines the proper usage of Hamilton's trademarked product names throughout documentation and diagrams.</p><p><strong>Full Trademarked Product Names:</strong></p><ul>
+<li><span>Microlab STAR™</span> - Hamilton's automated liquid handling workstation (STAR platform)</li>
+<li>Microlab VANTAGE™ - Hamilton's advanced liquid handling system (VANTAGE platform)</li>
+</ul><p><strong>Usage Guidelines:</strong></p><ul>
+<li>These are Hamilton's copyrighted and trademarked product names</li>
+<li>First references in each section should use the full trademarked names (<span>Microlab STAR™</span>, Microlab VANTAGE™)</li>
+<li>Shortened forms ("STAR", "VANTAGE") are acceptable and used in:
+    <ul>
+<li>Tables and data cells (for space efficiency)</li>
+<li>Diagrams and technical specifications</li>
+<li>Subsequent references within the same section after the full name has been used</li>
+</ul>
+</li>
+<li>The ™ symbol should appear on first use; subsequent uses may omit it</li>
+</ul><p><strong>Trademark Acknowledgment:</strong><br/>
+Microlab STAR™ and Microlab VANTAGE™ are trademarks of Hamilton Company. All Hamilton product names referenced in this document are the property of Hamilton Company.</p><h3>1.3 HTML-Only Editing Workflow</h3><h4>1.3.1 Standard Workflow (HTML Only)</h4><p>This guide is maintained directly in HTML as the single source of truth. Edit the HTML structure and content in-place, then validate section numbering, references, and styling before releasing the next version.</p><ol>
+<li>Open the current StyleGuide HTML file and apply requested content updates directly.</li>
+<li>Keep section numbering and internal references synchronized after edits.</li>
+<li>Remove prior-version yellow highlights and then apply yellow highlight only to newly added or modified content.</li>
+<li>Represent removals with strikethrough during the current version review cycle; permanently delete those stricken items in the following version.</li>
+<li>Update version metadata and append a changelog entry summarizing decisions and changes.</li>
+</ol><h4>1.3.2 Benefits of the HTML-Only Workflow</h4><ul>
+<li><strong>Faster iteration:</strong> Changes are made in one document without multi-format handoff overhead.</li>
+<li><strong>Cleaner maintenance:</strong> Version tracking is explicit in the same file using highlight + strikethrough conventions.</li>
+<li><strong>Direct editing:</strong> Authors can update structure, tables, and rules immediately where they are consumed.</li>
+</ul><h4>1.3.3 Styling Authority</h4><p>Section 1.4.10 (CSS Implementation Reference) remains authoritative for presentation and formatting behavior. Any visual formatting updates must be reflected there first.</p><h3>1.4 Document Formatting Specifications</h3><p><strong>Metadata governance note:</strong> Keep only formatting metadata that directly supports editing and rendering decisions. Remove stale descriptive metadata that does not influence implementation.</p><h4>1.4.1 Heading Hierarchy and Styles</h4><p><strong>Document Title (H1 Equivalent)</strong></p><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Font Family</td><td>LiberationSans (Bold)</td></tr>
+<tr><td>Font Size</td><td>24pt</td></tr>
+<tr><td>Color</td><td>#1a1a1a (near-black)</td></tr>
+<tr><td>Position</td><td>Left-aligned at x=90px</td></tr>
+</table><p><strong>Section Headings (H2 Equivalent)</strong></p><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Font Family</td><td>LiberationSans (Bold)</td></tr>
+<tr><td>Font Size</td><td>19pt</td></tr>
+<tr><td>Color</td><td>#292929 (dark gray)</td></tr>
+<tr><td>Examples</td><td>"1. Document Guide", "2. Layout Structure"</td></tr>
+</table><p><strong>Subsection Headings (H3 Equivalent)</strong></p><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Font Family</td><td>LiberationSans (Bold)</td></tr>
+<tr><td>Font Size</td><td>16pt</td></tr>
+<tr><td>Color</td><td>#3a3a3a (medium-dark gray)</td></tr>
+<tr><td>Examples</td><td>"1.1 Rules for Using This Guide", "2.1 Page Configuration"</td></tr>
+</table><p><strong>Minor Headings (H4 Equivalent)</strong></p><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Font Family</td><td>LiberationSans (Bold)</td></tr>
+<tr><td>Font Size</td><td>13pt</td></tr>
+<tr><td>Color</td><td>#4a4a4a (medium gray)</td></tr>
+</table><h4>1.4.2 Section Numbering System</h4><table>
+<tr><th>Level</th><th>Format</th><th>Example</th></tr>
+<tr><td>Major Section</td><td>Single digit with period</td><td>"1.", "2.", "3."</td></tr>
+<tr><td>Subsection</td><td>Major.Minor</td><td>"1.1", "1.2", "8.1"</td></tr>
+<tr><td>Sub-subsection</td><td>Major.Minor.Sub</td><td>"9.4.1", "9.4.2"</td></tr>
+</table><h4>1.4.3 Font Families, Sizes, and Styles</h4><table>
+<tr><th>Font ID</th><th>Family</th><th>Size</th><th>Color</th><th>Usage</th></tr>
+<tr><td>0</td><td>LiberationSans</td><td>24pt</td><td>#1a1a1a</td><td>Document title</td></tr>
+<tr><td>1</td><td>LiberationSans (Bold)</td><td>10pt</td><td>#000000</td><td>Bold labels, emphasis</td></tr>
+<tr><td>2</td><td>LiberationSans</td><td>10pt</td><td>#000000</td><td>Body text</td></tr>
+<tr><td>3</td><td>DejaVuSans</td><td>8pt</td><td>#000000</td><td>Header/footer text</td></tr>
+<tr><td>4</td><td>LiberationSans (Bold)</td><td>19pt</td><td>#292929</td><td>Section headings</td></tr>
+<tr><td>5</td><td>LiberationSans</td><td>10pt</td><td>#0000ed</td><td>Hyperlinks (TOC)</td></tr>
+<tr><td>6</td><td>LiberationSans (Bold)</td><td>16pt</td><td>#3a3a3a</td><td>Subsection headings</td></tr>
+<tr><td>7</td><td>LiberationSans (Bold)</td><td>8pt</td><td>#000000</td><td>Table headers</td></tr>
+<tr><td>8</td><td>LiberationSans</td><td>8pt</td><td>#000000</td><td>Table body text</td></tr>
+<tr><td>9</td><td>LiberationMono</td><td>8pt</td><td>#000000</td><td>Code/technical text</td></tr>
+</table><h4>1.4.4 Paragraph Spacing and Indentation</h4><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Left Margin</td><td>90px from page edge</td></tr>
+<tr><td>Line Height</td><td>~14px (for 10pt text)</td></tr>
+<tr><td>Paragraph Spacing</td><td>~24px between paragraphs</td></tr>
+<tr><td>Text Width</td><td>~700-720px maximum</td></tr>
+<tr><td>Bullet points (level 1)</td><td>x=118px (+28px indent)</td></tr>
+<tr><td>Bullet points (level 2)</td><td>x=146px (+56px indent)</td></tr>
+</table><h4>1.4.5 Table Formatting Conventions</h4><table>
+<tr><th>Property</th><th>Value</th><th>Description</th></tr>
+<tr><td>Border Style</td><td>solid</td><td>Continuous line style</td></tr>
+<tr><td>Border Width</td><td>1px</td><td>Consistent width on all borders</td></tr>
+<tr><td>Border Color</td><td>#000000</td><td>Full black for maximum contrast</td></tr>
+<tr><td>Header Background</td><td>#E0E0E0</td><td>Light gray</td></tr>
+<tr><td>Header Alignment</td><td>Center</td><td>Bold, center-aligned</td></tr>
+<tr><td>Cell Padding</td><td>8px</td><td>Consistent padding on all sides</td></tr>
+<tr><td>Vertical Alignment</td><td>middle</td><td>All cells vertically centered</td></tr>
+</table><h4>1.4.6 Code Block Formatting</h4><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Font</td><td>LiberationMono / DejaVuSansMono, 8pt</td></tr>
+<tr><td>Position</td><td>x=102-139px (indented from body)</td></tr>
+<tr><td>Line Height</td><td>~12-14px</td></tr>
+<tr><td>Background</td><td>Gray box (#f4f4f4)</td></tr>
+</table><h4>1.4.7 Page Layout and Margins</h4><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Page Width</td><td>612 pts (8.5 inches)</td></tr>
+<tr><td>Page Height</td><td>792 pts (11 inches)</td></tr>
+<tr><td>Left Margin</td><td>90px (content start)</td></tr>
+<tr><td>Right Margin</td><td>~90px</td></tr>
+<tr><td>Top Margin</td><td>~82-111px (varies by page)</td></tr>
+<tr><td>Bottom Margin</td><td>~37px above footer</td></tr>
+</table><h4>1.4.8 Special Formatting Elements</h4><table>
+<tr><th>Type</th><th>Format</th><th>Example</th></tr>
+<tr><td>CRITICAL</td><td>Bold, all caps</td><td>CRITICAL: CRITICAL RULE:</td></tr>
+<tr><td>IMPORTANT</td><td>Bold, all caps</td><td>IMPORTANT:</td></tr>
+<tr><td>NOTE</td><td>Bold</td><td>NOTE:</td></tr>
+<tr><td>Yellow highlight</td><td>New/modified info</td><td>For version tracking</td></tr>
+<tr><td>Strikethrough</td><td>Info being removed</td><td>For version tracking</td></tr>
+</table><h4>1.4.9 Formatting Guidelines Summary</h4><p><strong>DO:</strong></p><ul>
+<li>Use LiberationSans for all body text at 10pt</li>
+<li>Use LiberationMono for code/technical specifications at 8pt</li>
+<li>Maintain 90px left margin for main content</li>
+<li>Use 19pt bold for section headings (H2)</li>
+<li>Use 16pt bold for subsection headings (H3)</li>
+<li>Keep table content at 8pt</li>
+<li>Apply full black grid borders (1px solid #000000) on all tables</li>
+<li>Use light gray (#E0E0E0) background for table headers</li>
+</ul><p><strong>DON'T:</strong></p><ul>
+<li>Change font families mid-document</li>
+<li>Use different heading sizes than established hierarchy</li>
+<li>Alter the margin structure</li>
+<li>Mix numbering styles within the same level</li>
+<li>Use borderless tables</li>
+</ul><h4>1.4.10 CSS Implementation Reference</h4><p>This section contains the complete CSS stylesheet used to implement the formatting specifications defined in this document. It serves as the authoritative implementation reference for LLMs and automated document generation systems.</p><p><strong>Purpose:</strong></p><ul>
+<li>Provides the exact CSS code that implements all formatting rules in this StyleGuide</li>
+<li>Ensures consistency across document edits and regeneration</li>
+<li>Serves as a single source of truth for styling decisions</li>
+<li>Enables LLMs to reproduce identical formatting when generating or editing documents</li>
+</ul><p><strong>Usage:</strong> When generating or editing StyleGuide documents, use this exact CSS to ensure visual consistency with the established formatting specifications.</p><pre>/* ====
+STYLEGUIDE CSS IMPLEMENTATION
+<span class="highlight-new">Version: 2.2.3</span>
+<span class="highlight-new">Last Updated: October 26, 2026</span>
+==== */
+
+/* Page Setup */
+@page {
+size: letter;
+margin: 0.75in 0.9in;
+}
+
+/* Base Typography */
+body {
+font-family: 'Liberation Sans', Arial, sans-serif;
+font-size: 10pt;
+line-height: 1.4;
+color: #000000;
+max-width: 720px;
+margin: 0 auto;
+padding: 20px;
+}
+
+/* Heading Hierarchy */
+h1 { font-size: 24pt; color: #1a1a1a; margin-bottom: 5px; }
+h2 { font-size: 19pt; color: #292929; margin-top: 30px; page-break-after: avoid; }
+h3 { font-size: 16pt; color: #3a3a3a; margin-top: 25px; page-break-after: avoid; }
+h4 { font-size: 13pt; color: #4a4a4a; margin-top: 20px; page-break-after: avoid; }
+
+/* Version Info Block */
+.version-info { font-size: 12pt; color: <span>#333333</span>; margin-bottom: 30px; }
+
+/* Table Formatting */
+table { border-collapse: collapse; width: 100%; margin: 15px 0; font-size: 8pt; }
+th, td { border: 1px solid #000000; padding: 8px; text-align: left; vertical-align: middle; }
+th { background-color: #E0E0E0; font-weight: bold; text-align: center; }
+
+/* Lists */
+ul, ol { margin-left: 28px; }
+ul ul, ol ol { margin-left: 28px; }
+
+/* Code and Pre-formatted Text */
+code, pre { font-family: 'Liberation Mono', 'DejaVu Sans Mono', monospace; font-size:
+8pt; background-color: #f4f4f4; padding: 2px 5px; }
+pre { padding: 10px; overflow-x: visible; white-space: pre-wrap; word-wrap: break-word; }
+
+/* Special Classes */
+.critical { font-weight: bold; }
+.highlight-new { background-color: #FFFF00; }
+
+/* Table of Contents */
+.toc { margin: 20px 0; }
+.toc a { color: #0000ed; text-decoration: none; }
+.toc li { margin: 5px 0; }
+
+/* Page Breaks */
+.page-break { page-break-before: always; }</pre><div class="page-break"></div><h2 id="section2">2. Layout Structure</h2><h3>2.1 Page Configuration</h3><table>
+<tr><th>Property</th><th>Value</th><th>Description</th></tr>
+<tr><td>pageWidth</td><td>1100</td><td>Canvas width in pixels</td></tr>
+<tr><td>pageHeight</td><td>850</td><td>Canvas height in pixels</td></tr>
+<tr><td>gridSize</td><td>10</td><td>Snap grid spacing (pixels)</td></tr>
+<tr><td>grid</td><td>1 (enabled)</td><td>Grid visibility</td></tr>
+<tr><td>guides</td><td>1 (enabled)</td><td>Alignment guides</td></tr>
+<tr><td>pageScale</td><td>1</td><td>Page scaling factor</td></tr>
+</table><h3>2.2 Diagram Boundary</h3><ul>
+<li>Top edge: y-50</li>
+<li>Bottom edge: y-540 (adjustable)</li>
+<li>Left edge: x-190</li>
+<li>Right edge: x-1140</li>
+<li>Working area: 950px wide x variable height</li>
+</ul><h3>2.3 Column Organization</h3><table>
+<tr><th>Column</th><th>X Position</th><th>Header Text</th><th>Purpose</th></tr>
+<tr><td>1</td><td>190-330</td><td>Facility Requirements</td><td>Power circuits, facility infrastructure</td></tr>
+<tr><td>2</td><td>330-460</td><td>System Requirements</td><td>Power strips (when needed)</td></tr>
+<tr><td>3</td><td>460-640</td><td>PC Connections</td><td>Computer/workstation connections</td></tr>
+<tr><td>4</td><td>640-840</td><td>Off Deck Devices</td><td>Peripheral equipment off the main deck</td></tr>
+<tr><td>5</td><td>840-990</td><td>On Deck Devices</td><td>Main laboratory equipment</td></tr>
+<tr><td>6</td><td>990-1140</td><td>Pipettor Connections</td><td>Pipetting instruments</td></tr>
+</table><p class="highlight-new"><strong>NOTE:</strong> X positions are defaults. Columns may expand per the Column Expansion Rule in Section 2.6.</p><h3>2.4 Dashed Separator Lines</h3><p><strong>FLEXIBLE POSITIONING:</strong> Vertical and horizontal dashed separator lines can move ANY px distance to accommodate device placement and routing needs.</p><p><strong>Z-ORDER RULE:</strong></p><ul>
+<li>Dashed separators must be at the HIGHEST z-order (frontmost position)</li>
+<li>Vertical dashed lines (column dividers) must be arranged at the frontmost position</li>
+<li>Horizontal dashed lines (if any) also at frontmost position</li>
+<li>Boundary dashed lines (top, bottom, left, right borders) also at frontmost position</li>
+</ul><p><strong>XML Implementation:</strong> Place ALL dashed line elements at the END of the &lt;root&gt; element in the XML file.</p><p><strong>Style:</strong> <code>endArrow=none; dashed=1; html=1; dashPattern=1 3; strokeWidth=2;</code></p><h3>2.5 Header Row</h3><ul>
+<li>Y position: 20</li>
+<li>Height: 40px</li>
+<li>Style: Plain text, no fill, no border</li>
+<li>Font: Helvetica, 11pt, default color</li>
+</ul><h3>2.6 Flexible Layout Dimensions</h3><p><strong>IMPORTANT:</strong> The layout structure is flexible and should expand as needed to maintain proper spacing.</p><ul>
+<li>The layout structure does NOT need to be a fixed width</li>
+<li>Both dimensions (width and height) are variable</li>
+<li>The current diagram boundaries (1100x850px) should be treated as the MINIMUM dimensions</li>
+<li>Columns need to be expanded to follow the authoritative spacing requirements in Section 9.1.1 in both X and Y directions</li>
+<li>The layout should expand as needed to maintain proper spacing between all elements</li>
+<li>Proper spacing takes precedence over fixed dimensions</li>
+</ul><p class="highlight-new"><strong>Column Expansion Rule:</strong> Column expansion is allowed and encouraged.</p><ul class="highlight-new">
+<li>Widen a column when needed to place paired devices side by side.</li>
+<li>When a column widens, shift all columns to its right by the same amount, including their header text and dashed separator lines.</li>
+<li>Increase the overall diagram width to match. The 1100px width remains the minimum.</li>
+</ul><p><strong>CRITICAL - Line-Element Overlap Expansion Rule:</strong> During routing, if a line path will cross through or overlap any element (device, hub, circuit, power strip, pipettor, etc.), the layout MUST expand to provide clearance. Never allow a line to pass through or overlap an element.</p><div class="page-break"></div><h3>2.7 Ready-to-Use Style Templates</h3><h4>2.7.1 mxGraphModel Initialization</h4><pre>&lt;mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pagewidth="1100" pageHeight="850"&gt;</pre><h4>2.7.2 Section Divider (Dashed Line)</h4><pre>endArrow=none; dashed=1; html=1; dashPattern=1 3; strokeWidth=2; rounded=1; strokeColor=default</pre><h2 id="section3">3. Power Distribution</h2><p><strong>Reorganization note:</strong> This section consolidates facility power, circuit requirements, power strip specifications, and power-distribution workflow guidance.</p><h3>3.1 Facility Power Requirements</h3><table>
+<tr><th>Specification</th><th>Value</th></tr>
+<tr><td>Voltage</td><td>120V</td></tr>
+<tr><td>Circuit Rating</td><td>15A or 20A</td></tr>
+<tr><td>Circuit Type</td><td>NEMA 5-15R or NEMA 5-20R</td></tr>
+</table><h3>3.2 Power Distribution Method</h3><p><strong>NO UPS - USE POWER STRIPS ONLY WHEN REQUIRED</strong></p><p><strong>Power Strip Usage:</strong></p><ul>
+<li>Only use a power strip if the circuit will have MORE than 2 connections</li>
+<li>If 2 or fewer connections: Connect devices straight to the circuit (no power strip)</li>
+<li>Maximum: Up to 2 connections per circuit when connecting directly (without power strip)</li>
+</ul><h3>3.3 Power Strip Requirements</h3><h4>3.3.1 Power Strip Specifications</h4><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Shape</td><td>Rounded rectangle (rounded-1)</td></tr>
+<tr><td>Width</td><td>40px (fixed)</td></tr>
+<tr><td>Minimum Height</td><td>90px</td></tr>
+<tr><td>Orientation</td><td>Vertical</td></tr>
+<tr><td>Fill</td><td>#CCCCCC with south gradient to #000000</td></tr>
+<tr><td>Font Color</td><td>#FFFFFF</td></tr>
+<tr><td>Glass Effect</td><td>glass=1</td></tr>
+<tr><td>Connection Faces</td><td>LEFT and RIGHT only (vertical faces)</td></tr>
+<tr><td>Label Text</td><td>Power Strip (text-only label; do NOT include amperage or outlet type)</td></tr>
+</table><h4>3.3.2 Power Strip Scaling Formula</h4><p><strong>Formula:</strong> Height = max(90, 10 + (device_connections × 10))</p><p><strong>Clarification:</strong> <code>device_connections</code> = number of devices connecting to the power strip (does NOT include the circuit connection).</p><table>
+<tr><th>Device Connections</th><th>Calculation</th><th>Resulting Height</th></tr>
+<tr><td>2 devices</td><td>max(90, 10 + 2 × 10) = max(90, 30)</td><td>90px (floor applied)</td></tr>
+<tr><td>8 devices</td><td>max(90, 10 + 8 × 10) = max(90, 90)</td><td>90px</td></tr>
+<tr><td>9 devices</td><td>max(90, 10 + 9 × 10) = max(90, 100)</td><td>100px</td></tr>
+<tr><td>10 devices</td><td>max(90, 10 + 10 × 10) = max(90, 110)</td><td>110px</td></tr>
+</table><p><strong>Scaling behavior:</strong> Power strips with more than 8 device connections expand by 10px per additional connection.</p><div class="page-break"></div><h4>3.3.3 Power Strip Placement and Alignment</h4><p><strong>X-axis:</strong> Place the power strip at +20px from the left edge of the System Requirements column.</p><p><strong>Y-axis:</strong> Keep the circuit block and its associated power strip vertically centered together as a group.</p><p><strong>Example calculation:</strong> If a circuit center is at Y = 300 and the power strip height is 100px, set the power strip Y to 250 so its center is also Y = 300 (250 + 50 = 300).</p><h3>3.4 Circuit Requirements</h3><h4>3.4.1 Circuit Naming</h4><p><strong>Circuit Naming:</strong></p><ul>
+<li>Rename "Outlet" to "Circuit"</li>
+<li>First line: Add incrementing integer (e.g. "Circuit 1", "Circuit 2", "Circuit 3", etc.)</li>
+<li>Circuit blocks must use the standardized 3-line text format defined in Section 3.4.2.</li>
+</ul><p><span><strong>Best Practice:</strong> Dedicated 2-phase circuits and dedicated 3-phase circuits (20A, L21-20R) must be numbered LAST in sequence and positioned at the bottom of the page to improve line routing and reduce crossover complexity.</span></p><h4>3.4.2 Circuit Block Text Format (3-Line Standard)</h4><table>
+<tr><th>Row</th><th>Required Text</th><th>Example</th></tr>
+<tr><td>Row 1</td><td>Circuit X</td><td>Circuit 3</td></tr>
+<tr><td>Row 2</td><td>[Amperage]</td><td>15A, 20A</td></tr>
+<tr><td>Row 3</td><td>[Voltage and Outlet Type]</td><td>120V NEMA 5-15R, 208V L14-20R</td></tr>
+</table><p>Note: The first line (circuit identifier) must be bold (see <span>§10.12</span>).</p><h4>3.4.3 Circuit Type Specifications</h4><table>
+<tr><th>Circuit Type</th><th>Shape</th><th>Size</th><th>Fill/Gradient</th><th>Stroke</th></tr>
+<tr><td>15A (NEMA 5-15R)</td><td>Ellipse</td><td>80x80px</td><td>#FFFFFF -&gt; #FF4545</td><td>#B85450</td></tr>
+<tr><td>20A (NEMA 5-20R)</td><td>Ellipse</td><td> <span>80x80px</span></td><td>#FFFFFF -&gt; #FF4545</td><td>#B85450</td></tr>
+<tr><td><span>Dedicated 2-phase (20A, L14-20R)</span></td><td>Ellipse</td><td><span>90x90px</span></td><td>#FFFFFF -&gt; #FF4545</td><td>#B85450</td></tr>
+<tr><td><span>Dedicated 3-phase (20A, L21-20R)</span></td><td>Ellipse</td><td><span>90x90px</span></td><td>#FFFFFF -&gt; #FF4545</td><td>#B85450</td></tr>
+</table><div class="page-break"></div><h3>3.5 Power Distribution Workflow</h3><p><strong>Step 2: Calculate Power Distribution</strong></p><p><strong>Power Distribution Workflow:</strong></p><ol>
+<li><strong>Apply 80% Rule:</strong> For 15A circuit: Maximum usable = 12A. For 20A circuit: Maximum usable = 16A.</li>
+<li><strong>Optimization Goal:</strong> Use the least number of circuits possible. Distribute devices efficiently.</li>
+<li><strong>Circuit Order:</strong> First circuit: Must include the PC. Microlab VANTAGE family pipettors: Need dedicated circuit.</li>
+<li><strong>Power Strip Rules:</strong> Only use power strip if circuit has &gt;2 connections.</li>
+</ol><p>NOTE: <span>Standard PC</span> requires 2 power connections (2x C13 to NEMA 5-15 per <span>DRD §3</span>), so Circuit 1 will need a power strip when <span>Standard PC</span> is included (&gt;2 total connections).</p><div class="page-break"></div><h2 id="section4">4. PC Specifications</h2>
+<h3>4.1 PC Type Specifications (Ports)</h3>
+<p><strong>Step 1: Determine Hub Requirements and Power Inputs Based on PC Type</strong></p>
+<p><strong>NOTE:</strong> Amperage and power cable specifications for each PC type are maintained in the Device Reference Database (DRD §3 PCs) and are not repeated here.</p>
+<table>
+<tr><th>PC Type</th><th>Ports Available</th></tr>
+<tr><td>AIO PC</td><td>2x Standard USB A, 5x USB A 3.0, 1x USB C, 1x RJ45 Ethernet</td></tr>
+<tr><td>Standard PC</td><td>4x Standard USB A, 5x USB A 3.0, 1x USB C, 1x RJ45 Ethernet, 1x RS-232 DB9</td></tr>
+<tr><td>Industrial PC</td><td>8x USB A 3.0, 2x RJ45 Ethernet, 6x RS-232 DB9</td></tr>
+<tr><td>L3 PC</td><td>5x USB A 3.0, 5x USB C, 3x RJ45 Ethernet</td></tr>
+<tr><td>Customer-supplied PC</td><td>No hubs unless specified</td></tr>
+</table><p class="highlight-new"><strong>NOTE:</strong> If no PC is listed on the order, use the Customer-supplied PC.</p>
+<h3>4.2 PC Block Construction Rules</h3>
+<h4>4.2.1 PC Block Text Format</h4>
+<ul>
+<li><strong>Line 1:</strong> <strong>PC &amp; Peripheries</strong> (must be bold per <span>§10.12</span>)</li>
+<li><strong>Line 2:</strong> Amperage from <span>the DRD PCs table (DRD §3)</span></li>
+<li><strong>Line 3:</strong> C13 to NEMA 5-15</li>
+<li><strong>Line 4 (conditional):</strong> C13 to NEMA 5-15 (only for PCs with 2x power cables in <span>DRD §3</span>)</li>
+</ul>
+<p><strong>Format note:</strong> Use a 3-line block for PCs with 1x power cable and a 4-line block for PCs with 2x power cables.</p>
+<h4>4.2.2 PC Block Styling Specifications</h4>
+<ul>
+<li><strong>Size:</strong> 120x80px</li>
+<li><strong>Fill/Gradient/Stroke:</strong> Use the PC style definition in §10 (see <span>§10.9</span> PC &amp; Peripheries).</li>
+</ul>
+<h4>4.2.3 PC Positioning Rules</h4>
+<ul>
+<li><strong>Single PC:</strong> Place at +20px from the left edge of the column.</li>
+<li><strong>Multiple PCs:</strong> Stagger each additional PC in X by +120px from the previous PC.</li>
+<li><strong>Column behavior:</strong> Expand the column width as needed to accommodate multiple PCs.</li>
+<li><strong>Main PC rule:</strong> The main PC must be the leftmost PC.</li>
+</ul>
+<div class="page-break"></div>
+<h3>4.3 Hub Specifications</h3>
+<p><strong>CRITICAL RULE - HUB INCLUSION:</strong></p>
+<ul>
+<li>Include USB Hub, Serial Hub, or Router/Switch when the Step 1 workflow check in §8.1.1 indicates a hub is required based on PC ports and downstream device requirements.</li>
+<li>Also include hubs when they are explicitly specified in the prompt.</li>
+<li>Do not add extra hubs beyond workflow-driven requirements (§8.1.1) and explicit prompt requirements.</li>
+</ul>
+<h4>4.3.1 Hub Styling</h4>
+<table>
+<tr><th>Hub Type</th><th>Dimensions</th><th>Fill</th><th>Gradient</th><th>Stroke</th></tr>
+<tr><td>USB Hub</td><td>170px x 50px</td><td>#F8CECC</td><td>#FFCCE6</td><td>#B85450</td></tr>
+<tr><td>Serial Hub</td><td>140px x 50px</td><td>#F8CECC</td><td>#FFCCE6</td><td>#B85450</td></tr>
+<tr><td>Router/Switch</td><td>120px x 50px</td><td>#F8CECC</td><td>#FFCCE6</td><td>#B85450</td></tr>
+</table>
+<div class="page-break"></div><h2 id="section5">5. Device Specifications</h2>
+<h3>5.1 Flexible Device Label Format (Generalized)</h3>
+<p><strong>CRITICAL:</strong> Device label format is flexible and based on actual requirements.</p>
+<ul>
+<li><strong>Line 1:</strong> Device Name (required)</li><li>The first line (device name) must be bold (see <span>§10.12</span>).</li>
+<li><strong>Line 2:</strong> Amps used (omit if 0A)</li>
+<li><strong>Line 3+:</strong> Power cable(s) used (omit if none; use multiple lines if multiple cables)</li>
+<li><strong>Line 4+:</strong> Communication cable(s) used (omit if none; use multiple lines if multiple cables)</li>
+</ul>
+<p><strong>Device-specific source of truth:</strong> Use the Device Reference Database (DRD) for exact amperage, power cable, communication cable, and sizing specifications for each named device.</p><h3>5.2 Unit Count Rule</h3>
+<p><strong>IMPORTANT:</strong> When multiple identical devices exist (e.g. "Teleshake Module x2"):</p>
+<ul>
+<li>Create SEPARATE device blocks for each unit</li>
+<li>Do NOT include "x2" or quantity in the device name</li>
+<li>Each device shows the same text format individually</li>
+</ul>
+<h3>5.3 HHS Control Box Amperage Rule</h3><p><strong>DYNAMIC AMPERAGE FORMULA:</strong> HHS Control Box amperage = x + 0.3A where x = number of HHS/HHC devices connected. Maximum capacity: 8.3A</p><h3>5.4 HHS/HHC Communication Rules</h3><p>Hamilton Heater Shaker (HHS) and Hamilton Heater Cooler (HHC) devices have special communication requirements depending on their configuration:</p><p><del class="highlight-new"><strong>Basic Rules:</strong></del></p><ul>
+<li><del class="highlight-new">First HHS device: Connects to PC via USB A to B cable</del></li>
+<li><del class="highlight-new">Subsequent HHS devices: Do NOT connect to PC (only connect to HHS Control Box)</del></li>
+<li><del class="highlight-new">First HHC device: Connects to PC via USB A to micro cable</del></li>
+<li><del class="highlight-new">Subsequent HHC devices: Do NOT connect to PC (only connect to HHS Control Box)</del></li>
+</ul><p><del class="highlight-new"><strong>Mixed HHS/HHC Configuration:</strong> When both HHC and HHS devices are connected to a single HHS Control Box:</del></p><ul>
+<li><del class="highlight-new">Only the first HHC connects to PC (USB A to micro)</del></li>
+<li><del class="highlight-new">No HHS devices connect to PC</del></li>
+<li><del class="highlight-new">All HHS and HHC devices still connect to HHS Control Box via DB9 serial</del></li>
+</ul><p><del class="highlight-new"><strong>Multiple HHS Control Boxes:</strong> When using multiple HHS Control Boxes in a single system:</del></p><ul>
+<li><del class="highlight-new">One device per control box must be connected to PC for communication</del></li>
+<li><del class="highlight-new">Follow the priority: First HHC if present, otherwise first HHS</del></li>
+<li><del class="highlight-new">All other devices on that control box do not connect to PC</del></li>
+</ul><p><del class="highlight-new"><strong>Pipettor Direct Connection (No Control Box):</strong></del></p><ul>
+<li><del class="highlight-new"><strong>Microlab STAR TCC Ports:</strong> When HHS/HHC connect directly to Microlab STAR TCC ports without an HHS Control Box, no additional communication cables are needed (communication happens through the TCC port connection)</del></li>
+<li><del class="highlight-new"><strong>Microlab VANTAGE Periphery Box:</strong> When HHS/HHC connect directly to Microlab VANTAGE periphery box without an HHS Control Box, all devices need USB connections to the PC (follow USB cable specifications in device reference)</del></li>
+</ul><p><del class="highlight-new"><strong>CRITICAL:</strong> All HHS and HHC devices must always connect to the HHS Control Box via DB9 serial connections, regardless of PC communication setup.</del></p><p class="highlight-new"><strong>Step 1:</strong> Determine the connection method for each HHS/HHC, then apply the communication rule for that method.</p><table class="highlight-new">
+<tr><th>Connection Method</th><th>Physical Connection</th><th>USB to PC</th></tr>
+<tr><td>Microlab STAR TCC Ports</td><td>HHS/HHC connects to a STAR TCC port</td><td>None. Communication happens through the TCC port connection.</td></tr>
+<tr><td>Microlab VANTAGE Periphery Box</td><td>HHS/HHC connects to a Periphery Box port via a TCC adapter</td><td>Every HHS/HHC requires a USB connection to a Periphery Box USB A port. The VANTAGE External USB B port connects to the PC.</td></tr>
+<tr><td>HHS Control Box</td><td>Each HHS/HHC connects to the HHS Control Box via DB9 serial</td><td>Only one device per control box connects to the PC: the first HHC if present (USB A to micro), otherwise the first HHS (USB A to B).</td></tr>
+</table><p class="highlight-new"><strong>HHS Control Box Notes:</strong></p><ul class="highlight-new">
+<li>Mixed HHS/HHC: When both HHC and HHS devices are connected to a single HHS Control Box, only the first HHC connects to the PC. No HHS devices connect to the PC.</li>
+<li>Multiple HHS Control Boxes: Apply the one-device-per-control-box rule to each control box. All other devices on that control box do not connect to the PC.</li>
+<li>All HHS and HHC devices on an HHS Control Box connect to it via DB9 serial, regardless of PC communication setup.</li>
+<li>Follow USB cable specifications in the DRD.</li>
+</ul><div class="page-break"></div><h2 id="section6">6. Pipettor Structures</h2><p><strong>CRITICAL:</strong> The Microlab STAR™ pipettor has FIXED dimensions and internal components. The Microlab VANTAGE™ pipettor has VARIED dimensions based on the internal components present. CONNECTIONS DO NOT COME FROM THE MAIN PIPETTOR BODY. Connections MUST attach to the specific internal component port. The STAR and VANTAGE pipettors have different internal configurations, and both remain valid.</p><h3>6.1 Microlab STAR™ Pipettor</h3><p><span><strong>Title "STAR":</strong></span></p><ul>
+<li>Position: Top of container (y=0 relative to body)</li>
+<li>Dimensions: 90px width x 20px height</li>
+<li>Alignment: Centered horizontally</li>
+<li>Text Color: Black (#000000)</li>
+<li>Style: Bold, font size 13pt</li>
+</ul>
+<table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Outer Dimensions</td><td>90px x 410px</td></tr>
+<tr><td>Acceptable Names</td><td>STAR, STARlet, STARplus, STAR-2, STARlet-2</td></tr>
+<tr><td>Amperage</td><td>6.3A</td></tr>
+<tr><td>Power Cable</td><td>C13</td></tr>
+<tr><td>Communication</td><td>USB B</td></tr>
+<tr><td>Main Body Style</td><td>rounded=1; strokeWidth=2; fillColor=#CCE5FF; gradientColor=#0000FF; strokeColor=#36393d; arcSize=7; glass=1</td></tr>
+</table>
+<h4>6.1.1 STAR Body and Section Grouping (Relative Coordinates)</h4>
+<ul>
+<li><strong>Main body:</strong> x=0, y=0, w=90, h=410</li>
+<li><strong>Title area:</strong> x=0, y=0, w=90, h=20 (text: STAR-2 in template)</li>
+<li><strong>Periphery group:</strong> x=10, y=20, w=70, h=250 (section background + ports)</li>
+<li><strong>Int. Board group:</strong> x=10, y=280, w=70, h=30</li>
+<li><strong>External group:</strong> x=10, y=320, w=70, h=80</li>
+<li><strong>Bottom margin:</strong> 10px (External ends at y=400, body ends at y=410)</li>
+</ul>
+<table>
+<tr><th>Section</th><th>X</th><th>Y</th><th>Width</th><th>Height</th><th>Background/Grouping</th></tr>
+<tr><td>Periphery</td><td>10</td><td>20</td><td>70</td><td>250</td><td>Rounded section background, fillColor=#F5F5F5</td></tr>
+<tr><td>Int. Board</td><td>10</td><td>280</td><td>70</td><td>30</td><td>Rounded section background, fillColor=#F5F5F5 (also treated as a port; see 6.1.3)</td></tr>
+<tr><td>External</td><td>10</td><td>320</td><td>70</td><td>80</td><td>Rounded section background, fillColor=#F5F5F5</td></tr>
+</table>
+<h4>6.1.2 Periphery Ports (Complete Inventory from Template)</h4>
+<p>Periphery title: x=10, y=20, w=70, h=20. Port coordinates below are absolute offsets from main body origin (0,0).</p>
+<table>
+<tr><th>Port</th><th>Type</th><th>Shape</th><th>X</th><th>Y</th><th>Width</th><th>Height</th><th>Gradient Rule</th></tr>
+<tr><td>TCC1</td><td>Serial</td><td>Rounded Rectangle</td><td>20</td><td>40</td><td>50</td><td>20</td><td>Serial gradient (Section 6.3.1)</td></tr>
+<tr><td>TCC2</td><td>Serial</td><td>Rounded Rectangle</td><td>20</td><td>60</td><td>50</td><td>20</td><td>Serial gradient (Section 6.3.1)</td></tr>
+<tr><td>Ext. Can</td><td>Serial</td><td>Rounded Rectangle</td><td>20</td><td>80</td><td>50</td><td>20</td><td>Serial gradient (Section 6.3.1)</td></tr>
+<tr><td>EX IO</td><td>Serial</td><td>Rounded Rectangle</td><td>20</td><td>100</td><td>50</td><td>20</td><td>Serial gradient (Section 6.3.1); always filled per Section 6.1.5</td></tr>
+<tr><td>Div1</td><td>Serial</td><td>Rounded Rectangle</td><td>20</td><td>120</td><td>50</td><td>20</td><td>Serial gradient (Section 6.3.1)</td></tr>
+<tr><td>Div2</td><td>Power</td><td>Ellipse</td><td>30</td><td>140.87</td><td>30</td><td>30</td><td>Power gradient (Section 6.3.1)</td></tr>
+<tr><td>Div3</td><td>Power</td><td>Ellipse</td><td>30</td><td>170.87</td><td>30</td><td>30</td><td>Power gradient (Section 6.3.1)</td></tr>
+<tr><td>P1</td><td>Power</td><td>Ellipse</td><td>30</td><td>200.87</td><td>30</td><td>30</td><td>Power gradient (Section 6.3.1)</td></tr>
+<tr><td>P2</td><td>Power</td><td>Ellipse</td><td>30</td><td>230.87</td><td>30</td><td>30</td><td>Power gradient (Section 6.3.1)</td></tr>
+</table>
+<h4>6.1.3 Int. Board (Section Background + Port)</h4>
+<ul>
+<li><strong>Background bounds:</strong> x=10, y=280, w=70, h=30, rounded, fillColor=#F5F5F5.</li>
+<li><strong>Port treatment rule:</strong> Int. Board must be treated as a connectable STAR port while retaining section-background visual styling.</li>
+<li><strong>Label:</strong> "Int. Board" centered within the same x/y/w/h bounds.</li>
+<li><strong>Role:</strong> Encompasses internal STAR connection context and must remain visible even when no cable is connected.</li>
+</ul>
+<h4>6.1.4 External Group Ports</h4>
+<p>External title: x=10, y=320, w=70, h=20. Port coordinates below are absolute offsets from main body origin (0,0).</p>
+<table>
+<tr><th>Port</th><th>Type</th><th>Shape</th><th>X</th><th>Y</th><th>Width</th><th>Height</th><th>Gradient Rule</th></tr>
+<tr><td>USB B</td><td>USB</td><td>Rounded Rectangle</td><td>20</td><td>340</td><td>50</td><td>20</td><td>USB gradient (Section 6.3.1)</td></tr>
+<tr><td>C13</td><td>Power</td><td>Rounded Rectangle</td><td>20</td><td>360</td><td>50</td><td>20</td><td>Power gradient (Section 6.3.1)</td></tr>
+<tr><td>Amperage label</td><td>Text</td><td>Text Block</td><td>10</td><td>380</td><td>70</td><td>20</td><td>Display "6.3A" centered</td></tr>
+</table>
+<h4>6.1.5 STAR Fill and Background Application Rules</h4>
+<ul>
+<li>TCC1, TCC2, Ext. Can, EX IO, and Div1 are classified as <strong>serial ports</strong> and must use the serial gradient configuration from Section 6.3.1 when filled.</li>
+<li>Div2, Div3, P1, and P2 are classified as <strong>power ports</strong> and must use the power gradient configuration from Section 6.3.1.</li>
+<li>Periphery, Int. Board, and External use section background styling from Section 6.3.2.</li>
+<li>Unless a specific always-filled exception applies (for example EX IO in Section 6.1.5), unconnected ports follow the unfilled-port rule in Section 6.3.1.</li>
+</ul>
+<h3>6.2 Microlab VANTAGE™ Pipettor</h3><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Outer Dimensions</td><td>90px x 510px</td></tr>
+<tr><td>Acceptable Names</td><td>VANTAGE 2.0, VANTAGE 1.3, STAR-V 2.0, STAR-V 1.3</td></tr>
+<tr><td>Amperage</td><td>Varies by configuration</td></tr>
+<tr><td>Power Cable</td><td>L14-20, L21-20, or C19</td></tr>
+<tr><td>Communication</td><td>Ethernet, USB</td></tr>
+<tr><td>Fill/Gradient</td><td>default → #0000FF</td></tr>
+<tr><td>Stroke</td><td>#10739e</td></tr>
+</table><ul>
+<li><span>Always use Ethernet communication.</span></li>
+<li><br/><span>When a Periphery Box is utilized, VANTAGE requires <strong>TWO</strong> communication connections: <strong>Ethernet to PC</strong> (default, always present) and an <strong>external USB to PC</strong> connection (additional, required with Periphery Box use).</span></li>
+<li><span>Dimensions are adjustable based on configuration.</span></li>
+<li><span>Current dimensions are default configurations only.</span></li>
+<li><span>Periphery structure height formula: <strong>Y = 60 + (number of ports in periphery structure × 20)</strong>.</span></li>
+<li><span>AC Box is present for VANTAGE and not present for STAR-V.</span></li>
+<li><span>Main body height formula: <strong>Y = 200 + (number of ports in periphery structure × 20) + (170 if AC Box is present)</strong>.</span></li>
+<li><span>Example (STAR-V default, no AC Box): Periphery ports = 1 USB A, 1 DB9, 1 RJ45, High, Medium, Low, General (7 total) → Periphery Y = <strong>200px</strong>, Main body Y = <strong>340px</strong>.</span></li>
+<li><span>Example (VANTAGE with all RJ45 ports occupied): Periphery ports = 1 USB A, 1 DB9, 4 RJ45, High, Medium, Low, General (10 total) with AC Box present → Periphery Y = <strong>260px</strong>, Main body Y = <strong>570px</strong>.</span></li>
+</ul><h4>6.2.1 VANTAGE Body Specifications</h4><p><strong>Main VANTAGE Body:</strong></p><ul>
+<li>Position: Column 6 (Pipettor Connections) - absolute position varies by diagram</li>
+<li>Dimensions: 90px width x 510px height</li>
+<li>Style: rounded=1, fillColor=default, strokeColor=#10739e, gradientColor=#0000FF (blue gradient), arcSize=7, glass=1</li>
+</ul><p><strong>Title "VANTAGE":</strong></p><ul>
+<li>Position: Top of container (y=0 relative to body)</li>
+<li>Dimensions: 90px width x 20px height</li>
+<li>Alignment: Centered horizontally</li>
+<li>Text Color: Black (#000000)</li>
+<li>Style: Bold, font size 13pt</li>
+</ul><h4>6.2.2 Periphery Box Structure and Coordinates</h4><ul>
+<li>Position (relative to VANTAGE body origin): x=10, y=20</li>
+<li>Dimensions: 70px width x 200px height</li>
+<li>Background: fillColor=#F5F5F5 (light gray)</li>
+<li>Style: rounded=1</li>
+</ul><p><strong>Contents (X and Y coordinates relative to the element above):</strong></p><table>
+<tr><th>Element</th><th>X</th><th>Y</th><th>Width</th><th>Height</th><th>Style</th></tr>
+<tr><td>Title "Periphery Box"</td><td>0</td><td>0</td><td>70</td><td>30</td><td>Bold</td></tr>
+<tr><td>USB A Port</td><td>10</td><td>30</td><td>50</td><td>20</td><td>fillColor=#C4E4FF, gradientColor=#6600CC</td></tr>
+<tr><td>DB9 Port</td><td>0</td><td>20</td><td>50</td><td>20</td><td>fillColor=#00FF00, gradientColor=#009900</td></tr>
+<tr><td>RJ45 Port</td><td>0</td><td>20</td><td>50</td><td>20</td><td>fillColor=#FFCCFA, gradientColor=#FF4AE7</td></tr>
+<tr><td>Title "P INTER"</td><td>-10</td><td>20</td><td>70</td><td>20</td><td>Bold</td></tr>
+<tr><td>High</td><td>10</td><td>20</td><td>50</td><td>20</td><td>fillColor=#00FF00, gradientColor=#009900</td></tr>
+<tr><td>Medium</td><td>0</td><td>20</td><td>50</td><td>20</td><td>fillColor=#00FF00, gradientColor=#009900</td></tr>
+<tr><td>Low</td><td>0</td><td>20</td><td>50</td><td>20</td><td>fillColor=#00FF00, gradientColor=#009900</td></tr>
+<tr><td>General</td><td>0</td><td>20</td><td>50</td><td>20</td><td>fillColor=#00FF00, gradientColor=#009900</td></tr>
+</table><ul>
+<li><strong>Default ports from the table are always included</strong> in the base VANTAGE structure.</li>
+<li><strong>Complete available Periphery port inventory:</strong> 4 RJ45, 3 USB A, 4 DB9, 1 High, 2 Medium, 1 Low, 2 General, 1 Limited.</li>
+<li>Default VANTAGE/STAR-V Periphery Box configuration shown in diagrams: Title "Periphery Box", USB A, DB9, RJ45, Title "P INTER", High, Medium, Low, General.</li>
+<li>During pre-generation, check assigned VANTAGE Periphery ports by port type against available port allocation for all Periphery port types (USB A, RJ45, DB9, High, Medium, Low, General, Limited).</li>
+<li>If allocation exceeds availability for any Periphery port type, show this warning: "WARNING: X [port type] ports are assigned to VANTAGE periphery, but only Y are available. Which device do you want to move to a direct PC connection?"</li>
+<li>Additional ports use 50x20px dimensions and are filled as defined in Section 6.3.1.</li>
+</ul><h4>6.2.3 External Section Structure and Coordinates</h4><ul>
+<li><span>Position (relative to final Periphery port element): x=-10, y=40</span></li>
+<li>Dimensions: 70px width x 90px height</li>
+<li>Background: fillColor=#F5F5F5 (light gray)</li>
+<li>Style: rounded=1</li>
+</ul><table>
+<tr><th>Element</th><th>X</th><th>Y</th><th>Width</th><th>Height</th><th>Style</th></tr>
+<tr><td>Title "External"</td><td>0</td><td>0</td><td>70</td><td>20</td><td>Bold</td></tr>
+<tr><td>RJ45 Port</td><td>10</td><td>20</td><td>50</td><td>20</td><td>fillColor=#FFCCFA, gradientColor=#FF4AE7</td></tr>
+<tr><td>USB B Port</td><td>10</td><td>40</td><td>50</td><td>20</td><td>fillColor=#C4E4FF, gradientColor=#6600CC</td></tr>
+<tr><td>L14-20 Port</td><td>10</td><td>60</td><td>50</td><td>20</td><td>Power port styling</td></tr>
+</table><p class="highlight-new"><strong>NOTE:</strong> Relabel the External power port to match the VANTAGE power cable (L14-20, L21-20, or C19). L14-20 is the default label.</p><h4>6.2.4 AC Box Structure and Coordinates</h4><ul>
+<li><span>Position (relative to final Periphery port element): x=-10, y=140</span></li>
+<li>Dimensions: 70px width x 170px height</li>
+</ul><table>
+<tr><th>Element</th><th>X</th><th>Y</th><th>Width</th><th>Height</th><th>Notes</th></tr>
+<tr><td>Title "AC Box"</td><td>0</td><td>0</td><td>70</td><td>20</td><td>Bold</td></tr>
+<tr><td>PWR 1</td><td>10</td><td>20</td><td>50</td><td>20</td><td>✔ FILLED (fillColor=#CCCCCC)</td></tr>
+<tr><td>PWR 2</td><td>10</td><td>40</td><td>50</td><td>20</td><td>Unfilled unless connected</td></tr>
+<tr><td>PWR 3</td><td>10</td><td>60</td><td>50</td><td>20</td><td>Unfilled unless connected</td></tr>
+<tr><td>PWR 4</td><td>10</td><td>80</td><td>50</td><td>20</td><td>Unfilled unless connected</td></tr>
+<tr><td>PWR 5</td><td>10</td><td>100</td><td>50</td><td>20</td><td>Unfilled unless connected</td></tr>
+<tr><td>PWR 6</td><td>10</td><td>120</td><td>50</td><td>20</td><td>Unfilled unless connected</td></tr>
+<tr><td>P SKT</td><td>10</td><td>140</td><td>50</td><td>20</td><td>✔ FILLED (fillColor=#CCCCCC)</td></tr>
+</table><h3>6.3 Common Port Specifications</h3><h4>6.3.1 Port Styling with Gradients</h4><p>All ports must use gradient fills for visual depth. Standard configurations:</p><p><strong>USB Ports (A and B types):</strong></p><ul>
+<li>fillColor=#C4E4FF (light blue)</li>
+<li>gradientColor=#6600CC (purple)</li>
+<li>fontColor=#ffffff (white text)</li>
+<li>strokeColor=#314354</li>
+<li>rounded=1</li>
+</ul><p><strong>Serial/DB9 Ports:</strong></p><ul>
+<li>fillColor=#00FF00 (bright green)</li>
+<li>gradientColor=#009900 (dark green)</li>
+<li>fontColor=#ffffff (white text)</li>
+<li>strokeColor=#314354</li>
+<li>rounded=1</li>
+</ul><p><strong>Ethernet/RJ45 Ports:</strong></p><ul>
+<li>fillColor=#FFCCFA (light pink)</li>
+<li>gradientColor=#FF4AE7 (bright magenta)</li>
+<li>fontColor=#ffffff (white text)</li>
+<li>strokeColor=#314354</li>
+<li>rounded=1</li>
+</ul><p><strong>Power Ports (when filled):</strong></p><ul>
+<li>fillColor=#CCCCCC (gray)</li>
+<li>gradientColor=default</li>
+<li>fontColor=#ffffff (white text)</li>
+<li>strokeColor=#314354</li>
+<li>rounded=1</li>
+</ul><p><strong>Unfilled Ports:</strong></p><ul>
+<li>fillcolor=none</li>
+<li>gradientColor=none</li>
+<li>fontColor=#000000 (black text)</li>
+<li>strokeColor=#314354</li>
+<li>rounded=1</li>
+</ul><h4>6.3.2 Section Background Fills</h4><p>All internal sections used in Microlab STAR™ and Microlab VANTAGE™ structures (for example Periphery, Int. Board, External, and AC Box where applicable) must have:</p><ul>
+<li>fillColor=#F5F5F5 (light gray background)</li>
+<li>rounded=1 corners</li>
+<li>This provides visual separation from the main VANTAGE container</li>
+</ul><h2 id="section7">7. Legend Box</h2><h3>7.1 Legend Box Properties - FLEXIBLE POSITIONING</h3><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Position</td><td>Can be in any corner of the working space</td></tr>
+<tr><td>Placement Strategy</td><td>Preferably in the emptiest corner to avoid clutter</td></tr>
+<tr><td>Overlap Rule</td><td>Must NOT overlap with any other elements</td></tr>
+<tr><td>Dimensions</td><td>140px width x 150px height</td></tr>
+<tr><td>Style</td><td>rounded=1, default stroke</td></tr>
+</table><p><strong>CRITICAL CHANGE:</strong> Legend box position is NOT fixed. Do not specify absolute coordinates like (190, 650). Position varies based on diagram layout.</p><p><strong>Best Practice:</strong> Place the legend in a corner (preferably the emptiest corner) and do NOT place the legend inside the PC Connections column.</p><h3>7.2 Legend Box Sizing</h3><ul>
+<li>Base Width: 140px (fixed)</li>
+<li>Dynamic Height: Adjustable in Y direction based on number of connection types</li>
+<li>Height Formula: 50px + (N x 20px), where N = number of connection types</li>
+</ul><h3>7.3 Legend Title</h3><ul>
+<li>Text: "Legend"</li>
+<li>Style: Bold + Underlined (&lt;b&gt;&lt;u&gt;Legend&lt;/u&gt;&lt;/b&gt;)</li>
+<li>Position: Top of legend box</li>
+<li>Size: ~40px width x ~23px height</li>
+<li>Alignment: Centered</li>
+</ul><h3>7.4 Legend Contents</h3><p>Must include 5 items (previously 4) with strokeWidth=3:</p><table>
+<tr><th>#</th><th>Item</th><th>Line Color</th><th>Hex Code</th><th>Notes</th></tr>
+<tr><td>1</td><td>Title (Legend)</td><td>—</td><td>—</td><td>Bold + Underlined</td></tr>
+<tr><td>2</td><td>Power</td><td>Black</td><td>#000000</td><td>~23px from title</td></tr>
+<tr><td>3</td><td>USB</td><td>Blue</td><td>#007CF7</td><td>~23px from previous</td></tr>
+<tr><td>4</td><td>Serial</td><td>Green</td><td>#009900</td><td>~23px from previous</td></tr>
+<tr><td>5</td><td>Ethernet</td><td>Pink</td><td>#FF4AE7</td><td>~23px from previous</td></tr>
+<tr><td>6</td><td>Periphery</td><td>Purple</td><td>#6600CC</td><td>REQUIRED</td></tr>
+</table><p><strong>Line specifications:</strong></p><ul>
+<li>Length: 40px horizontal</li>
+<li>Style: endArrow=none, strokeWidth=3, endFill=0, jumpStyle=arc, edgeStyle=orthogonalEdgeStyle</li>
+<li>Layout: Horizontal lines starting at x=-17.5 (relative to legend box), text labels positioned to the right</li>
+</ul><div class="page-break"></div><h2 id="section8">8. Diagram Creation Workflow</h2><p><strong>Reorganization note:</strong> Hub/PC and power calculations are centralized in Sections 4 and 3. This section defines sequence and execution rules.</p><p><strong>★ CRITICAL SPACING RULE - READ FIRST:</strong> Apply the authoritative spacing specification in Section 9.1.1 before routing any line or placing any element.</p><p>This applies to: Device blocks, PC blocks, Hub blocks, Pipettor blocks, Power strips, Circuits, All connection lines, Dashed separator lines, Legend box, Any other diagram elements.</p><h3>8.1 Step Order and Execution Details</h3><ol><li>Step 1: Determine Hub Requirements and PC power inputs based on PC Type Specifications (Section 4.1) <span>and PC power specifications (DRD §3)</span>.</li><li>Step 2: Calculate Power Distribution (Section 3.5).</li><li>Step 3: Add Elements Per-Circuit Order.</li><li>Step 4: Handle Pipettor Connection Timing.</li></ol><h4>8.1.1 Step 1 - Hub Requirement Check</h4><p>Use Section 4.1 PC type specifications <span>(ports) and DRD §3 (power)</span> to determine whether any USB hub, serial hub, or router/switch is required before placing downstream devices.</p><h4>8.1.2 Step 2 - Power Distribution Calculation</h4><ul><li>Apply the 80% circuit loading rule (15A circuit: 12A usable, 20A circuit: 16A usable).</li><li>Optimize to use the fewest circuits while keeping routing clean and compliant.</li><li>Ensure Circuit 1 includes the PC.</li><li>Use power strips only when a circuit has more than 2 connections.</li><li><span>Standard PC</span> requires 2 power connections (2x C13 to NEMA 5-15), which can force a power strip on Circuit 1 when total connections exceed 2.</li></ul><h4>8.1.3 Step 3 - Add Elements Per-Circuit Order</h4><p>Process circuits strictly in order (Circuit 1, Circuit 2, etc.) and finish each circuit layout before moving to the next one.</p><h4>8.1.4 Step 4 - Pipettor Connection Timing</h4><p>Add the pipettor block when a pipettor-connected device is required.</p><p><strong>IMPORTANT:</strong> Do NOT connect pipettor communication and power until the pipettor's circuit is next in the ordered sequence.</p><div class="page-break"></div><h2 id="section9">9. Line Spacing &amp; Routing Rules</h2><p><strong>Reorganization note:</strong> This section merges spacing rules, connector behavior, and connection placement rules.</p><h3>9.1 The 10px Rule</h3><p><strong>CRITICAL RULE:</strong> Section 9.1.1 is the PRIMARY and AUTHORITATIVE 10px spacing rule for all diagrams. If any other sentence appears to conflict, follow Section 9.1.1.</p><h4>9.1.1 Comprehensive 10px Spacing Rule (PRIMARY/AUTHORITATIVE)</h4><p><strong>Non-available space concept:</strong> Every placed element creates a 10px exclusion perimeter where no unrelated line segment or element edge may enter. The non-available space is part of the routing obstacle and must be respected before route generation and while refining paths.</p><p><strong>Occupied area and non-available perimeter formula:</strong> For an element with origin <code>(x, y)</code>, width <code>w</code>, and height <code>h</code>:</p><ul>
+<li><strong>Occupied space:</strong> <code>[x, x+w] × [y, y+h]</code></li>
+<li><strong>Non-available perimeter bounds:</strong> <code>[x-10, x+w+10] × [y-10, y+h+10]</code></li>
+<li><strong>Valid orthogonal line routing for unrelated segments:</strong> <code>X ≤ (x-10)</code> OR <code>X ≥ (x+w+10)</code> OR <code>Y ≤ (y-10)</code> OR <code>Y ≥ (y+h+10)</code></li>
+</ul><p><strong>PC example (mandatory reference example):</strong> PC origin <code>(600, 160)</code>, dimensions <code>120×80</code>.</p><ul>
+<li>Occupied space: <code>[600, 720] × [160, 240]</code></li>
+<li>Non-available perimeter bounds: <code>[590, 730] × [150, 250]</code></li>
+<li>Lines must route at: <code>X ≤ 590</code> OR <code>X ≥ 730</code> OR <code>Y ≤ 150</code> OR <code>Y ≥ 250</code></li>
+</ul><p><strong>Device-to-device spacing formula:</strong> For Device A <code>(x1, y1, w1, h1)</code> and Device B <code>(x2, y2, w2, h2)</code>, separation is valid only if one condition is true: <code>x2 ≥ x1+w1+10</code> OR <code>x1 ≥ x2+w2+10</code> OR <code>y2 ≥ y1+h1+10</code> OR <code>y1 ≥ y2+h2+10</code>.</p><p><strong>Applies to all elements:</strong> device blocks, PC blocks, hubs, pipettors, power strips, circuits, all connector types, dashed separators, legend blocks, labels, and diagram boundaries.</p><p><strong>Line-to-line and multi-connection rule:</strong> parallel orthogonal segments and same-device connection lanes must maintain the same 10px minimum clearance; use arc jumps for crossings.</p><h4>9.1.2 Routing Guidelines</h4><ul>
+<li>Lines connect to device faces (top, bottom, left, right) - never corners.</li>
+<li>Use orthogonal (90°) routing only</li>
+<li>When lines cross, use arc jumps (jumpStyle=arc)</li>
+<li><strong>Waypoint routing note:</strong> Always include explicit waypoint points (<code>&lt;Array as="points"&gt;</code>) to route around obstacles (device boxes, labels, legends, and other diagram elements) while maintaining Section 9.1.1 spacing clearances.</li>
+<li class="highlight-new"><strong>Line attachment:</strong> Attach lines to devices using only <code>source</code> and <code>target</code>. Do not lock lines to fixed connection points on the device; lines must remain free to move along the device face. Use waypoints to control routing.</li>
+</ul><h4>9.1.3 Enhanced Line Spacing Rules</h4><p><strong>No Overlap Rules:</strong></p><ul>
+<li>Lines should NOT overlap with each other</li>
+<li>Lines should NOT overlap with any other elements (devices, hubs, power strips, etc.)</li>
+<li>For numeric clearance and parallel lane spacing requirements, use Section 9.1.1 as the sole authoritative reference.</li>
+</ul><p><strong>Multiple Connections to Same Element:</strong> Connection point separation and lane spacing must follow Section 9.1.1.</p><div class="page-break"></div><h3>9.2 Connector Behavior</h3><h4>9.2.1 Standard Connector Properties</h4><table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>edgeStyle</td><td>orthogonalEdgeStyle</td></tr>
+<tr><td>rounded</td><td>1</td></tr>
+<tr><td>curved</td><td>0</td></tr>
+<tr><td>jumpStyle</td><td>arc</td></tr>
+<tr><td>endArrow</td><td>none</td></tr>
+<tr><td>strokeWidth</td><td>2</td></tr>
+</table><p class="highlight-new"><strong>NOTE:</strong> Do not include fixed connection point properties (<code>exitX</code>, <code>exitY</code>, <code>exitPerimeter</code>, <code>entryX</code>, <code>entryY</code>, <code>entryPerimeter</code>) in connector styles. See Section 9.1.2.</p><h4>9.2.2 Power Connector Style</h4><pre>edgeStyle=orthogonalEdgeStyle; rounded=1;jumpStyle=arc;html=1;strokeWidth=2;endArrow=none</pre><h4>9.2.3 USB Connector Style</h4><pre>edgeStyle=orthogonalEdgeStyle; rounded=1;jumpStyle=arc;html=1;strokeColor=[USB color per <span>Section 10.2</span>];strokeWidth=2;endArrow=none</pre><h4>9.2.4 Serial Connector Style</h4><pre>edgeStyle=orthogonalEdgeStyle; rounded=1;jumpStyle=arc;html=1;strokeColor=[Serial color per <span>Section 10.2</span>];strokeWidth=2;endArrow=none</pre><h4>9.2.5 Periphery Connector Style</h4><pre>edgeStyle=orthogonalEdgeStyle; rounded=1;jumpStyle=arc;html=1;strokeColor=[Periphery color per <span>Section 10.2</span>];strokeWidth=2;endArrow=none</pre><div class="page-break"></div><h3>9.3 Connection Placement Rules</h3><p><strong>CRITICAL:</strong> Different element types have different rules for where connections can attach.</p><h4>9.3.1 Power Strip Connection Placement</h4><p><strong>VERTICAL FACES ONLY:</strong> Power strip connections must attach to the LEFT or RIGHT faces only. Do NOT connect to top or bottom faces.</p><h4>9.3.2 Hub Connection Placement</h4><p><strong>HORIZONTAL FACES ONLY:</strong> Hub connections must attach to the TOP or BOTTOM faces only. Do NOT connect to left or right faces.</p><h4>9.3.3 Standard Device Connection Placement</h4><ul>
+<li>Regular devices (On-Deck, Off-Deck, Control Boxes): Any face (top, bottom, left, right)</li>
+<li>Pipettors: Left face preferred for external connections</li>
+<li>PC &amp; Peripheries: Any face</li>
+<li>Circuit: Any point on ellipse circumference</li>
+</ul><h4>9.3.4 Pipettor Internal Port Connection Placement</h4><p><strong>CRITICAL:</strong> Connections to pipettors must attach to the specific internal port, not the outer body.</p><h4>9.3.5 Connection Face Summary</h4><table>
+<tr><th>Element Type</th><th>Allowed Connection Faces</th></tr>
+<tr><td>Power Strip</td><td>LEFT, RIGHT only (vertical faces)</td></tr>
+<tr><td>USB Hub / Serial Hub / Router</td><td>TOP, BOTTOM only (horizontal faces)</td></tr>
+<tr><td>Standard Devices</td><td>Any face</td></tr>
+<tr><td>Pipettors (outer body)</td><td>DO NOT CONNECT TO OUTER BODY</td></tr>
+<tr><td>Pipettor Internal Ports</td><td>LEFT face of specific port element</td></tr>
+<tr><td>PC &amp; Peripheries</td><td>Any face</td></tr>
+<tr><td>Circuit (ellipse)</td><td>Any point on circumference</td></tr>
+</table><h4>9.3.6 PC Connection Placement Rules</h4><p><strong>Devices to Main PC:</strong></p><ul>
+<li>Prioritize connections to the bottom face of the main PC</li>
+<li>Route USB, Serial, and Ethernet connections from devices to the bottom of the PC block</li>
+<li>This creates cleaner routing and better visual organization</li>
+</ul><p><strong>Devices to Additional PCs:</strong></p><ul>
+<li>Connections to additional PCs (PC 2, PC 3, Master PC, etc.) may use any face</li>
+<li>Choose the face that provides the cleanest routing path</li>
+<li>Avoid overlaps and follow the authoritative spacing specification in Section 9.1.1</li>
+</ul><p><strong>PCs to Power Strips:</strong></p><ul>
+<li>All PC power connections to power strips should prioritize the left face of the PC</li>
+<li>This maintains consistent power routing from left (facility/power) to right (devices)</li>
+<li>Applies to all PC types (main PC, additional PCs, Industrial PC, etc.)</li>
+</ul><div class="page-break"></div><h2 id="section10">10. Block Styles</h2><h3>10.1 Centralized Color Palette</h3><p>All color definitions for lines and block fills are centralized in this section. Other sections should reference Section 10 instead of redefining colors.</p><h3>10.2 Connector/Line Colors</h3><table>
+<tr><th>Connection Type</th><th>Color</th><th>Hex Code</th></tr>
+<tr><td>Power</td><td>Black</td><td>#000000</td></tr>
+<tr><td>USB</td><td>Blue</td><td>#007CF7</td></tr>
+<tr><td>Serial</td><td>Green</td><td>#009900</td></tr>
+<tr><td>Ethernet</td><td>Pink</td><td>#FF4AE7</td></tr>
+<tr><td>Periphery/Custom</td><td>Purple</td><td>#6600CC</td></tr>
+</table><p class="highlight-new"><strong>NOTE:</strong> Any connection type not listed in this table uses Purple (#6600CC).</p><h3>10.3 Shape Fill Colors</h3><table>
+<tr><th>Device Category</th><th>Fill Color</th><th>Gradient Color</th><th>Stroke Color</th></tr>
+<tr><td>Power Circuit</td><td>#FFFFFF</td><td>#FF4545</td><td>#B85450</td></tr>
+<tr><td>Power Strip</td><td>#CCCCCC</td><td>#000000</td><td>default</td></tr>
+<tr><td>USB Hub</td><td><span>#F8CECC</span></td><td>#FFCCE6</td><td>#B85450</td></tr>
+<tr><td>Serial Hub</td><td><span>#F8CECC</span></td><td>#FFCCE6</td><td>#B85450</td></tr>
+<tr><td>Router/Switch</td><td><span>#F8CECC</span></td><td>#FFCCE6</td><td>#B85450</td></tr>
+<tr><td>On-Deck/Off-Deck Device</td><td>#FFFFFF</td><td>#D5E8D4</td><td>default</td></tr>
+<tr><td>PC &amp; Peripheries</td><td>#FFFFFF</td><td><span>#B3B3B3</span></td><td>#6c8ebf</td></tr>
+<tr><td>Pipettor (STAR)</td><td>#CCE5FF</td><td>#0000FF</td><td>#36393d</td></tr>
+<tr><td>Pipettor (VANTAGE)</td><td>default</td><td>#0000FF</td><td>#10739e</td></tr>
+</table><div class="page-break"></div>
+<h3>10.4 Sizing Guidelines (Readability-First)</h3>
+<p><strong>Guideline Priority:</strong> Prioritize readability and maintain minimum 10px spacing/clearance from Section 9.1.1 over fixed dimensions, except for fixed-size pipettors.</p>
+<table>
+<tr><th>Device Type</th><th>Recommended Width (px)</th><th>Recommended Height (px)</th><th>Guideline Notes</th></tr>
+<tr><td>Small device block</td><td>50-70</td><td>20-40</td><td>Adjust as needed for label readability</td></tr>
+<tr><td>Medium device block</td><td>90-120</td><td>60-80</td><td>Preferred default range for most devices</td></tr>
+<tr><td>Large device block</td><td>120-150</td><td>80-130</td><td>Expand for multi-line labels/cables</td></tr>
+<tr><td>Power Circuit (ellipse)</td><td>80-90</td><td>80-90</td><td>Keep text legible and routing clear</td></tr>
+<tr><td>Power Strip</td><td>40 (fixed)</td><td>90 minimum</td><td>Height scales by number of connected devices</td></tr>
+<tr><td>STAR Pipettor</td><td>90 (fixed)</td><td><span>410</span> (fixed)</td><td>Fixed template dimensions</td></tr>
+<tr><td>VANTAGE Pipettor</td><td>90 (fixed)</td><td><del class="highlight-new">510 default/fixed template</del><span class="highlight-new">510 default; varies with internal components (see Section 6.2 height formulas)</span></td><td>Use template-driven dimensions</td></tr>
+</table>
+<h3>10.5 Power Circuit (Ellipse)</h3><pre>ellipse; whiteSpace=wrap; html=1; aspect=fixed; fillColor=#FFFFFF; gradientColor=#FF4545; strokeColor=#B85450</pre><h3>10.6 Power Strip</h3><pre>rounded=1; whiteSpace=wrap; html=1; strokeWidth=2; gradientColor=#000000; gradientDirection=south; glass=1; fillColor=#CCCCCC;
+value="Power Strip" (text-only, no amperage/outlet)</pre><h3>10.7 Hub (USB Hub / Serial Hub / Router)</h3><pre>rounded=1; whiteSpace=wrap; html=1; shadow=0; glass=1; sketch=0; strokeWidth=2; fillColor=<span>#F8CECC</span>; gradientColor=#FFCCE6; strokeColor=#B85450</pre><h3>10.8 On-Deck/Off-Deck Device</h3><pre>rounded=1; whiteSpace=wrap; html=1; shadow=0; strokewidth=2; gradientColor=#D5E8D4; glass=1;</pre><h3>10.9 PC &amp; Peripheries</h3><pre>rounded=1; whiteSpace=wrap; html=1; fillColor=#FFFFFF; strokeColor=#6c8ebf; gradientColor=#B3B3B3</pre><h3>10.10 Microlab STAR Pipettor (Outer)</h3><pre>rounded=1; whiteSpace=wrap; html=1; strokeWidth=2; shadow=0; sketch=0; align=center; fillColor=#CCE5FF; gradientColor=#0000FF; strokeColor=#36393d; arcSize=7; glass=1</pre><h3>10.11 Microlab VANTAGE Pipettor (Outer)</h3><pre>rounded=1; whiteSpace=wrap; html=1; fillColor=default; strokeColor=#10739e; arcSize=7; gradientColor=#0000FF</pre><h3>10.12 Text Formatting Rules</h3><p>All diagram elements EXCEPT pipettors must apply bold formatting to the first line of text. This includes device blocks, circuit labels, power strips, and legend entries. This ensures visual hierarchy and improves readability.</p><h2 id="section11">11. Changelog</h2><h3 class="highlight-new">v2.2.3 (October 26, 2026)</h3><ul class="highlight-new"><li>Updated version metadata to v2.2.3 and cleared v2.2.2 highlights. Permanently deleted the v2.2.2 strikethroughs: §1.1.2 "STAR or VANTAGE will use the same block structure", the §4.1 Amperage and Power Cables columns, and the §6.2 "9.4 Update Notes:" and "9.4.2 Additional Notes:" labels.</li><li>§1.1.1: Replaced the Prompt 1 - Initial Setup text. Split Prompt 2 into Option A (manual device entry, existing prompt) and Option B (Sales Order/Quote and CPR upload with power distribution analysis prompt).</li><li>§2.3 and §2.6: Added the Column Expansion Rule. Columns may widen to place paired devices side by side; columns to the right shift with their headers and separators; diagram width grows with 1100px as the minimum.</li><li>§4.1: Added note to use the Customer-supplied PC when no PC is listed on the order.</li><li>§5.4: Restructured HHS/HHC communication rules into a connection-method table (STAR TCC ports, VANTAGE Periphery Box, HHS Control Box). Periphery Box connections now route each HHS/HHC USB to a Periphery Box USB A port, with the VANTAGE External USB B to the PC. Removed the CRITICAL designation from the DB9 rule and limited it to HHS Control Box connections. Previous rules struck.</li><li>§6.2.3: Added note to relabel the External power port to match the VANTAGE power cable.</li><li>§9.1.2 and §9.2.1: Added line attachment rule. Lines attach using source/target only, without fixed connection point properties, so they can be adjusted along the device face.</li><li>§10.2: Added note that unlisted connection types use Purple (#6600CC).</li><li>§10.4: VANTAGE Pipettor height changed from "510 default/fixed template" to 510 default, varying with internal components per the §6.2 height formulas.</li></ul><h3>v2.2.2 (October 23, 2026)</h3><ul><li>Updated version metadata to v2.2.2 and cleared v2.2.1 highlights; permanently deleted the stricken legacy filename format (StyleGuide_v[VERSION].pdf) from §1.2 rule 4, which was carried over from v2.2.0.</li><li>§4.1: Struck the Amperage and Power Cables columns (DRD §3 is the source of truth for PC power; this also resolves the L3 PC 9.5A vs 12A conflict). Retitled §4.1 to "PC Type Specifications (Ports)", added a DRD reference note, and repointed the power references in §3.5, §4.2.1, §8.1 and §8.1.1 to DRD §3.</li><li>§10.3 Shape Fill Colors and §10.7 Hub style: Hub fill changed from #FBCECC to #F8CECC to match §4.3.1.</li><li>§10.3 Shape Fill Colors: PC &amp; Peripheries gradient changed from #B3B383 to #B3B3B3 to match §10.9.</li><li>Expanded 3-digit shorthand color codes to full 6-digit hex (#333→#333333, #ddd→#dddddd) in the document CSS and §1.4.10 CSS reference. All other color codes were verified as already full-length 6-digit hex.</li><li>§1.2.1 (and v1.2.0 changelog entry): Corrected typo "Microlab START™" to "Microlab STAR™".</li><li>§5 renumbered to remove the skipped subsection: 5.3→5.2 (Unit Count), 5.4→5.3 (HHS Control Box Amperage), 5.5→5.4 (HHS/HHC Communication).</li><li>§10 renumbered to remove duplicate subsections: 10.1 Centralized Color Palette, 10.2 Connector/Line Colors, 10.3 Shape Fill Colors, 10.4 Sizing Guidelines, 10.5 Power Circuit, 10.6 Power Strip, 10.7 Hub, 10.8 On-Deck/Off-Deck Device, 10.9 PC &amp; Peripheries, 10.10 STAR Pipettor, 10.11 VANTAGE Pipettor, 10.12 Text Formatting Rules. Updated cross-references (§10.8→§10.12 in §3.4.2/§4.2.1/§5.1; §10.5→§10.9 in §4.2.2; Section 10.1→10.2 in §9.2.3–9.2.5).</li><li>§1.4.10: CSS reference header updated to Version 2.2.2 / October 23, 2026.</li><li>§1.2 rule 3: Repointed new-device and pairing instructions to the Device Reference Database (DRD §5/§6 for devices, DRD §7 for pairings, DRD version bump).</li><li>Replaced "Win10 PC"/"Win10PC"/"Win10" with "Standard PC" (§1.1.2, §3.5, §4.1, §8.1.2) to match the DRD.</li><li>§1.1.2: Struck "STAR or VANTAGE will use the same block structure" (conflicts with the separate structures defined in §6).</li><li>§10.4 Sizing Guidelines: STAR Pipettor height changed from 430 to 410 to match §6.1.</li><li>§6.2: Struck the leftover legacy labels "9.4 Update Notes:" and "9.4.2 Additional Notes:"; the bullets following each table are retained.</li><li>§1.1.2 Devices: Repointed device lookup from "Section 5" to the Device Reference Database (DRD).</li></ul><h3>v2.2.1 (April 20, 2026)</h3><ul><li>Updated version metadata to v2.2.1 and reset highlight tracking so only v2.2.1 changes are highlighted.</li><li>Section 6.1 (STAR) and Section 6.2 (VANTAGE): Added pipettor title formatting specifications. §6.1 now specifies STAR title positioning, alignment, text color (black), and font styling (bold, 13pt). §6.2 updated to include text color (black) specification for VANTAGE title, matching the complete specification for both pipettor types.</li></ul><h3>v2.2.0 (April 20, 2026)</h3><ul><li>Updated version metadata to v2.2.0 and reset highlight tracking so only v2.2.0 changes are highlighted.</li><li>Section 1.3 was fully rewritten to an HTML-only editing workflow and all legacy multi-format toolchain guidance was removed from that section.</li><li>Section 1.2 now explicitly defines strikethrough usage for removed content, how to combine strikethrough with highlighting, and includes a concrete markup example.</li><li>Section 1.2 filename rule was updated to HTML output and now shows the deprecated format as stricken text for transition visibility: <del>StyleGuide_v[VERSION].pdf</del> → <strong>StyleGuide_v[VERSION].html</strong>.</li><li>Section 1.4 metadata review: removed the stale Document Overview table to eliminate maintenance-only metadata drift, while keeping Section 1.4.10 as the authoritative formatting reference and updating its embedded CSS header metadata to current version/date.</li></ul><h3>v2.1.9 (April 20, 2026)</h3>
+<ul>
+<li>Updated document version metadata from v2.1.8 to v2.1.9 and applied fresh highlight markers only to this version's changes per Section 1.2.</li>
+<li>Section 4.1 table: updated Customer-supplied PC amperage from "As specified" to 9.5A.</li>
+<li>Section 4.3 CRITICAL hub inclusion rule: removed outdated "only if explicitly specified" language and now requires hub inclusion when recommended by the Step 1 workflow check in §8.1.1, and also when explicitly specified in the prompt.</li>
+</ul><h3>v2.1.8 (April 20, 2026)</h3>
+<ul>
+<li>Updated document version metadata from v2.1.7 to v2.1.8 and cleared prior version highlights per Section 1.2.</li>
+<li>Reorganized Section 4 by merging former 4.1 (PC Port Availability) and 4.2 (PC Amperage Variations) into a single Section 4.1 PC Type Specifications table.</li>
+<li>Removed the Standard Hamilton PC row and updated Customer-supplied PC to use 2x C13 to NEMA 5-15 power cables.</li>
+<li>Added Section 4.2 PC Block Construction Rules, including explicit 3-line vs 4-line text format, styling requirements (120x80px and §10.5 style reference), and positioning rules for single/multiple PCs.</li>
+<li>Fixed duplicate numbering by renaming former "4.1 Hub Styling (Exact from Template)" to Section 4.3.1 "Hub Styling" and updated related Section 4 references.</li>
+</ul><h3>v2.1.7 (April 17, 2026)</h3><ul><li>Updated document version metadata from v2.1.6 to v2.1.7 and cleared prior version highlights per Section 1.2.</li><li>Section 2.5 (Header Row): changed the existing Y position value from 30 to 20.</li><li>Added new Section 10.8 (Text Formatting Rules): all diagram elements except pipettors must bold the first line of text.</li><li>Added cross-reference notes for first-line bolding in Section 5.1 (device labels) and Section 3.4.2 (circuit block text).</li><li>Added new Section 3.3.3 (Power Strip Placement and Alignment) with X-axis offset (+20px from System Requirements column left edge), Y-axis centering with circuit, and an example calculation.</li></ul><h3>v2.1.6 (April 17, 2026)</h3><ul><li>Updated document version metadata from v2.1.5 to v2.1.6 and cleared prior version highlights per Section 1.2.</li><li>Section 6 cleanup: removed former Sections 6.1 and 6.2, removed the STAR template attribution sentence from former Section 6.3, and removed the VANTAGE introductory sentence from former Section 6.4.</li><li>Replaced the Section 6 CRITICAL note to clarify fixed STAR dimensions, varied VANTAGE dimensions, and mandatory internal-component port attachment for all connections.</li><li>Removed former Section 6.5.3 (Platform Differences) and renumbered Section 6 structure to: 6.1 Microlab STAR™, 6.2 Microlab VANTAGE™, 6.3 Common Port Specifications (with 6.3.1/6.3.2).</li><li>Updated Section 6 cross-references throughout the document to align with the new numbering.</li></ul><h3>v2.1.5 (April 17, 2026)</h3><ul><li>Updated document version metadata from v2.1.4 to v2.1.5 and cleared prior version highlights per Section 1.2.</li><li>Rebuilt Section 6.1 (Microlab STAR™) from the uploaded "Just the STAR.drawio" template using body-origin-relative coordinates, full section grouping, and complete port inventory.</li><li>Added STAR-specific fill mapping in Section 6.1: TCC1/TCC2/Ext. Can/EX IO/Div1 mapped to serial gradients; Div2/Div3/P1/P2 mapped to power gradients; Int. Board treated as both section background and a port.</li><li>Created new Section 6.1 (Common Port Specifications) and moved former Sections 6.2.5, 6.2.6, and 6.2.7 to Sections 6.3.1, 6.3.2, and 6.5.3 respectively.</li><li>Updated Section 6 cross-references impacted by the 6.5 migration.</li></ul>
+<h3>v2.1.4 (April 17, 2026)</h3><ul><li>Updated document version metadata from v2.1.3 to v2.1.4 and cleared previous version highlights per Section 1.2.</li><li>Section 5: Removed all device label format example blocks (2-line, 3-line, 4-line, and 5+ line examples) while keeping flexible line rules and adding explicit DRD reference guidance.</li><li>Section 8.1: Reworked the workflow into structured subsections (8.1.1 to 8.1.4) and restored practical Step 2 guidance for power calculations.</li><li>Sections 3 and 9: Corrected numbering hierarchy using three-digit subsections where appropriate and updated affected cross-references.</li><li>Merged former Section 11 Style Templates into Section 2 as Section 2.7; renumbered Changelog from Section 12 to Section 11.</li></ul><h3>v2.1.3 (April 17, 2026)</h3>
+<ul>
+<li>Reorganized the document into a 12-section structure per approved mapping (Document Guide, Layout, Power Distribution, PC Specifications, Device Specifications, Pipettor Structures, Legend Box, Workflow, Line Spacing &amp; Routing, Block Styles, Style Templates, Changelog).</li>
+<li>Merged old Section 3 (Color Specifications) into new Section 10 as the centralized color palette and removed redundant standalone color sectioning.</li>
+<li>Merged old Section 5 (Connector Behavior) into new Section 9 (Line Spacing &amp; Routing Rules).</li>
+<li>Generalized device label format in new Section 5 to flexible line-based rules, including explicit 2-line, 3-line, 4-line, and 5+ line examples.</li>
+<li>Converted old sizing rules into readability-first guidelines in Section 10.2, with 10px spacing priority except for fixed-size pipettors.</li>
+<li>Updated cross-references and section numbering context to align with the new structure, and updated metadata/version from v2.1.2 to v2.1.3.</li>
+</ul>
+<h3><span>v2.1.2 (April 17, 2026)</span></h3><ul>
+<li><span>Updated document version metadata from v2.1.1 to v2.1.2 and updated date to April 17, 2026.</span></li>
+<li><span>Section 9.2 Routing Guidelines: Added waypoint routing requirement to always include explicit <code>&lt;Array as="points"&gt;</code> waypoints so lines route around obstacles while preserving Section 6.1.1 spacing clearances.</span></li>
+<li><span>Cleared prior version-tracking highlights/marks from earlier updates, keeping yellow highlight only for this version's newly added content per Section 1.2.</span></li>
+</ul><h3><span>v2.1.1 (April 16, 2026)</span></h3><ul>
+<li><span>Updated document version metadata from v2.1.0 to v2.1.1.</span></li>
+<li><span>Updated power strip minimum height from 100px to 90px.</span></li>
+<li><span>Added power strip scaling formula in Section 3.4: <strong>Height = max(90, 10 + (device_connections × 10))</strong>.</span></li>
+<li><span>Clarified that <code>device_connections</code> excludes the circuit connection and counts only devices connected to the power strip.</span></li>
+<li><span>Documented scaling behavior: power strips with more than 8 device connections expand by 10px per additional connection.</span></li>
+</ul><h3><span>v2.1.0 (April 16, 2026)</span></h3><ul>
+<li><span>Updated document version from v2.0.6 to v2.1.0.</span></li>
+<li><span>Section 6.2.2 (VANTAGE Periphery Box) clarification: P INTER is now explicitly mandatory as a default element in ALL Periphery structures, with required relative placement formula X=-10 and Y=+20.</span></li>
+<li><span>Section 6.2.2 clarification: P INTER labels the second Periphery port group (High, Medium, Low, General, Limited).</span></li>
+<li><span>Section 6.1.1 replaced with a PRIMARY and AUTHORITATIVE comprehensive 10px spacing rule, including the non-available space concept, routing formulas, PC coordinate example, and device-to-device spacing formula.</span></li>
+<li><span>Redundant 10px spacing statements were consolidated across Sections 2.6, 6.3, 7, and 18.6 to defer to Section 6.1.1 as the single source of truth.</span></li>
+</ul><h3><span>v2.0.6 (April 15, 2026)</span></h3><ul>
+<li><span>Updated document version from v2.0.5 to v2.0.6.</span></li>
+<li><span>Replaced the Section 6.2 main body height rule with formula: Y = 200 + (number of ports in periphery structure × 20) + (170 if AC Box is present).</span></li>
+<li><span>Added STAR-V and VANTAGE examples in Section 6.2 to show calculated Periphery and Main body Y values (200/340 and 260/570).</span></li>
+</ul><h3><span>v2.0.5 (April 15, 2026)</span></h3><ul>
+<li><span>Updated document version from v2.0.4 to v2.0.5.</span></li>
+<li><span>Updated Section 6.2 communication note to explicitly require two VANTAGE-to-PC communication connections when Periphery Box is used: default Ethernet plus additional external USB.</span></li>
+<li><span>Expanded Section 6.2.2 Additional Notes to clarify default-included ports and full available Periphery port inventory (4 RJ45, 3 USB A, 4 DB9, 1 High, 2 Medium, 1 Low, 2 General, 1 Limited).</span></li>
+<li><span>Added new Section 6.2.2.1 with port availability checking and USB hub decision rules aligned with Section 8 workflow.</span></li>
+<li><span>Updated Section 6.2.3 and Section 6.2.4 relative positioning values from y=20 to y=40 and from y=120 to y=140.</span></li>
+</ul><h3><span>v2.0.4 (April 15, 2026)</span></h3><ul>
+<li><span>Updated document version from v2.0.3 to v2.0.4.</span></li>
+<li><span>Added Section 6.2 notes clarifying Ethernet-first communication, USB-only use with Periphery Box, and configuration-dependent dimensions.</span></li>
+<li><span>Added dynamic dimension formulas in Section 6.2 for Periphery Box height, AC Box presence rules, and main body height adjustments.</span></li>
+<li><span>Added Section 6.2.2 notes for default and additional port configurations, including 50x20px additional port fill behavior per Section 6.2.5.</span></li>
+<li><span>Updated Section 6.2.3 and Section 6.2.4 positioning to be relative to the final Periphery port element.</span></li>
+</ul><h3><span>v2.0.2 (April 15, 2026)</span></h3><ul>
+<li><span>Updated document version from v2.0.1 to v2.0.2.</span></li>
+<li><span>Completely removed Section 3.4 from the document.</span></li>
+<li><span>Updated all dedicated 2-phase circuit references to include dedicated 3-phase circuits (20A, L21-20R).</span></li>
+<li><span>Updated Section 3.2: removed 30A (L5-30R), changed 20A (NEMA 5-20R) size to 80x80px, and documented dedicated 2-phase and 3-phase circuit sizes as 90x90px.</span></li>
+<li><span>Updated changelog history by adding v2.0.0 entry and removing BioTek mention from v2.0.1 entry.</span></li>
+</ul><h3>v2.0.1 (April 15, 2026)</h3><ul>
+<li>Updated circuit block standards to require a 3-line format: Circuit name, amperage, and voltage/outlet type.</li>
+<li>Updated Power Strip styling and template rules to enforce #CCCCCC fill with south gradient to #000000 and text-only label "Power Strip".</li>
+<li>Added temporary device pairing requirements section (later moved to the independent Device Reference Database).</li>
+<li>Added legend placement best practice (corner placement, not in PC Connections column).</li>
+<li>Added circuit numbering/layout best practice: dedicated 2-phase and dedicated 3-phase circuits (20A, L21-20R) are numbered last and placed at page bottom.</li>
+</ul><h3><span>v2.0.0 (April 14, 2026)</span></h3><ul>
+<li><span>Removed section 19 Device Reference Database into its own independent document.</span></li>
+</ul><h3>v1.3.5 (March 18, 2026)</h3><ul>
+<li>Corrected communication cable specifications for three devices in Section 12:
+    <ul>
+<li>MPE Deck Module (Section 12.4):  → RS-232 D15M to D15M (removed erroneous space in connector designation)</li>
+<li>MFM Deck Module (Section 12.4):  → Pigtail Turck 3P F (added actual communication cable specification)</li>
+<li>MFM Pump (Section 12.5):  → Pigtail Turck 4P F (added actual communication cable specification)</li>
+</ul>
+</li>
+<li>Updated Device Pairings (Section 4.6): Corrected cable specifications for MFM Pump → Hamilton MFM Control Box ( → Pigtail Turck 4P F) and Hamilton MFM Control Box → MFM Deck Module ( → Pigtail Turck 3P F)</li>
+<li>Updated Device Pairings (Section 4.6): Corrected MPE Deck Module → MPE Ctrl Box cable designation ( → RS-232 D15M to D15M)</li>
+</ul><h3>v1.3.4 (March 18, 2026)</h3><ul>
+<li>Added STAR-V as acceptable VANTAGE pipettor name (per Section 6.2 naming conventions)</li>
+<li>Verified MPE ACME Box entry: Communication correctly listed as Barrel Connector (not Serial DB9); Dispense Unit pairs to ACME Box via RS-232 D9 M to D9 F confirmed</li>
+<li>Updated Device Pairings (Section 4.6): Clarified 'Ctrl Box' references to 'Hamilton MFM Control Box' for MFM Pump and MFM Deck Module pairings</li>
+<li>Added Hamilton MFM Control Box to Section 12.5 Off-Deck Devices (2.5A, C13 to NEMA 5-15, USB A M to USB B M, 140x80px, Controls Media Fill Modules)</li>
+</ul><h3>v1.3.3 (March 12, 2026)</h3><ul>
+<li>Added comprehensive 10px Rule clarifications in Section 6.1.1:
+    <ul>
+<li>Clarified device-to-device spacing requirements</li>
+<li>Clarified device-to-line spacing (devices must be 10px from ALL lines, not just connected ones)</li>
+<li>Clarified PC-to-line spacing requirements</li>
+<li>Clarified hub-to-line spacing requirements</li>
+<li>Clarified line-to-line spacing, including parallel lines connected to the same device</li>
+<li>Added comprehensive list of ALL elements the rule applies to</li>
+</ul>
+</li>
+<li>Added BioTek 405TSRS clarification note (uses same specs as 405LS, includes BioTek pump)</li>
+<li>Added MD SpectraMax M2 clarification note (uses same specs as M2e)</li>
+<li>Added BioTek 405TSRS to Device Pairings (Section 4.6)</li>
+<li>Reverted Section 8 (Diagram Creation Order and Workflow) to original v1.3.0 content (v1.3.3 simplified version was incorrect; restored full workflow with PC Type table, Power Distribution Workflow, and Per-Circuit Order steps)</li>
+<li> — Reorganized DeckWatch Kit components into appropriate device tables:
+    <ul>
+<li>Hamilton DeckWatch added to Off Deck Devices table (Section 12.5)</li>
+<li>Pelco Camera added to On Deck Devices table (Section 12.4)</li>
+<li>NetGear Router added to Hubs table (Section 12.3)</li>
+</ul>
+</li>
+<li>Added Hamilton DeckWatch → NetGear Router pairing to Section 4.6 (Device Pairings)</li>
+</ul><h3>v1.3.2 (March 12, 2026)</h3><ul>
+<li>Corrected BioShake Q1 amperage:  → 1.0A</li>
+</ul><h3>v1.3.1 (March 12, 2026)</h3><ul>
+<li> (Moved to individual device tables in v1.3.3):
+    <ul>
+<li>Hamilton DeckWatch: 0A, No power cable, Ethernet communication, Off-Deck category</li>
+<li>Pelco Camera (quantity: 2): 0A, No power cable, TCP/Periphery communication, On-Deck category</li>
+<li>NetGear Router: 1.7A, IEC C13 to NEMA 5-15 power, Ethernet communication, Hub category</li>
+</ul>
+</li>
+<li>Corrected HIS (Hamilton Incubator Shaker):
+    <ul>
+<li>Category:  → Off-Deck</li>
+<li>Communication:  → USB A M to USB B M</li>
+</ul>
+</li>
+<li>Corrected SCAP:
+    <ul>
+<li>Category:  → On-Deck</li>
+</ul>
+</li>
+</ul><h3>v1.3.0 (March 5, 2026)</h3><ul>
+<li>Added Section 1.1 - Rules for Using This Guide - For Humans with comprehensive workflow instructions:
+    <ul>
+<li>1.1.1 Prompt Instructions: Initial setup prompt and diagram generation prompt templates</li>
+<li>1.1.2 Input Field Guidelines: Detailed guidance for Filename, Pipettor, Devices, PC, and Facility fields</li>
+<li>1.1.3 Workflow and Tips: Approval process, post-generation steps, and performance notes</li>
+</ul>
+</li>
+<li>Renumbered all sections to accommodate new section</li>
+<li>Major update for human user guidance</li>
+</ul><h3>v1.2.0 (March 5, 2026)</h3><ul>
+<li>Hamilton naming compliance: Added Product Naming Conventions; updated section headers and first references to use "<span>Microlab STAR™</span>" and "Microlab VANTAGE™"</li>
+<li>Section reorganization: Moved Device Pairings to Section 4.6; renamed Section 5 to "HHS/HHC Control System"</li>
+<li>Code formatting improvements: Standardized code blocks; fixed scrollbar issues for PDF compatibility</li>
+<li>Structure corrections: Renumbered Section 6.1 subsections to x.y.z format</li>
+<li>Device updates: Merged tables in Section 12.5; removed Inheco CPAC from Section 12.2; combined PC entries in Section 12.3</li>
+</ul><h3>v1.1.0 (March 4, 2026)</h3><ul>
+<li>Added detailed STARline Internal Structure Specifications (Section 6.1)</li>
+<li>Added MSD QuickPlex device specifications</li>
+<li>Updated STAR Vibratory Waste and EasyCode cable information</li>
+</ul><h3>v1.0.5 (March 5, 2026)</h3><ul>
+<li>Base document with complete formatting specifications</li>
+<li>Added CSS Implementation Reference (Section 1.3.10)</li>
+<li>Added PDF Tools and Workflow documentation (Section 1.2)</li>
+</ul><h3>v1.0.0 (March 3, 2026)</h3><ul>
+<li>Initial release</li>
+<li>Creation of the Style Guide</li>
+</ul><hr/><p><strong>Document End - StyleGuide</strong></p></body>
+</html>
