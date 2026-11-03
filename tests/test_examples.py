@@ -161,6 +161,100 @@ class TestExact(Base):
         self.assertIn("3 circuit ellipse(s)", out)
 
 
+def layout(res):
+    return {c.num: sorted(l.key for l in c.loads) for c in res.circuits}
+
+
+class TestCircuitMoves(unittest.TestCase):
+    """Circuits table edits: only the moved loads change circuit."""
+    def setUp(self):
+        s = new_session()
+        s.load_order(os.path.join(FIX, "Exact_SO-294012.xlsx"))
+        s.add_customer("Agilent PlateLoc")
+        s.add_customer("IntelliXcap Decapper")
+        s.add_pipettor("STARline", "C13")
+        s.apply_pairing()
+        self.s = s
+        self.base = layout(s.run_analysis())
+
+    def where(self, key):
+        return next(n for n, keys in layout(self.s.result).items() if key in keys)
+
+    def test_move_keeps_other_loads(self):
+        src = self.where("IntelliXcap Decapper")
+        dst = next(n for n in self.base if n not in (src, 1))
+        res = self.s.move_loads(["IntelliXcap Decapper"], dst)
+        after = layout(res)
+        self.assertIn("IntelliXcap Decapper", after[dst])
+        for n, keys in self.base.items():
+            for k in keys:
+                if k != "IntelliXcap Decapper":
+                    self.assertEqual(self.where(k), n, k)
+        self.assertEqual(self.s.moved, {"IntelliXcap Decapper"})
+
+    def test_swap(self):
+        a, b = "IntelliXcap Decapper", "HHS Control Box"
+        na, nb = self.where(a), self.where(b)
+        self.assertNotEqual(na, nb)
+        self.s.swap_loads(a, b)
+        self.assertEqual((self.where(a), self.where(b)), (nb, na))
+
+    def test_new_circuit(self):
+        res = self.s.move_loads(["IntelliXcap Decapper"], "new")
+        self.assertEqual(len(res.circuits), len(self.base) + 1)
+        self.assertEqual(layout(res)[len(res.circuits)], ["IntelliXcap Decapper"])
+
+    def test_empty_circuit_is_removed_and_numbers_stay_sequential(self):
+        src = self.where("IntelliXcap Decapper")
+        keys = self.base[src]
+        res = self.s.move_loads(keys, "new")
+        self.assertEqual([c.num for c in res.circuits], list(range(1, len(res.circuits) + 1)))
+        self.assertEqual(len(res.circuits), len(self.base))
+        self.assertEqual(sorted(layout(res)[len(res.circuits)]), sorted(keys))
+        self.assertEqual(self.s.options.manual_circuits["IntelliXcap Decapper"], len(res.circuits))
+
+    def test_main_pc_stays_put(self):
+        self.s.move_loads(["HHS Control Box"], 1)
+        self.assertEqual(self.where("Standard PC"), 1)
+        self.assertEqual(self.where("HHS Control Box"), 1)
+
+    def test_clear_and_device_change_reset(self):
+        self.s.move_loads(["IntelliXcap Decapper"], "new")
+        self.assertEqual(layout(self.s.clear_pins()), self.base)
+        self.s.move_loads(["IntelliXcap Decapper"], "new")
+        self.s.add_customer("Ziath Mirage")
+        res = self.s.run_analysis()
+        self.assertFalse(self.s.options.manual_circuits)
+        self.assertTrue(any("circuit moves were cleared" in w for w in res.warnings))
+
+
+class TestDedicatedCircuitMoves(unittest.TestCase):
+    def setUp(self):
+        s = new_session()
+        s.load_order(os.path.join(FIX, "AstraZeneca_QTE-056533.xlsx"))
+        map_pn(s, "6610032-01", ["BioTek 405"])
+        map_pn(s, "0207846-001", ["Revvity VICTOR Nivo"])
+        map_pn(s, "0207358-003", ["Ziath Mirage"])
+        s.add_pipettor("VANTAGEline", "C19")
+        s.apply_pairing()
+        s.options.over_80_approved = True
+        s.options.isolate_vantage = True
+        self.s = s
+        self.res = s.run_analysis()
+
+    def test_load_on_dedicated_circuit_blocks(self):
+        ded = next(c.num for c in self.res.circuits if c.dedicated)
+        res = self.s.move_loads(["Ziath Mirage"], ded)
+        self.assertFalse(res.ok)
+        self.assertTrue(any("dedicated" in i for i in res.issues), res.issues)
+
+    def test_vantage_onto_shared_circuit_blocks(self):
+        vid = next(u.id for u in self.res.units if u.role == "pipettor")
+        res = self.s.move_loads([vid], 1)
+        self.assertFalse(res.ok)
+        self.assertTrue(any("dedicated" in i for i in res.issues), res.issues)
+
+
 class TestValidator(unittest.TestCase):
     """The routing check must catch the problems seen in the v2.0.0 diagrams."""
     def _run(self, xml):
@@ -195,6 +289,43 @@ class TestValidator(unittest.TestCase):
     def test_clean_route_passes(self):
         pts = '<Array as="points"><mxPoint x="150" y="330"/></Array>'
         self.assertIn("[PASS]  Routing (9.1)", self._run(self._doc([("a", "b", pts)])))
+
+
+class TestBayerLayout(unittest.TestCase):
+    """Bayer SO-283791: 31 devices, 3 hubs, 9 circuits (hand-made diagram ~1215x1210)."""
+    @classmethod
+    def setUpClass(cls):
+        import time
+        from app.drawio_gen import DrawioGenerator
+        cls.g = DrawioGenerator(read_csv(os.path.join(ROOT, "samples", "Bayer_SO-283791_V2_power_distribution.csv")))
+        t = time.time()
+        cls.xml = cls.g.generate()
+        cls.seconds = time.time() - t
+
+    def test_all_lines_routed(self):
+        self.assertEqual([(c.source, c.target) for c, _a, _b in self.g.route_fail], [])
+
+    def test_fast(self):
+        self.assertLess(self.seconds, 30)
+
+    def test_page_size(self):
+        rects = [r for cid, r in self.g.rect.items() if self.g.col_of.get(cid) is not None]
+        self.assertLessEqual(max(r.x2 for r in rects), 1.3 * 1215)
+        self.assertLessEqual(max(r.y2 for r in rects), 1.3 * 1210)
+
+    def test_off_deck_split_one_header_no_inner_separator(self):
+        self.assertEqual(self.g.split, {3})
+        self.assertEqual(self.xml.count("Off Deck Devices"), 1)
+        self.assertEqual(len([s for s in self.g.separators if s[0] == "v"]), 7)
+        xs = {int(r.x) for cid, r in self.g.rect.items() if self.g.col_of.get(cid) == 3}
+        self.assertEqual(len(xs), 2)
+
+    def test_pcs_in_a_row_laptop_level_with_xcytomatic(self):
+        r = lambda ref: self.g.rect[self.g.cell[ref]]
+        self.assertEqual(r("Standard PC #1").y, r("Standard PC #2").y)
+        self.assertEqual(r("XM30 Laptop").y, r("XcytoMatic 30").y)
+        hubs = sorted(self.g.hubs, key=lambda hb: r(hb.id).y)
+        self.assertEqual(hubs[-1].id, "Serial Hub")
 
 
 class TestRules(unittest.TestCase):

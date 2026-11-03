@@ -289,9 +289,11 @@ class EditDeviceDialog(_Dialog):
 
 
 class PipettorDialog(_Dialog):
-    def __init__(self, master, models):
+    def __init__(self, master, models, variants):
         super().__init__(master, "Add pipettor")
+        self.variants = variants
         self.model = tk.StringVar(value=models[0] if models else "")
+        self.variant = tk.StringVar()
         self.power = tk.StringVar()
         self.amps = tk.StringVar()
         ttk.Label(self.body, text="Model:").grid(row=0, column=0, sticky="w")
@@ -299,15 +301,18 @@ class PipettorDialog(_Dialog):
                           width=24)
         cb.grid(row=0, column=1, sticky="w", pady=2)
         cb.bind("<<ComboboxSelected>>", lambda e: self._sync())
-        ttk.Label(self.body, text="Power:").grid(row=1, column=0, sticky="w")
+        ttk.Label(self.body, text="Variant:").grid(row=1, column=0, sticky="w")
+        self.vcb = ttk.Combobox(self.body, textvariable=self.variant, state="readonly", width=24)
+        self.vcb.grid(row=1, column=1, sticky="w", pady=2)
+        ttk.Label(self.body, text="Power:").grid(row=2, column=0, sticky="w")
         self.pcb = ttk.Combobox(self.body, textvariable=self.power, state="readonly", width=24)
-        self.pcb.grid(row=1, column=1, sticky="w", pady=2)
+        self.pcb.grid(row=2, column=1, sticky="w", pady=2)
         self.pcb.bind("<<ComboboxSelected>>", lambda e: self._sync_amps())
-        ttk.Label(self.body, text="Amperage (A):").grid(row=2, column=0, sticky="w")
-        ttk.Entry(self.body, textvariable=self.amps, width=10).grid(row=2, column=1, sticky="w")
+        ttk.Label(self.body, text="Amperage (A):").grid(row=3, column=0, sticky="w")
+        ttk.Entry(self.body, textvariable=self.amps, width=10).grid(row=3, column=1, sticky="w")
         ttk.Label(self.body, text="L14-20 / L21-20 VANTAGE gets its own dedicated circuit "
                                   "(no amperage). C19 single-phase = 10A.",
-                  wraplength=320, foreground="gray").grid(row=3, column=0, columnspan=2,
+                  wraplength=320, foreground="gray").grid(row=4, column=0, columnspan=2,
                                                           sticky="w", pady=4)
         self._sync()
         self.buttons("Add")
@@ -316,6 +321,9 @@ class PipettorDialog(_Dialog):
         return "VANTAGE" if "vantage" in self.model.get().lower() else "STAR"
 
     def _sync(self):
+        names = self.variants(self.model.get())
+        self.vcb.configure(values=names)
+        self.variant.set(names[0] if names else "")
         vals = POWER_CHOICES[self._type()]
         self.pcb.configure(values=vals)
         self.power.set(vals[0])
@@ -331,7 +339,8 @@ class PipettorDialog(_Dialog):
         except ValueError:
             messagebox.showwarning("Amperage", "Amperage must be a number.", parent=self)
             return
-        self.result = {"model": self.model.get(), "power": self.power.get(), "amps": amps}
+        self.result = {"model": self.model.get(), "variant": self.variant.get(),
+                       "power": self.power.get(), "amps": amps}
         self.destroy()
 
 
@@ -569,9 +578,9 @@ class ReviewTab(ttk.Frame):
         self.app.drd_tab.refresh()
 
     def _add_pip(self):
-        r = PipettorDialog(self, self.s.pipettor_models()).run()
+        r = PipettorDialog(self, self.s.pipettor_models(), self.s.pipettor_variants).run()
         if r:
-            self.s.add_pipettor(r["model"], r["power"], r["amps"])
+            self.s.add_pipettor(r["model"], r["power"], r["amps"], r["variant"])
             self.refresh()
 
     def _rm_pip(self):
@@ -646,11 +655,13 @@ class AnalysisTab(ttk.Frame):
         self.ct.tag_configure("pinned", foreground="#1565c0")
         pin = ttk.Frame(cf)
         pin.pack(fill="x", pady=(4, 0))
-        ttk.Label(pin, text="Move selected load to circuit:").pack(side="left")
-        self.pin_n = tk.StringVar(value="1")
-        ttk.Spinbox(pin, from_=1, to=20, textvariable=self.pin_n, width=4).pack(side="left", padx=4)
+        ttk.Label(pin, text="Move selected load(s) to:").pack(side="left")
+        self.pin_n = tk.StringVar()
+        self.pin_cb = ttk.Combobox(pin, textvariable=self.pin_n, state="readonly", width=12)
+        self.pin_cb.pack(side="left", padx=4)
         ttk.Button(pin, text="Move", command=self._pin).pack(side="left")
-        ttk.Button(pin, text="Clear moves", command=self._clear).pack(side="left", padx=4)
+        ttk.Button(pin, text="Swap 2 loads", command=self._swap).pack(side="left", padx=4)
+        ttk.Button(pin, text="Clear moves", command=self._clear).pack(side="left")
         mid.add(cf, weight=2)
 
         rf = ttk.Frame(mid)
@@ -703,7 +714,11 @@ class AnalysisTab(ttk.Frame):
         self.issues.delete(0, "end")
         if res is None:
             return
-        pins = self.s.options.manual_circuits
+        pins = self.s.moved
+        targets = [f"Circuit {c.num}" for c in res.circuits] + ["New circuit"]
+        self.pin_cb.configure(values=targets)
+        if self.pin_n.get() not in targets:
+            self.pin_n.set(targets[0])
         for c in res.circuits:
             pct = (c.load / float(c.rating.rstrip("A")) * 100) if c.rating.rstrip("A") else 0
             note = c.outlet + (" | power strip" if c.power_strip else "") + \
@@ -724,7 +739,8 @@ class AnalysisTab(ttk.Frame):
         self.btn_csv.configure(state="normal" if res.ok else "disabled")
         self.status.configure(
             text=("OK - ready to export." if res.ok else f"{len(res.issues)} blocking issue(s).")
-            + f"  {len(res.warnings)} warning(s), {len(res.assumptions)} assumption(s).",
+            + f"  {len(res.warnings)} warning(s), {len(res.assumptions)} assumption(s)."
+            + ("  Edited circuit layout (Clear moves to undo)." if self.s.options.manual_circuits else ""),
             foreground="#2e7d32" if res.ok else "#c62828")
         self.app.diagram.refresh_source()
 
@@ -733,15 +749,25 @@ class AnalysisTab(ttk.Frame):
         if not sel:
             messagebox.showinfo("Move", "Select a load (not a circuit row).", parent=self)
             return
+        t = self.pin_n.get()
+        if not t:
+            return
+        target = "new" if t == "New circuit" else int(t.split()[-1])
+        self._sync_options()
         try:
-            n = int(self.pin_n.get())
-        except ValueError:
+            self.s.move_loads([i[2:] for i in sel], target)
+        except Exception as ex:
+            _err(self, "Analysis failed", ex)
+        self.show()
+
+    def _swap(self):
+        sel = [i for i in self.ct.selection() if i.startswith("L:")]
+        if len(sel) != 2:
+            messagebox.showinfo("Swap", "Select exactly two loads (Ctrl+click).", parent=self)
             return
         self._sync_options()
-        for i in sel:
-            self.s.options.manual_circuits[i[2:]] = n
         try:
-            self.s.run_analysis()
+            self.s.swap_loads(sel[0][2:], sel[1][2:])
         except Exception as ex:
             _err(self, "Analysis failed", ex)
         self.show()

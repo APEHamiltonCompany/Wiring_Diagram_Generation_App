@@ -92,6 +92,12 @@ STAR_PORTS = ["TCC1", "TCC2", "Ext. Can", "EX IO", "Div1", "Div2", "Div3",
               "P1", "P2", "Int. Board"]
 VANTAGE_PORTS = ["High", "Medium", "Low", "General"]
 
+# Acceptable pipettor names per family (StyleGuide §6.1 / §6.2).
+PIPETTOR_VARIANTS = {
+    "STAR": ["STAR", "STARlet", "STARplus", "STAR-2", "STARlet-2"],
+    "VANTAGE": ["VANTAGE 2.0", "VANTAGE 1.3", "STAR-V 2.0", "STAR-V 1.3"],
+}
+
 
 # --------------------------------------------------------------------------
 # HTML table extraction (struck-text aware)

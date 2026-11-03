@@ -27,7 +27,7 @@ import re
 from xml.sax.saxutils import quoteattr
 
 from .csv_io import PowerModel, ConnectionRow
-from .drd import split_cables, cable_kind
+from .drd import split_cables, cable_kind, PIPETTOR_VARIANTS
 from .router import Router, Rect, Terminal
 
 # --------------------------------------------------------------------------
@@ -65,20 +65,37 @@ STAR_PORT_KIND = {
     "USB B": "usb", "C13": "power",
 }
 VANTAGE_PORT_KIND = {
-    "DB9": "serial", "RJ45": "ethernet",
+    "USB A": "usb", "DB9": "serial", "RJ45": "ethernet",
     "High": "serial", "Medium": "serial", "Low": "serial", "General": "serial", "Limited": "serial",
     "Ext RJ45": "ethernet", "Ext USB B": "usb", "power": "power", "P SKT": "power",
 }
+
+PERIPH_INVENTORY = {"USB A": 3, "DB9": 4, "RJ45": 4, "High": 1,
+                    "Medium": 2, "Low": 1, "General": 2, "Limited": 1}
+PERIPH_DEFAULT = ("USB A", "DB9", "RJ45", "High", "Medium", "Low", "General")
+_PERIPH_RE = re.compile(r"(USB A|DB9|RJ45|High|Medium|Low|General|Limited)[\s_-]*(\d*)", re.I)
+
+
+def _periph_key(key):
+    """(base, index) of a VANTAGE Periphery Box port key ("USB A2" -> ("USB A", 2)), else None."""
+    m = _PERIPH_RE.fullmatch((key or "").strip())
+    if not m:
+        return None
+    base = next(b for b in PERIPH_INVENTORY if b.lower() == m.group(1).lower())
+    return base, max(1, int(m.group(2) or 1))
+
+
+def _periph_name(base, idx):
+    return base if idx == 1 else f"{base}{idx}"
 
 
 def _port_kind(ptype, key):
     if ptype == "STAR":
         return STAR_PORT_KIND.get(key, "")
-    if key.startswith("USB A"):
-        return "usb"
     if key.startswith("PWR"):
         return "power"
-    return VANTAGE_PORT_KIND.get(key, "")
+    pk = _periph_key(key)
+    return VANTAGE_PORT_KIND.get(pk[0] if pk else key, "")
 
 # Ellipse variants (STAR Div/P power ports are circles) ---------------------
 def _ellipse(style):
@@ -197,11 +214,17 @@ def _h(d, default=60):
     return int(d.height) if getattr(d, "height", None) else default
 
 
-def _usb_a_index(key):
-    m = re.fullmatch(r"USB A(\d*)", key or "")
-    if not m:
-        return 0
-    return int(m.group(1) or 1)
+def _is_star_v(row):
+    return "STAR-V" in f"{row.name} {row.id} {row.drd_name}".upper()
+
+
+def _pip_title(row, ptype):
+    name = (row.name or "").strip()
+    return name if name in PIPETTOR_VARIANTS.get(ptype, []) else ptype
+
+
+def _is_feeder(ref):
+    return ref.startswith("Circuit") or ref.startswith("Power Strip")
 
 
 def _pip_type(row, model):
@@ -227,7 +250,7 @@ def _legacy_connections(model):
         if d.powered and d.circuit:
             src = f"Power Strip {d.circuit}" if d.circuit in strips else f"Circuit {d.circuit}"
             n = max(1, len(_power_cables(d.power_cable)))
-            port = ("C13" if "STAR" in d.name.upper() else "power") if d.category == "pipettor" else ""
+            port = ("C13" if _pip_type(d, model) == "STAR" else "power") if d.category == "pipettor" else ""
             for _ in range(n if d.category != "pipettor" else 1):
                 model.connections.append(ConnectionRow(src, "", d.id, port, "power", d.power_cable))
         elif d.connect_power_to and d.connect_power_to in names:
@@ -279,6 +302,8 @@ class DrawioGenerator:
         self.warnings = []
         self.extra = [0] * len(COLS)      # extra width per column (lane room)
         self.gap_y = GAP_Y
+        self.face_pref = True
+        self.split = set()                # device columns drawn as two halves
         self._reset()
 
     def _reset(self):
@@ -330,6 +355,9 @@ class DrawioGenerator:
         self.pcs = sorted([d for d in m.devices if d.category == "pc"],
                           key=lambda d: d.id != pc_main)
         self.hubs = [d for d in m.devices if d.category == "hub"]
+        self.pc_ids = {d.id for d in self.pcs}
+        self.hub_ids = {d.id for d in self.hubs}
+        self.main_pc = self.pcs[0].id if self.pcs else ""
         rest = [d for d in m.devices if d.category not in ("pc", "hub", "pipettor")]
         self.children = {}
         for d in rest:
@@ -350,17 +378,37 @@ class DrawioGenerator:
                 self.usb_ends.update((c.source, c.target))
         # pipettor ports: filled when used, colour by PORT TYPE
         self.ptype = {p.id: _pip_type(p, m) for p in self.pip_rows}
+        self.star_v = {p.id for p in self.pip_rows if self.ptype[p.id] == "VANTAGE" and _is_star_v(p)}
         self.filled = {}
         for c in m.connections:
             for end, port in ((c.target, c.target_port), (c.source, c.source_port)):
                 if end in self.pip_ids and port:
-                    self.filled[(end, port)] = _port_kind(self.ptype[end], port) or c.type or "power"
+                    key = self._pkey(end, port)
+                    self.filled[(end, key)] = _port_kind(self.ptype[end], key) or c.type or "power"
+        self.links = {}
+        for c in m.connections:
+            self.links.setdefault(c.source, []).append((c.target, c.target_port, c.type))
+            self.links.setdefault(c.target, []).append((c.source, c.source_port, c.type))
+        self.pc_target = {}
+        for pc in self.pcs[1:]:
+            ends = {o for o, _p, k in self.links.get(pc.id, []) if k != "power"}
+            if len(ends) == 1:
+                o = next(iter(ends))
+                if o in self.devs and self.devs[o].category in ("off_deck", "on_deck"):
+                    self.pc_target[pc.id] = o
         for p in self.pip_rows:
             if self.ptype[p.id] == "STAR":
                 self.filled.setdefault((p.id, "EX IO"), "serial")     # always filled (6.1.5)
-            else:
+            elif p.id not in self.star_v:
                 self.filled.setdefault((p.id, "PWR 1"), "power")
                 self.filled.setdefault((p.id, "P SKT"), "power")
+
+    def _pkey(self, ref, port):
+        if port and self.ptype.get(ref) == "VANTAGE":
+            pk = _periph_key(port)
+            if pk:
+                return _periph_name(*pk)
+        return port
 
     # =================================================================
     # PHASE 2 - layout
@@ -378,8 +426,16 @@ class DrawioGenerator:
                 need = max(need, w)
         widths[3] = max(widths[3], need, max([_w(d) + 60 for d in self.offdeck] + [0]))
         widths[4] = max(widths[4], max([_w(d) + 50 for d in self.ondeck] + [0]))
-        pc_w = max([_w(d) for d in self.pcs + self.hubs] + [120])
-        widths[2] = max(widths[2], pc_w + 60)
+        row = [d for d in self.pcs if d.id not in self.pc_target]
+        widths[2] = max([widths[2], 180, 20 + sum(_w(d) + 40 for d in row)]
+                        + [_w(d) + 60 for d in self.hubs]
+                        + [_w(d) + 60 for d in self.pcs if d.id in self.pc_target])
+        lane_w = {3: max([_w(p) + sum(20 + _w(k) for k in self.beside.get(p.id, []))
+                          for p in self.offdeck] + [120]),
+                  4: max([_w(d) for d in self.ondeck] + [80])}
+        for c in (3, 4):
+            if c in self.split:
+                widths[c] = max(widths[c], 40 + 2 * lane_w[c] + self._mid_gap(c))
         widths = [_g(w + e) for w, e in zip(widths, self.extra)]
         self.cols = []
         left = COL_LEFT0
@@ -387,14 +443,51 @@ class DrawioGenerator:
             self.cols.append((title, left, widths[i]))
             left += widths[i]
         self.page_right = left
+        self.lane_x = {}
+        for c in (3, 4):
+            self.lane_x[(c, 0)] = self.cols[c][1] + 20
+            if c in self.split:
+                self.lane_x[(c, 1)] = self.cols[c][1] + widths[c] - 20 - lane_w[c]
+
+    def _too_tall(self):
+        """First device column whose stack is much taller than the PC/hub stack and
+        the pipettors (1.5x) or above 1400px; it is split into two halves."""
+        hubs = max([_h(p, 80) for p in self.pcs if p.id not in self.pc_target] + [0]) \
+            + sum(_h(hb, 50) + 60 for hb in self.hubs)
+        limit = min(1400, 1.5 * max(hubs, self.pip_bottom - 90))
+        for c in (3, 4):
+            rows = {(r.y, r.y2) for cid, r in self.rect.items() if self.col_of.get(cid) == c}
+            if c not in self.split and sum(b - a + self.gap_y for a, b in rows) > limit:
+                return c
+        return None
+
+    def _inner(self, d):
+        """Devices that go in the half of a split column nearer the pipettor."""
+        to_pip = any(o in self.pip_ids for o, _p, _k in self.links.get(d.id, []))
+        return to_pip if d.category == "on_deck" else to_pip or bool(self._kids_on_deck(d))
+
+    def _mid_gap(self, col):
+        """Gap between the two halves: room for the lines the inner half sends left."""
+        left = self.pc_ids | self.hub_ids
+        n = 0
+        for d in (self.offdeck if col == 3 else self.ondeck):
+            if self._inner(d) or col == 4:
+                n += sum(1 for o, _p, _k in self.links.get(d.id, []) if o in left or _is_feeder(o)
+                         or (col == 4 and o in self.devs and self.devs[o].category == "off_deck"))
+        return _g(max(40, (n + 1) * 10 + 20))
 
     def _layout(self):
         self._compute_columns()
         for title, left, w in self.cols:
             self.node(title, STYLE_HEADER, left, 20, w, 40)
         self._layout_pipettors()
-        self._layout_pcs()
         self._layout_devices()
+        col = self._too_tall()
+        if col is not None:
+            self.split.add(col)
+            self._reset()
+            return self._layout()
+        self._layout_pcs()
         self._layout_circuits()
         self._layout_legend()
         self._wire()
@@ -429,7 +522,7 @@ class DrawioGenerator:
         body = self.node("", STYLE_STAR, bx, by, 90, H, col=5)
         self.cell[pip.id] = body
         P, o = pip.id, (bx, by)
-        self.node("STAR", STYLE_PIP_TITLE, 0, 0, 90, 20, parent=body)
+        self.node(_pip_title(pip, "STAR"), STYLE_PIP_TITLE, 0, 0, 90, 20, parent=body)
         self.node("", PS_SECTION, 10, 20, 70, 250, parent=body)
         self.node("Periphery", STYLE_SECTION_TITLE, 10, 20, 70, 20, parent=body)
         for key, oy in [("TCC1", 40), ("TCC2", 60), ("Ext. Can", 80), ("EX IO", 100), ("Div1", 120)]:
@@ -450,61 +543,95 @@ class DrawioGenerator:
     def _build_vantage(self, pip, bx, by):
         P, o = pip.id, (bx, by)
         phase = (pip.power_cable or self.m.vantage_phase or "L14-20").strip()
-        n_usba = max([1] + [_usb_a_index(k) for (pid, k) in self.filled if pid == P])
-        periph_ports = 6 + n_usba
+        used = {}
+        for (pid, k) in self.filled:
+            pk = _periph_key(k) if pid == P else None
+            if pk:
+                used[pk[0]] = max(used.get(pk[0], 0), pk[1])
+        count = {b: min(n, max(int(b in PERIPH_DEFAULT), used.get(b, 0)))
+                 for b, n in PERIPH_INVENTORY.items()}
+        periph_ports = sum(count.values())
+        ac_box = P not in self.star_v
         periph_h = 60 + periph_ports * 20
-        H = 200 + periph_ports * 20 + 170
+        H = 200 + periph_ports * 20 + (170 if ac_box else 0)
         body = self.node("", STYLE_VANTAGE, bx, by, 90, H, col=5)
         self.cell[P] = body
-        self.node("VANTAGE", STYLE_PIP_TITLE, 0, 0, 90, 20, parent=body)
+        self.node(_pip_title(pip, "VANTAGE"), STYLE_PIP_TITLE, 0, 0, 90, 20, parent=body)
         self.node("", PS_SECTION, 10, 20, 70, periph_h, parent=body)
         self.node("Periphery Box", STYLE_SECTION_TITLE, 10, 20, 70, 30, parent=body)
         oy = 50
-        for i in range(n_usba):
-            key = "USB A" if i == 0 else f"USB A{i + 1}"
-            self._port(P, body, key, "USB A", 20, oy, 50, 20, origin=o)
-            oy += 20
-        self._port(P, body, "DB9", "DB9", 20, oy, 50, 20, origin=o); oy += 20
-        self._port(P, body, "RJ45", "RJ45", 20, oy, 50, 20, origin=o); oy += 20
-        self.node("P INTER", STYLE_SECTION_TITLE, 10, oy, 70, 20, parent=body); oy += 20
-        for key in ["High", "Medium", "Low", "General"]:
-            self._port(P, body, key, key, 20, oy, 50, 20, origin=o); oy += 20
+        for base in PERIPH_INVENTORY:
+            if base == "High":
+                self.node("P INTER", STYLE_SECTION_TITLE, 10, oy, 70, 20, parent=body); oy += 20
+            for i in range(1, count[base] + 1):
+                self._port(P, body, _periph_name(base, i), base, 20, oy, 50, 20, origin=o); oy += 20
         ext_y = oy + 20
         self.node("", PS_SECTION, 10, ext_y, 70, 90, parent=body)
         self.node("External", STYLE_SECTION_TITLE, 10, ext_y, 70, 20, parent=body)
         self._port(P, body, "Ext RJ45", "RJ45", 20, ext_y + 20, 50, 20, origin=o)
         self._port(P, body, "Ext USB B", "USB B", 20, ext_y + 40, 50, 20, origin=o)
         self._port(P, body, "power", _esc(phase), 20, ext_y + 60, 50, 20, origin=o)
-        ac_y = ext_y + 100
-        self.node("", PS_SECTION, 10, ac_y, 70, 170, parent=body)
-        self.node("AC Box", STYLE_SECTION_TITLE, 10, ac_y, 70, 20, parent=body)
-        for i, lab in enumerate(["PWR 1", "PWR 2", "PWR 3", "PWR 4", "PWR 5", "PWR 6"]):
-            self._port(P, body, lab, lab, 20, ac_y + 20 + i * 20, 50, 20, origin=o)
-        self._port(P, body, "P SKT", "P SKT", 20, ac_y + 140, 50, 20, origin=o)
+        if ac_box:
+            ac_y = ext_y + 100
+            self.node("", PS_SECTION, 10, ac_y, 70, 170, parent=body)
+            self.node("AC Box", STYLE_SECTION_TITLE, 10, ac_y, 70, 20, parent=body)
+            for i, lab in enumerate(["PWR 1", "PWR 2", "PWR 3", "PWR 4", "PWR 5", "PWR 6"]):
+                self._port(P, body, lab, lab, 20, ac_y + 20 + i * 20, 50, 20, origin=o)
+            self._port(P, body, "P SKT", "P SKT", 20, ac_y + 140, 50, 20, origin=o)
         return H
 
     # ---- PCs + hubs ------------------------------------------------------
+    def _pc_block(self, pc, x, y):
+        w, h = _w(pc), _h(pc, 80)
+        name = "PC &amp; Peripheries" if pc.id == self.m.meta.get("main_pc_id", "") \
+            else _esc(pc.name)
+        lines = [f"<b>{name}</b>"]
+        if pc.amperage:
+            lines.append(f"{_fmt(pc.amperage)}A")
+        # every power cable on its own line (a 2-plug PC lists two)
+        lines += [_esc(c) for c in self._power_lines(pc)]
+        h = max(h, _g(12 + 16 * len(lines)))
+        self.cell[pc.id] = self.node("<br>".join(lines), STYLE_PC, x, _g(y), w, h, col=2)
+        return w, h
+
+    def _end_y(self, ref, port):
+        r = self._end_rect(ref, port)
+        return None if r is None else r.y + r.h / 2
+
     def _layout_pcs(self):
+        """PCs side by side at the top, hubs stacked below with the gaps sized from
+        the lines that leave between them (busiest hub last), and a PC wired to a
+        single device level with that device."""
         x = self._col_x(2) + 20
-        y = 90
+        y, bx, row_h = 90, x, 0
         for pc in self.pcs:
-            w, h = _w(pc), _h(pc, 80)
-            name = "PC &amp; Peripheries" if pc.id == self.m.meta.get("main_pc_id", "") \
-                else _esc(pc.name)
-            lines = [f"<b>{name}</b>"]
-            if pc.amperage:
-                lines.append(f"{_fmt(pc.amperage)}A")
-            # every power cable on its own line (a 2-plug PC lists two)
-            lines += [_esc(c) for c in self._power_lines(pc)]
-            h = max(h, _g(12 + 16 * len(lines)))
-            self.cell[pc.id] = self.node("<br>".join(lines), STYLE_PC, x, y, w, h, col=2)
-            y += h + 40
-        for hb in self.hubs:
+            if pc.id not in self.pc_target:
+                w, h = self._pc_block(pc, bx, y)
+                bx += w + 40
+                row_h = max(row_h, h)
+        main_down = sum(1 for o, _p, k in self.links.get(self.main_pc, [])
+                        if k != "power" and o not in self.hub_ids)
+        y += row_h
+        above = main_down
+        hubs = sorted(self.hubs, key=lambda hb: (len(self.links.get(hb.id, [])), self.hubs.index(hb)))
+        for hb in hubs:
             w, h = _w(hb, 120), _h(hb, 50)
+            mid = y + 60 + h / 2
+            ys = [self._end_y(o, p) for o, p, _k in self.links.get(hb.id, [])]
+            up = sum(1 for v in ys if v is None or v < mid)
+            y += max(60, (up + above + 1) * 10 + 20)
             lines = [f"<b>{_esc(hb.name)}</b>"] + [_esc(c) for c in split_cables(hb.comm_cable)]
             self.cell[hb.id] = self.node("<br>".join(lines), STYLE_HUB, x, y, w, h, col=2)
-            y += h + 40
+            y += h
+            above = len(ys) - up
+        y += 40
+        for pc in self.pcs:
+            if pc.id in self.pc_target:
+                want = self.rect[self.cell[self.pc_target[pc.id]]].y
+                _w2, h = self._pc_block(pc, x, max(want, y))
+                y = max(want, y) + h + 40
         self.pc_bottom = y
+        self.devices_bottom = max(self.devices_bottom, y)
 
     def _power_lines(self, d):
         """Power cables of a device, one entry per physical cable."""
@@ -541,71 +668,166 @@ class DrawioGenerator:
         return "<br>".join(lines)
 
     def _block(self, d, x, y, col):
-        w = _w(d)
-        label = self._dev_label(d)
-        h = _h(d, 0) or _g(max(60, 12 + 16 * label.count("<br>") + 16))
-        self.cell[d.id] = self.node(label, STYLE_DEVICE, x, _g(y), w, h, col=col)
+        w, h = _w(d), self._dev_h(d)
+        self.cell[d.id] = self.node(self._dev_label(d), STYLE_DEVICE, x, _g(y), w, h, col=col)
         return w, h
+
+    def _dev_h(self, d):
+        return _h(d, 0) or _g(max(60, 12 + 16 * self._dev_label(d).count("<br>") + 16))
 
     def _kids_on_deck(self, d):
         return [k for k in self.children.get(d.id, []) if k.category == "on_deck"]
 
+    def _port_ys(self, d):
+        """Centre y of every pipettor port the device is wired to."""
+        out = []
+        for o, p, _k in self.links.get(d.id, []):
+            key = self._pkey(o, p)
+            if o in self.pip_ids and (o, key) in self.port_rect:
+                r = self.port_rect[(o, key)]
+                out.append(r.y + r.h / 2)
+        return out
+
+    def _port_only(self, d):
+        """Port ys of a device wired only to pipettor ports (plus PCs / hubs)."""
+        ys = self._port_ys(d)
+        if not ys or any(o not in self.pip_ids and o not in self.pc_ids and o not in self.hub_ids
+                         for o, _p, _k in self.links.get(d.id, [])):
+            return None
+        return ys
+
+    def _channels(self):
+        """Clusters of pipettor-port ys wired from the left of the device columns
+        (PCs, hubs, power strips, circuits); those lanes cross both device columns."""
+        ys = []
+        for c in self.m.connections:
+            for p, port, o in ((c.target, c.target_port, c.source), (c.source, c.source_port, c.target)):
+                key = self._pkey(p, port)
+                left = o in self.pc_ids or o in self.hub_ids or _is_feeder(o)
+                if p in self.pip_ids and left and (p, key) in self.port_rect:
+                    r = self.port_rect[(p, key)]
+                    ys.append(r.y + r.h / 2)
+        out = []
+        for v in sorted(ys):
+            if out and v - out[-1][1] <= 30:
+                out[-1][1] = v
+            else:
+                out.append([v, v])
+        return [(a - 10, b + 10) for a, b in out]
+
+    def _reserve_ports(self, ports):
+        """Port-only devices: block tops inside the straight-line window of their
+        ports, stacked in port order and centred on the group."""
+        top0 = min(self.rect[self.cell[p.id]].y for p in self.pip_rows)
+        bot0 = self.pip_bottom
+        out = []
+        for d, ys in sorted(ports, key=lambda t: (t[0].category == "on_deck", min(t[1]), t[0].id)):
+            h = self._dev_h(d)
+            lo, hi = max(ys) - h + 10, min(ys) - 10
+            want = (min(ys) + max(ys)) / 2 - h / 2
+            if lo <= hi:
+                want = min(max(want, lo), hi)
+            out.append([d, want, h, lo, hi])
+        groups = []
+        for item in out:
+            g = groups[-1] if groups else None
+            if g and g[-1][0].category == item[0].category and g[-1][1] + g[-1][2] + self.gap_y > item[1]:
+                g.append(item)
+            else:
+                groups.append([item])
+        for g in groups:
+            span = sum(i[2] for i in g) + self.gap_y * (len(g) - 1)
+            mid = sum(i[1] + i[2] / 2 for i in g) / len(g)
+            y = min(max(mid - span / 2, top0), max(top0, bot0 - span))
+            for i in g:
+                i[1] = _g(y)
+                y += i[2] + self.gap_y
+        return [(d, y, h, max(top0, min(y, lo) - h), min(bot0, max(y + h, hi + h) + h))
+                for d, y, h, lo, hi in out]
+
     def _layout_devices(self):
         gy = self.gap_y
-        x4 = self._col_x(3) + 20
-        x5 = self._col_x(4) + 20
-        off_y, on_y = 90, 90
+        occ = {k: [] for k in self.lane_x}
         placed = set()
+        last = {c: max(k for cc, k in self.lane_x if cc == c) for c in (3, 4)}
+
+        def reserve(col, a, b, lanes=None):
+            for k in occ:
+                if k[0] == col and (lanes is None or k[1] in lanes):
+                    occ[k].append((a + gy, b - gy))
+
+        def fits(col, y, h):
+            return y >= 90 and all(y + h + gy <= a or b + gy <= y for a, b in occ[col])
+
+        def near(col, h, want, lo=90):
+            want = max(lo, _g(want))
+            cands = [want] + [_g(b + gy) for _a, b in occ[col]] + [_g(a - gy - h) for a, _b in occ[col]]
+            return min((c for c in cands if c >= lo and fits(col, c, h)),
+                       key=lambda c: (abs(c - want), c))
+
+        def put(d, lane, y, dx=0):
+            w, h = self._block(d, self.lane_x[lane] + dx, y, lane[0])
+            occ[lane].append((_g(y), _g(y) + h))
+            placed.add(d.id)
+            return w, h
 
         def kids_h(d):
-            ks = self._kids_on_deck(d)
-            return sum(_h(k) + gy for k in ks)
+            return sum(self._dev_h(k) + gy for k in self._kids_on_deck(d))
 
         def key(d):
             circ = [_int(c) for c in (d.circuit or "").split(",") if c.strip()]
             return (min(circ) if circ else 99, kids_h(d))
-        for d in sorted(self.offdeck, key=key):
-            kids = self._kids_on_deck(d)
-            y = max(off_y, on_y) if kids else off_y
-            w, h = self._block(d, x4, y, 3)
-            bx = x4 + w + 20
-            row_h = h
-            for k in self.beside.get(d.id, []):
-                kw, kh = self._block(k, bx, y, 3)
-                bx += kw + 20
-                row_h = max(row_h, kh)
-                placed.add(k.id)
-            off_y = y + row_h + gy
-            ky = y
-            for k in kids:
-                _kw, kh = self._block(k, x5, ky, 4)
-                placed.add(k.id)
-                ky += kh + gy
+
+        def put_kids(d, y):
+            kids = [k for k in self._kids_on_deck(d) if k.id not in placed]
             if kids:
-                on_y = ky
-        # remaining on-deck devices: line up with the pipettor port they use
-        rest = []
-        for d in self.ondeck:
+                ky = near((4, 0), kids_h(d) - gy, y)
+                for k in kids:
+                    ky += put(k, (4, 0), ky)[1] + gy
+        for a, b in self._channels():
+            reserve(3, a, b)
+            reserve(4, a, b)
+        ports = []
+        for d in self.offdeck + self.ondeck:
+            ys = self._port_only(d)
+            par = self.devs.get(d.parent)
+            if ys and not (par and par.category in ("off_deck", "on_deck")):
+                ports.append((d, ys))
+        port_ys = {d.id: ys for d, ys in ports}
+        for d, y, h, a, b in self._reserve_ports(ports):
+            col = 4 if d.category == "on_deck" else 3
+            put(d, (col, last[col]), y)
+            reserve(col, a, b, (last[col],))
+            if col == 3:
+                reserve(4, min(port_ys[d.id]) - 10, max(port_ys[d.id]) + 10)
+        cursor = {k: 90 for k in occ}
+        for d in sorted(self.offdeck, key=key):
             if d.id in placed:
+                put_kids(d, self.rect[self.cell[d.id]].y)
                 continue
-            want = on_y
-            for c in self.m.connections:
-                for a, b, port in ((c.source, c.target, c.target_port), (c.target, c.source, c.source_port)):
-                    if a == d.id and (b, port) in self.port_rect:
-                        r = self.port_rect[(b, port)]
-                        want = r.y + r.h / 2 - _h(d) / 2
-                        break
-                else:
-                    continue
-                break
-            rest.append((want, d))
-        for want, d in sorted(rest, key=lambda t: t[0]):
-            _w5, h = self._block(d, x5, max(on_y, _g(want)), 4)
-            on_y = max(on_y, _g(want)) + h + gy
-        self.devices_bottom = max(off_y, on_y, self.pc_bottom, self.pip_bottom)
+            row = [d] + self.beside.get(d.id, [])
+            row_h = max(self._dev_h(k) for k in row)
+            lanes = [(3, last[3])] if 3 in self.split and self._inner(d) else \
+                [k for k in occ if k[0] == 3]
+            spots = [(near(k, row_h, cursor[k], cursor[k]), k[1], k) for k in lanes]
+            y, _i, lane = min(spots)
+            dx = 0
+            for k in row:
+                dx += put(k, lane, y, dx)[0] + 20
+            occ[lane][-len(row):] = [(y, y + row_h)]
+            cursor[lane] = y + row_h + gy
+            put_kids(d, y)
+        for d in self.ondeck:
+            if d.id not in placed:
+                ys = self._port_ys(d)
+                h = self._dev_h(d)
+                lane = (4, last[4] if ys else 0)
+                put(d, lane, near(lane, h, sum(ys) / len(ys) - h / 2 if ys else 90))
+        self.devices_bottom = max([self.rect[self.cell[i]].y2 for i in placed] + [self.pip_bottom])
 
     # ---- circuits -----------------------------------------------------
     def _end_rect(self, ref, port):
+        port = self._pkey(ref, port)
         if port and (ref, port) in self.port_rect:
             return self.port_rect[(ref, port)]
         cid = self.cell.get(ref)
@@ -623,16 +845,18 @@ class DrawioGenerator:
         strip_conns = {}
         targets = {}
         for c in self.m.connections:
-            if c.type != "power" or c.target.startswith("Circuit"):
+            if c.type != "power" or _is_feeder(c.source) == _is_feeder(c.target):
                 continue
-            src = c.source
-            if src.startswith("Power Strip"):
-                strip_conns[src] = strip_conns.get(src, 0) + 1
-                src = "Circuit " + src.split()[-1]
-            if src.startswith("Circuit"):
-                r = self._end_rect(c.target, c.target_port)
-                if r is not None:
-                    targets.setdefault(src, []).append(r.y + r.h / 2)
+            if _is_feeder(c.source):
+                feed, dev, port = c.source, c.target, c.target_port
+            else:
+                feed, dev, port = c.target, c.source, c.source_port
+            if feed.startswith("Power Strip"):
+                strip_conns[feed] = strip_conns.get(feed, 0) + 1
+                feed = "Circuit " + feed.split()[-1]
+            r = self._end_rect(dev, port)
+            if r is not None:
+                targets.setdefault(feed, []).append(r.y + r.h / 2)
         prev_bottom = 70
         self.circuits_bottom = 90
         for c in ordered:
@@ -646,15 +870,17 @@ class DrawioGenerator:
             ys = targets.get(name)
             want_c = sum(ys) / len(ys) if ys else prev_bottom + self.gap_y + ext / 2
             top = max(want_c - ext / 2, prev_bottom + self.gap_y)
-            center = _g(top + ext / 2)
-            cy = _g(center - size / 2)
+            if has_strip:
+                sy = _g(top + (ext - sh) / 2)
+                cy = sy + sh / 2 - size / 2
+            else:
+                cy = _g(top + (ext - size) / 2)
             cx = 215 if ded else 220
             label = f"<b>Circuit {c.circuit}</b><br>{c.rating}<br>{c.voltage_outlet}"
             self.cell[name] = self.node(label, STYLE_CIRCUIT, cx, cy, size, size, col=0)
             bottom = cy + size
             if has_strip:
                 sx = self._col_x(1) + 20
-                sy = _g(center - sh / 2)
                 self.cell[sname] = self.node("<b>Power Strip</b>", STYLE_POWERSTRIP, sx, sy, 40, sh, col=1)
                 bottom = max(bottom, sy + sh)
             prev_bottom = bottom
@@ -705,8 +931,9 @@ class DrawioGenerator:
             ly += 23
 
     # ---- wiring ---------------------------------------------------------
-    def _terminal(self, ref, port):
+    def _terminal(self, ref, port, other="", kind=""):
         """(cell id, Terminal, column) for one end of a connection."""
+        port = self._pkey(ref, port)
         if port and (ref, port) in self.port_id:
             body = self.rect[self.cell[ref]]
             return self.port_id[(ref, port)], Terminal(self.port_rect[(ref, port)], body, ("W",)), 5
@@ -716,18 +943,33 @@ class DrawioGenerator:
         if not cid:
             return None, None, None
         r = self.rect[cid]
+        col = self.col_of.get(cid, 0)
         if ref in self.pip_ids:
             return cid, Terminal(r, r, ("W",)), 5
-        return cid, Terminal(r), self.col_of.get(cid, 0)
+        if ref.startswith("Power Strip"):
+            return cid, Terminal(r, faces=("E", "W")), col
+        if ref in self.hub_ids:
+            return cid, Terminal(r, faces=("N", "S")), col
+        prefer = None
+        if ref in self.pc_ids and self.face_pref:
+            if kind == "power" and other.startswith("Power Strip"):
+                prefer = ("W",)
+            elif kind != "power" and ref == self.main_pc:
+                prefer = ("S",)
+        return cid, Terminal(r, prefer=prefer), col
+
+    def _sep_xs(self):
+        return [COL_LEFT0] + [left + w for (_t, left, w) in self.cols]
 
     def _wire(self):
         obstacles = [r for cid, r in self.rect.items() if self.col_of.get(cid) is not None]
         bottom = max([r.y2 for r in obstacles] + [self.devices_bottom])
-        router = Router(obstacles, (COL_LEFT0 + 10, 70, self.page_right - 10, bottom + 200))
+        router = Router(obstacles, (COL_LEFT0 + 10, 70, self.page_right - 10, bottom + 200),
+                        vlines=self._sep_xs())
         jobs = []
         for i, c in enumerate(self.m.connections):
-            s, st, sc = self._terminal(c.source, c.source_port)
-            t, tt, tc = self._terminal(c.target, c.target_port)
+            s, st, sc = self._terminal(c.source, c.source_port, c.target, c.type)
+            t, tt, tc = self._terminal(c.target, c.target_port, c.source, c.type)
             if not s or not t:
                 self.warnings.append(f"Connection {c.source} -> {c.target} skipped: "
                                      f"{'source' if not s else 'target'} not on the diagram.")
@@ -736,13 +978,64 @@ class DrawioGenerator:
             dist = abs((a.x + a.w / 2) - (b.x + b.w / 2)) + abs((a.y + a.h / 2) - (b.y + b.h / 2))
             jobs.append((dist, i, c, s, st, sc, t, tt, tc))
         # short lines first: they take the inner lanes and the longer ones nest outside
-        for dist, i, c, s, st, sc, t, tt, tc in sorted(jobs, key=lambda j: (j[0], j[1])):
-            pts = router.route(st, tt)
-            if pts is None:
+        jobs.sort(key=lambda j: (j[0], j[1]))
+        pts = {}
+        for j in jobs:
+            p = router.route(j[4], j[7], lid=j[1])
+            if p is not None:
+                pts[j[1]] = p
+        self._rip_up(router, jobs, pts)
+        self.diagnosis = []
+        for dist, i, c, s, st, sc, t, tt, tc in jobs:
+            if i not in pts:
                 self.route_fail.append((c, sc, tc))
-                pts = []
-            self.edge(s, t, LINE_COLORS.get(c.type, C_PERIPHERY), pts)
+                self.diagnosis.append(router.blockers(st, tt))
+            self.edge(s, t, LINE_COLORS.get(c.type, C_PERIPHERY), pts.get(i, []))
         self.lines_bottom = max([p[1] for e in self.edges for p in e.points] + [0])
+
+    def _rip_up(self, router, jobs, pts, rounds=3, max_lines=4):
+        """Rip-up and reroute: free the lines that block a failed one, route the
+        failed line first, then put the removed lines back. Undone if any of them
+        then fails."""
+        by_id = {j[1]: j for j in jobs}
+        for _round in range(rounds):
+            failed = [j for j in jobs if j[1] not in pts]
+            if not failed:
+                return
+            progress = False
+            for j in failed:
+                p = router.route(j[4], j[7], lid=j[1])
+                if p is not None:
+                    pts[j[1]] = p
+                    progress = True
+                    continue
+                diag = router.blockers(j[4], j[7])
+                if not diag or not diag[0] or len(diag[0]) > max_lines or diag[1]:
+                    continue
+                lids = [k for k in diag[0] if k in pts]
+                old = {k: (router.uncommit(k), pts.pop(k)) for k in lids}
+                new = {}
+                p = router.route(j[4], j[7], lid=j[1])
+                ok = p is not None
+                if ok:
+                    new[j[1]] = p
+                    for k in sorted(lids, key=lambda k: (by_id[k][0], k)):
+                        q = router.route(by_id[k][4], by_id[k][7], lid=k)
+                        if q is None:
+                            ok = False
+                            break
+                        new[k] = q
+                if ok:
+                    pts.update(new)
+                    progress = True
+                    continue
+                for k in new:
+                    router.uncommit(k)
+                for k, (nodes, q) in old.items():
+                    router.commit(nodes, k)
+                    pts[k] = q
+            if not progress:
+                return
 
     # =================================================================
     # Frame
@@ -752,8 +1045,7 @@ class DrawioGenerator:
         max_y = max([ry + rh for (_rx, ry, _rw, rh) in rects] + [850, self.lines_bottom + 20])
         max_y = int(max_y + 30)
         self.frame_bottom = max_y
-        xs = [COL_LEFT0] + [left + w for (_t, left, w) in self.cols]
-        for x in xs:
+        for x in self._sep_xs():
             self.separators.append(("v", x, 50, x, max_y))
         self.separators.append(("h", COL_LEFT0, 50, self.page_right, 50))
         self.separators.append(("h", COL_LEFT0, max_y, self.page_right, max_y))
@@ -817,26 +1109,58 @@ class DrawioGenerator:
                 f'<diagram id="wirediagram" name={quoteattr(self.m.meta.get("project_name") or "Wiring Diagram")}>'
                 + body + '</diagram>\n</mxfile>\n')
 
+    def _expand(self, fails, diagnosis):
+        """Column Expansion Rule: widen the column where the diagnostic route had to
+        cut through blocks; without a diagnosis, the gaps along the failed span."""
+        grow = set()
+        for (_c, sc, tc), diag in zip(fails, diagnosis):
+            cols = set()
+            for ix, _iy in (diag[1] if diag else []):
+                for k, (_t, left, w) in enumerate(self.cols):
+                    if left <= ix * 10 < left + w:
+                        cols.add(k)
+            if not cols:
+                lo, hi = sorted((sc if sc is not None else 0, tc if tc is not None else 0))
+                cols = {k for k in {lo, max(lo, hi - 1)} if 0 <= k < len(self.extra) - 1}
+            grow |= cols
+        for k in grow:
+            self.extra[k] += 20
+
     # ---- public ----------------------------------------------------
     def generate(self) -> str:
         self._plan()
         base_warn = list(self.warnings)
-        for attempt in range(MAX_TRIES):
+        best, stale, fallback = None, 0, True
+
+        def run(pref):
+            nonlocal best
+            self.face_pref = pref
             self._reset()
             self.warnings = list(base_warn)
             self._layout()
+            self.face_pref = True
+            if best is None or len(self.route_fail) < len(best["route_fail"]):
+                best = dict(self.__dict__)
+                return True
+            return False
+        for attempt in range(MAX_TRIES):
+            improved = run(True)
             if not self.route_fail:
                 break
-            if attempt == MAX_TRIES - 1:
+            diagnosis = self.diagnosis
+            fails = self.route_fail
+            if fallback:
+                fallback = False
+                improved = run(False) or improved
+                if not self.route_fail:
+                    break
+            stale = 0 if improved else stale + 1
+            if stale >= 2 or attempt == MAX_TRIES - 1:
                 break
-            # Column Expansion Rule: widen the gaps the failed lines need
-            for _c, sc, tc in self.route_fail:
-                lo, hi = sorted((sc if sc is not None else 0, tc if tc is not None else 0))
-                for k in {lo, max(lo, hi - 1)}:
-                    if 0 <= k < len(self.extra) - 1:
-                        self.extra[k] += 20
+            self._expand(fails, diagnosis)
             if attempt >= 3:
                 self.gap_y = GAP_Y + 10
+        self.__dict__.update(best)
         for c, _sc, _tc in self.route_fail:
             self.warnings.append(f"Line {c.source} -> {c.target} could not be routed on the 10px "
                                  f"grid; drawn without waypoints, adjust it in draw.io.")
