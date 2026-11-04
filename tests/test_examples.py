@@ -320,6 +320,36 @@ class TestBayerLayout(unittest.TestCase):
         xs = {int(r.x) for cid, r in self.g.rect.items() if self.g.col_of.get(cid) == 3}
         self.assertEqual(len(xs), 2)
 
+    def _lines(self):
+        from app.drawio_gen import C_POWER
+        inv = {v: k for k, v in self.g.cell.items()}
+        for k, v in self.g.port_id.items():
+            inv[v] = k[0]
+        for e in self.g.edges:
+            yield e.color == C_POWER, inv.get(e.src, ""), inv.get(e.tgt, ""), e.points
+
+    def test_only_power_lines_in_facility_and_system_columns(self):
+        pc_left = self.g.cols[2][1]
+        bad = [(s, t) for power, s, t, pts in self._lines()
+               if not power and any(x < pc_left for x, _y in pts)]
+        self.assertEqual(bad, [])
+
+    def test_only_circuit_lines_left_of_the_strips(self):
+        strip_x = max(r.x2 for cid, r in self.g.rect.items() if self.g.col_of.get(cid) == 1)
+        bad = [(s, t) for power, s, t, pts in self._lines()
+               if power and not (s.startswith("Circuit") or t.startswith("Circuit"))
+               and any(x < strip_x for x, _y in pts)]
+        self.assertEqual(bad, [])
+
+    def test_no_line_left_of_the_circuits(self):
+        left = min(r.x for cid, r in self.g.rect.items() if self.g.col_of.get(cid) == 0)
+        self.assertEqual([(s, t) for _p, s, t, pts in self._lines() if any(x < left for x, _y in pts)], [])
+
+    def test_vantage_power_crosses_pc_column_straight(self):
+        (_t, left, w) = self.g.cols[2]
+        pts = [p for power, s, t, p in self._lines() if power and t == "VANTAGE"][0]
+        self.assertFalse([x for x, _y in pts if left <= x < left + w], pts)
+
     def test_pcs_in_a_row_laptop_level_with_xcytomatic(self):
         r = lambda ref: self.g.rect[self.g.cell[ref]]
         self.assertEqual(r("Standard PC #1").y, r("Standard PC #2").y)

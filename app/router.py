@@ -74,13 +74,18 @@ def _floor_g(v):
 
 
 class Router:
-    def __init__(self, obstacles, bounds, vlines=()):
+    def __init__(self, obstacles, bounds, vlines=(), power_x=None, power_bends=()):
         """obstacles: list of Rect; bounds: (x0, y0, x1, y1) routing area;
-        vlines: x of vertical separators (no vertical segment closer than 10px)."""
+        vlines: x of vertical separators (no vertical segment closer than 10px);
+        power_x: only power lines may use x < power_x;
+        power_bends: (x0, x1, extra cost) per bend of a power line in that x range."""
         self.obstacles = list(obstacles)
         x0, y0, x1, y1 = bounds
         self.ix0, self.iy0 = _ceil_g(x0), _ceil_g(y0)
         self.ix1, self.iy1 = _floor_g(x1), _floor_g(y1)
+        self.power_ix = _ceil_g(power_x) if power_x is not None else self.ix0
+        self.power_bend = {ix: c for bx0, bx1, c in power_bends
+                           for ix in range(_ceil_g(bx0), _ceil_g(bx1))}
         self.no_vert = {ix for x in vlines
                         for ix in range(_floor_g(x - CLEAR), _ceil_g(x + CLEAR) + 1)
                         if abs(ix * G - x) < CLEAR - 1e-9}
@@ -166,18 +171,20 @@ class Router:
                 and not (d[0] == 0 and n[0] in self.no_vert))
 
     # ---- search ------------------------------------------------------
-    def route(self, src: Terminal, tgt: Terminal, max_expand=None, lid=None):
-        found = self._search(src, tgt, max_expand or self.max_expand)
+    def route(self, src: Terminal, tgt: Terminal, max_expand=None, lid=None, power=False,
+              min_x=None):
+        found = self._search(src, tgt, max_expand or self.max_expand, power=power, min_x=min_x)
         if found is None:
             return None
         nodes, d0, d1 = found
         self.commit(nodes, lid)
         return self._waypoints(nodes, d0, d1)
 
-    def blockers(self, src: Terminal, tgt: Terminal, max_expand=None):
+    def blockers(self, src: Terminal, tgt: Terminal, max_expand=None, power=False, min_x=None):
         """Diagnostic route where blocks and used lanes are expensive, not forbidden.
         Returns (line ids in the way, grid nodes inside blocks) or None."""
-        found = self._search(src, tgt, max_expand or self.max_expand, soft=True)
+        found = self._search(src, tgt, max_expand or self.max_expand, soft=True, power=power,
+                             min_x=min_x)
         if found is None:
             return None
         nodes = found[0]
@@ -214,16 +221,21 @@ class Router:
             return SOFT_COST
         return None
 
-    def _search(self, src, tgt, max_expand, soft=False):
+    def _search(self, src, tgt, max_expand, soft=False, power=False, min_x=None):
+        """power: may use x < power_x and pays power_bends; min_x: leftmost x allowed."""
+        lo_ix = self.ix0 if power else self.power_ix
+        if min_x is not None:
+            lo_ix = max(lo_ix, _ceil_g(min_x))
+        bend_x = self.power_bend if power else {}
         starts = []
         for n, d, ln, pen in self._face_points(src):
             ec = self._end_cost(n, d, soft)
-            if ec is not None:
+            if ec is not None and n[0] >= lo_ix:
                 starts.append((n, d, ln / G + pen + ec))
         goals = {}
         for n, d, ln, pen in self._face_points(tgt):
             ec = self._end_cost(n, d, soft)
-            if ec is not None:
+            if ec is not None and n[0] >= lo_ix:
                 inward = (-d[0], -d[1])
                 c = ln / G + pen + ec
                 if n not in goals or c < goals[n][1]:
@@ -290,6 +302,8 @@ class Router:
                 if nd[0] == 0 and n[0] in self.no_vert:
                     continue
                 m = (n[0] + nd[0], n[1] + nd[1])
+                if m[0] < lo_ix:
+                    continue
                 if not self.free(m):
                     if not soft or not self.in_bounds(m):
                         continue
@@ -298,7 +312,7 @@ class Router:
                     if not soft:
                         continue
                     pen += SOFT_COST
-                cost = STEP_COST + pen + (BEND_COST if bend else 0.0)
+                cost = STEP_COST + pen + (BEND_COST + bend_x.get(n[0], 0.0) if bend else 0.0)
                 if bend and fresh:
                     cost += JOG_COST
                 ori = "h" if nd[1] == 0 else "v"

@@ -287,6 +287,10 @@ class Edge:
 # --------------------------------------------------------------------------
 GAP_Y = 20          # vertical gap between stacked blocks
 MAX_TRIES = 8       # layout / route attempts (columns widen between tries)
+FACILITY_LANES = 2          # power lanes between the circuits and the Facility separator
+POWER_BEND_SYSTEM = 4.0     # extra cost per power-line bend in System Requirements
+POWER_BEND_PC = 40.0        # extra cost per power-line bend in PC Connections
+POWER_BEND_DEVICES = 8.0    # extra cost per power-line bend in the device / pipettor columns
 
 
 class DrawioGenerator:
@@ -304,6 +308,7 @@ class DrawioGenerator:
         self.gap_y = GAP_Y
         self.face_pref = True
         self.split = set()                # device columns drawn as two halves
+        self.fac_lanes = 0                # extra power lanes in Facility Requirements
         self._reset()
 
     def _reset(self):
@@ -436,6 +441,16 @@ class DrawioGenerator:
         for c in (3, 4):
             if c in self.split:
                 widths[c] = max(widths[c], 40 + 2 * lane_w[c] + self._mid_gap(c))
+        widths[0] += 10 * self.fac_lanes
+        # one vertical lane right of the strip for each device line of the busiest strip
+        per_strip = {}
+        for c in self.m.connections:
+            ends = (c.source, c.target)
+            if c.type == "power" and not any(e.startswith("Circuit") for e in ends):
+                for e in ends:
+                    if e.startswith("Power Strip"):
+                        per_strip[e] = per_strip.get(e, 0) + 1
+        widths[1] = max(widths[1], 70 + 10 * max(per_strip.values(), default=0))
         widths = [_g(w + e) for w, e in zip(widths, self.extra)]
         self.cols = []
         left = COL_LEFT0
@@ -448,6 +463,22 @@ class DrawioGenerator:
             self.lane_x[(c, 0)] = self.cols[c][1] + 20
             if c in self.split:
                 self.lane_x[(c, 1)] = self.cols[c][1] + widths[c] - 20 - lane_w[c]
+
+    def _facility_jogs(self):
+        """Circuit-to-device power lines that cannot leave their circuit straight;
+        each needs its own vertical lane in Facility Requirements."""
+        n = 0
+        for c in self.m.connections:
+            ends = (c.source, c.target)
+            circ = [e for e in ends if e.startswith("Circuit")]
+            if c.type != "power" or len(circ) != 1 or any(e.startswith("Power Strip") for e in ends):
+                continue
+            dev = c.target if circ[0] == c.source else c.source
+            port = c.target_port if dev == c.target else c.source_port
+            r, e = self.rect.get(self.cell.get(circ[0])), self._end_rect(dev, port)
+            if r is not None and e is not None and not r.y + 10 <= e.y + e.h / 2 <= r.y2 - 10:
+                n += 1
+        return n
 
     def _too_tall(self):
         """First device column whose stack is much taller than the PC/hub stack and
@@ -489,6 +520,11 @@ class DrawioGenerator:
             return self._layout()
         self._layout_pcs()
         self._layout_circuits()
+        lanes = self._facility_jogs() - FACILITY_LANES
+        if lanes > self.fac_lanes:
+            self.fac_lanes = lanes
+            self._reset()
+            return self._layout()
         self._layout_legend()
         self._wire()
         self._finalise_frame()
@@ -620,6 +656,9 @@ class DrawioGenerator:
             ys = [self._end_y(o, p) for o, p, _k in self.links.get(hb.id, [])]
             up = sum(1 for v in ys if v is None or v < mid)
             y += max(60, (up + above + 1) * 10 + 20)
+            for a, b in self._channels():
+                if y < b + 10 and y + h + 10 > a:
+                    y = _g(b + 10)
             lines = [f"<b>{_esc(hb.name)}</b>"] + [_esc(c) for c in split_cables(hb.comm_cable)]
             self.cell[hb.id] = self.node("<br>".join(lines), STYLE_HUB, x, y, w, h, col=2)
             y += h
@@ -759,11 +798,21 @@ class DrawioGenerator:
         def fits(col, y, h):
             return y >= 90 and all(y + h + gy <= a or b + gy <= y for a, b in occ[col])
 
-        def near(col, h, want, lo=90):
+        def near(col, h, want, lo=90, ok=None):
             want = max(lo, _g(want))
             cands = [want] + [_g(b + gy) for _a, b in occ[col]] + [_g(a - gy - h) for a, _b in occ[col]]
-            return min((c for c in cands if c >= lo and fits(col, c, h)),
+            cands = [c for c in cands if c >= lo and fits(col, c, h)]
+            return min([c for c in cands if ok is None or ok(c, h) is not None] or cands,
                        key=lambda c: (abs(c - want), c))
+
+        def outer_lane(y, h):
+            """A y on the device's face where the outer half of a split Off Deck
+            column is free, so the device's lines can cross it straight."""
+            for m in range(int(_g(y + h / 2)), int(y + h - 10) + 1, 10):
+                for v in (m, int(2 * _g(y + h / 2) - m)):
+                    if y + 10 <= v and all(v <= a - 10 or b + 10 <= v for a, b in occ[(3, 0)]):
+                        return v
+            return None
 
         def put(d, lane, y, dx=0):
             w, h = self._block(d, self.lane_x[lane] + dx, y, lane[0])
@@ -809,12 +858,17 @@ class DrawioGenerator:
             row_h = max(self._dev_h(k) for k in row)
             lanes = [(3, last[3])] if 3 in self.split and self._inner(d) else \
                 [k for k in occ if k[0] == 3]
-            spots = [(near(k, row_h, cursor[k], cursor[k]), k[1], k) for k in lanes]
+            inner = lambda k: 3 in self.split and k[1] == last[3]
+            spots = [(near(k, row_h, cursor[k], cursor[k], outer_lane if inner(k) else None), k[1], k)
+                     for k in lanes]
             y, _i, lane = min(spots)
             dx = 0
             for k in row:
                 dx += put(k, lane, y, dx)[0] + 20
             occ[lane][-len(row):] = [(y, y + row_h)]
+            m = outer_lane(y, row_h) if inner(lane) else None
+            if m is not None:
+                occ[(3, 0)].append((m + gy - 10, m - gy + 10))
             cursor[lane] = y + row_h + gy
             put_kids(d, y)
         for d in self.ondeck:
@@ -947,7 +1001,7 @@ class DrawioGenerator:
         if ref in self.pip_ids:
             return cid, Terminal(r, r, ("W",)), 5
         if ref.startswith("Power Strip"):
-            return cid, Terminal(r, faces=("E", "W")), col
+            return cid, Terminal(r, faces=("W",) if other.startswith("Circuit") else ("E",)), col
         if ref in self.hub_ids:
             return cid, Terminal(r, faces=("N", "S")), col
         prefer = None
@@ -964,8 +1018,20 @@ class DrawioGenerator:
     def _wire(self):
         obstacles = [r for cid, r in self.rect.items() if self.col_of.get(cid) is not None]
         bottom = max([r.y2 for r in obstacles] + [self.devices_bottom])
-        router = Router(obstacles, (COL_LEFT0 + 10, 70, self.page_right - 10, bottom + 200),
-                        vlines=self._sep_xs())
+        circ = [r for cid, r in self.rect.items() if self.col_of.get(cid) == 0]
+        x0 = min(r.x for r in circ) if circ else COL_LEFT0 + 10
+        # only power lines in Facility / System Requirements; power lines bend there
+        # first, sparingly in the device columns, and avoid bending in PC Connections
+        (_t, pc_left, pc_w) = self.cols[2]
+        bends = [(self.cols[1][1], pc_left, POWER_BEND_SYSTEM),
+                 (pc_left, pc_left + pc_w, POWER_BEND_PC),
+                 (pc_left + pc_w, self.page_right, POWER_BEND_DEVICES)]
+        router = Router(obstacles, (x0, 70, self.page_right - 10, bottom + 200),
+                        vlines=self._sep_xs(), power_x=pc_left, power_bends=bends)
+        # only lines with a circuit end may run left of the power strips
+        strips = [r for cid, r in self.rect.items() if self.col_of.get(cid) == 1]
+        strip_x = max(r.x2 for r in strips) + 10 if strips else None
+        self._ropt, first = {}, set()
         jobs = []
         for i, c in enumerate(self.m.connections):
             s, st, sc = self._terminal(c.source, c.source_port, c.target, c.type)
@@ -977,11 +1043,20 @@ class DrawioGenerator:
             a, b = st.rect, tt.rect
             dist = abs((a.x + a.w / 2) - (b.x + b.w / 2)) + abs((a.y + a.h / 2) - (b.y + b.h / 2))
             jobs.append((dist, i, c, s, st, sc, t, tt, tc))
-        # short lines first: they take the inner lanes and the longer ones nest outside
-        jobs.sort(key=lambda j: (j[0], j[1]))
+            power = c.type == "power"
+            to_circuit = c.source.startswith("Circuit") or c.target.startswith("Circuit")
+            self._ropt[i] = {"power": power,
+                             "min_x": strip_x if power and not to_circuit else None}
+            ends = {c.source, c.target}
+            if ends & self.pip_ids and any(e in self.pc_ids or e in self.hub_ids or _is_feeder(e)
+                                           for e in ends):
+                first.add(i)
+        # lines from the left to pipettor ports first (they cross every column at the
+        # port height), then short lines: they take the inner lanes, longer ones nest outside
+        jobs.sort(key=lambda j: (j[1] not in first, j[0], j[1]))
         pts = {}
         for j in jobs:
-            p = router.route(j[4], j[7], lid=j[1])
+            p = router.route(j[4], j[7], lid=j[1], **self._ropt[j[1]])
             if p is not None:
                 pts[j[1]] = p
         self._rip_up(router, jobs, pts)
@@ -989,7 +1064,7 @@ class DrawioGenerator:
         for dist, i, c, s, st, sc, t, tt, tc in jobs:
             if i not in pts:
                 self.route_fail.append((c, sc, tc))
-                self.diagnosis.append(router.blockers(st, tt))
+                self.diagnosis.append(router.blockers(st, tt, **self._ropt[i]))
             self.edge(s, t, LINE_COLORS.get(c.type, C_PERIPHERY), pts.get(i, []))
         self.lines_bottom = max([p[1] for e in self.edges for p in e.points] + [0])
 
@@ -1004,23 +1079,24 @@ class DrawioGenerator:
                 return
             progress = False
             for j in failed:
-                p = router.route(j[4], j[7], lid=j[1])
+                p = router.route(j[4], j[7], lid=j[1], **self._ropt[j[1]])
                 if p is not None:
                     pts[j[1]] = p
                     progress = True
                     continue
-                diag = router.blockers(j[4], j[7])
+                diag = router.blockers(j[4], j[7], **self._ropt[j[1]])
                 if not diag or not diag[0] or len(diag[0]) > max_lines or diag[1]:
                     continue
                 lids = [k for k in diag[0] if k in pts]
                 old = {k: (router.uncommit(k), pts.pop(k)) for k in lids}
                 new = {}
-                p = router.route(j[4], j[7], lid=j[1])
+                p = router.route(j[4], j[7], lid=j[1], **self._ropt[j[1]])
                 ok = p is not None
                 if ok:
                     new[j[1]] = p
                     for k in sorted(lids, key=lambda k: (by_id[k][0], k)):
-                        q = router.route(by_id[k][4], by_id[k][7], lid=k)
+                        q = router.route(by_id[k][4], by_id[k][7], lid=k,
+                                         **self._ropt[k])
                         if q is None:
                             ok = False
                             break
