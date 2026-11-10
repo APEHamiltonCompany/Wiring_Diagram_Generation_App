@@ -30,6 +30,9 @@ BEND_COST = 6.0
 CROSS_COST = 4.0
 CENTER_COST = 0.15      # per grid step away from the middle of a face
 JOG_COST = 20.0         # two bends 10px apart (a small zig-zag)
+FACE_COST = 50.0
+SOFT_COST = 40.0        # diagnostic route: using a lane another line holds
+SOFT_BLOCK = 15.0       # diagnostic route: one grid step inside a block's clearance
 
 
 class Rect:
@@ -53,11 +56,13 @@ class Terminal:
     rect   : the shape the line attaches to (a block or a pipettor port)
     owner  : the obstacle rect that contains it (pipettor body for a port)
     faces  : faces the line may use ("E", "W", "S", "N")
+    prefer : faces to use when possible; the other faces cost FACE_COST
     """
-    __slots__ = ("rect", "owner", "faces")
+    __slots__ = ("rect", "owner", "faces", "prefer")
 
-    def __init__(self, rect, owner=None, faces=("E", "W", "S", "N")):
+    def __init__(self, rect, owner=None, faces=("E", "W", "S", "N"), prefer=None):
         self.rect, self.owner, self.faces = rect, owner or rect, faces
+        self.prefer = prefer
 
 
 def _ceil_g(v):
@@ -69,18 +74,35 @@ def _floor_g(v):
 
 
 class Router:
-    def __init__(self, obstacles, bounds):
-        """obstacles: list of Rect; bounds: (x0, y0, x1, y1) routing area."""
+    def __init__(self, obstacles, bounds, vlines=(), power_x=None, power_bends=()):
+        """obstacles: list of Rect; bounds: (x0, y0, x1, y1) routing area;
+        vlines: x of vertical separators (no vertical segment closer than 10px);
+        power_x: only power lines may use x < power_x;
+        power_bends: (x0, x1, extra cost) per bend of a power line in that x range."""
         self.obstacles = list(obstacles)
         x0, y0, x1, y1 = bounds
         self.ix0, self.iy0 = _ceil_g(x0), _ceil_g(y0)
         self.ix1, self.iy1 = _floor_g(x1), _floor_g(y1)
+        self.power_ix = _ceil_g(power_x) if power_x is not None else self.ix0
+        self.power_bend = {ix: c for bx0, bx1, c in power_bends
+                           for ix in range(_ceil_g(bx0), _ceil_g(bx1))}
+        self.no_vert = {ix for x in vlines
+                        for ix in range(_floor_g(x - CLEAR), _ceil_g(x + CLEAR) + 1)
+                        if abs(ix * G - x) < CLEAR - 1e-9}
         self.blocked = set()
         for r in self.obstacles:
             self._block(r)
-        self.seg_used = set()       # frozenset({a, b}) of grid nodes
-        self.bend_nodes = set()     # nodes where a line bends / ends (exclusive)
-        self.pass_nodes = {}        # node -> set of "h"/"v" straight passes
+        self.lines = {}
+        self._rebuild()
+        cells = (self.ix1 - self.ix0 + 1) * (self.iy1 - self.iy0 + 1)
+        self.max_expand = max(400000, cells * 10)
+
+    def _rebuild(self):
+        self.seg_used = {}          # frozenset({a, b}) of grid nodes -> line id
+        self.bend_nodes = {}        # nodes where a line bends / ends (exclusive) -> line id
+        self.pass_nodes = {}        # node -> {"h"/"v": line id} straight passes
+        for lid, nodes in self.lines.items():
+            self._mark(nodes, lid)
 
     # ---- obstacles ---------------------------------------------------
     def _block(self, r):
@@ -109,6 +131,7 @@ class Router:
         mv = 5 if small_v else 10
         mh = 5 if small_h else 10
         for f in t.faces:
+            fc = FACE_COST if t.prefer and f not in t.prefer else 0.0
             if f in ("E", "W"):
                 lo, hi = r.y + mv, r.y2 - mv
                 ys = list(range(_ceil_g(lo), _floor_g(hi) + 1))
@@ -124,7 +147,7 @@ class Router:
                     ex = _floor_g(min(face_x, o.x) - CLEAR)
                     d = W
                 for iy in ys:
-                    out.append(((ex, iy), d, abs(ex * G - face_x), abs(iy - mid) * CENTER_COST))
+                    out.append(((ex, iy), d, abs(ex * G - face_x), abs(iy - mid) * CENTER_COST + fc))
             else:
                 lo, hi = r.x + mh, r.x2 - mh
                 xs = list(range(_ceil_g(lo), _floor_g(hi) + 1))
@@ -140,21 +163,81 @@ class Router:
                     ey = _floor_g(min(face_y, o.y) - CLEAR)
                     d = N
                 for ix in xs:
-                    out.append(((ix, ey), d, abs(ey * G - face_y), abs(ix - mid) * CENTER_COST))
+                    out.append(((ix, ey), d, abs(ey * G - face_y), abs(ix - mid) * CENTER_COST + fc))
         return out
 
-    def _node_ok_as_end(self, n):
-        return self.free(n) and n not in self.bend_nodes and n not in self.pass_nodes
+    def _node_ok_as_end(self, n, d):
+        return (self.free(n) and n not in self.bend_nodes and n not in self.pass_nodes
+                and not (d[0] == 0 and n[0] in self.no_vert))
 
     # ---- search ------------------------------------------------------
-    def route(self, src: Terminal, tgt: Terminal, max_expand=400000):
-        starts = [(n, d, ln / G + pen) for n, d, ln, pen in self._face_points(src)
-                  if self._node_ok_as_end(n)]
+    def route(self, src: Terminal, tgt: Terminal, max_expand=None, lid=None, power=False,
+              min_x=None):
+        found = self._search(src, tgt, max_expand or self.max_expand, power=power, min_x=min_x)
+        if found is None:
+            return None
+        nodes, d0, d1 = found
+        self.commit(nodes, lid)
+        return self._waypoints(nodes, d0, d1)
+
+    def blockers(self, src: Terminal, tgt: Terminal, max_expand=None, power=False, min_x=None):
+        """Diagnostic route where blocks and used lanes are expensive, not forbidden.
+        Returns (line ids in the way, grid nodes inside blocks) or None."""
+        found = self._search(src, tgt, max_expand or self.max_expand, soft=True, power=power,
+                             min_x=min_x)
+        if found is None:
+            return None
+        nodes = found[0]
+        lids, inside = set(), []
+        for n in (nodes[0], nodes[-1]):
+            if n in self.bend_nodes:
+                lids.add(self.bend_nodes[n])
+            lids.update(self.pass_nodes.get(n, {}).values())
+        for a, b in zip(nodes, nodes[1:]):
+            k = frozenset((a, b))
+            if k in self.seg_used:
+                lids.add(self.seg_used[k])
+            if b in self.bend_nodes:
+                lids.add(self.bend_nodes[b])
+            if b in self.blocked:
+                inside.append(b)
+        for i in range(1, len(nodes) - 1):
+            a, b, c = nodes[i - 1], nodes[i], nodes[i + 1]
+            ps = self.pass_nodes.get(b)
+            if not ps:
+                continue
+            bend = (b[0] - a[0], b[1] - a[1]) != (c[0] - b[0], c[1] - b[1])
+            ori = "h" if a[1] == b[1] else "v"
+            for o, owner in ps.items():
+                if bend or o == ori:
+                    lids.add(owner)
+        lids.discard(None)
+        return lids, inside
+
+    def _end_cost(self, n, d, soft):
+        if self._node_ok_as_end(n, d):
+            return 0.0
+        if soft and self.in_bounds(n) and not (d[0] == 0 and n[0] in self.no_vert):
+            return SOFT_COST
+        return None
+
+    def _search(self, src, tgt, max_expand, soft=False, power=False, min_x=None):
+        """power: may use x < power_x and pays power_bends; min_x: leftmost x allowed."""
+        lo_ix = self.ix0 if power else self.power_ix
+        if min_x is not None:
+            lo_ix = max(lo_ix, _ceil_g(min_x))
+        bend_x = self.power_bend if power else {}
+        starts = []
+        for n, d, ln, pen in self._face_points(src):
+            ec = self._end_cost(n, d, soft)
+            if ec is not None and n[0] >= lo_ix:
+                starts.append((n, d, ln / G + pen + ec))
         goals = {}
         for n, d, ln, pen in self._face_points(tgt):
-            if self._node_ok_as_end(n):
+            ec = self._end_cost(n, d, soft)
+            if ec is not None and n[0] >= lo_ix:
                 inward = (-d[0], -d[1])
-                c = ln / G + pen
+                c = ln / G + pen + ec
                 if n not in goals or c < goals[n][1]:
                     goals[n] = (inward, c)
         if not starts or not goals:
@@ -211,23 +294,34 @@ class Router:
                 if nd[0] == -d[0] and nd[1] == -d[1]:
                     continue
                 bend = nd != d
+                pen = 0.0
                 if bend and (n in self.pass_nodes or (n in self.bend_nodes)):
+                    if not soft:
+                        continue
+                    pen += SOFT_COST
+                if nd[0] == 0 and n[0] in self.no_vert:
                     continue
                 m = (n[0] + nd[0], n[1] + nd[1])
+                if m[0] < lo_ix:
+                    continue
                 if not self.free(m):
-                    continue
-                if frozenset((n, m)) in self.seg_used:
-                    continue
-                if m in self.bend_nodes:
-                    continue
-                cost = STEP_COST + (BEND_COST if bend else 0.0)
+                    if not soft or not self.in_bounds(m):
+                        continue
+                    pen += SOFT_BLOCK
+                if frozenset((n, m)) in self.seg_used or m in self.bend_nodes:
+                    if not soft:
+                        continue
+                    pen += SOFT_COST
+                cost = STEP_COST + pen + (BEND_COST + bend_x.get(n[0], 0.0) if bend else 0.0)
                 if bend and fresh:
                     cost += JOG_COST
                 ori = "h" if nd[1] == 0 else "v"
                 passes = self.pass_nodes.get(m)
                 if passes:
                     if ori in passes:
-                        continue
+                        if not soft:
+                            continue
+                        cost += SOFT_COST
                     cost += CROSS_COST
                 ns = (m, nd, bend)
                 ng = g + cost
@@ -248,21 +342,32 @@ class Router:
         nodes = [s[0] for s in path]
         d0 = path[0][1]
         d1 = goals[nodes[-1]][0]
-        self._commit(nodes)
-        return self._waypoints(nodes, d0, d1)
+        return nodes, d0, d1
 
     # ---- bookkeeping ---------------------------------------------------
-    def _commit(self, nodes):
+    def commit(self, nodes, lid=None):
+        if lid is None:
+            lid = ("anon", len(self.lines))
+        self.lines[lid] = nodes
+        self._mark(nodes, lid)
+
+    def uncommit(self, lid):
+        nodes = self.lines.pop(lid, None)
+        if nodes is not None:
+            self._rebuild()
+        return nodes
+
+    def _mark(self, nodes, lid):
         for a, b in zip(nodes, nodes[1:]):
-            self.seg_used.add(frozenset((a, b)))
-        self.bend_nodes.add(nodes[0])
-        self.bend_nodes.add(nodes[-1])
+            self.seg_used[frozenset((a, b))] = lid
+        self.bend_nodes[nodes[0]] = lid
+        self.bend_nodes[nodes[-1]] = lid
         for i in range(1, len(nodes) - 1):
             a, b, c = nodes[i - 1], nodes[i], nodes[i + 1]
             if (b[0] - a[0], b[1] - a[1]) != (c[0] - b[0], c[1] - b[1]):
-                self.bend_nodes.add(b)
+                self.bend_nodes[b] = lid
             else:
-                self.pass_nodes.setdefault(b, set()).add("h" if a[1] == b[1] else "v")
+                self.pass_nodes.setdefault(b, {})["h" if a[1] == b[1] else "v"] = lid
 
     @staticmethod
     def _waypoints(nodes, d0, d1):

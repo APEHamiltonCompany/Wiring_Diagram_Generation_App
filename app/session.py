@@ -96,6 +96,7 @@ class Session:
         self._cpr_keys = set()
         self.result = None
         self.messages = []
+        self.moved = set()          # load keys the user moved in the Circuits table
 
     @classmethod
     def open(cls):
@@ -237,8 +238,11 @@ class Session:
     def pipettor_models(self):
         return list(self.drd.pipettors.keys()) or ["STARline", "VANTAGEline"]
 
-    def add_pipettor(self, model, power="", amperage=None):
-        p = rv.default_pipettor(self.drd, model, power)
+    def pipettor_variants(self, model):
+        return rv.PIPETTOR_VARIANTS.get(rv.default_pipettor(self.drd, model).type, [])
+
+    def add_pipettor(self, model, power="", amperage=None, variant=""):
+        p = rv.default_pipettor(self.drd, model, power, variant)
         if amperage is not None:
             p.amperage = float(amperage)
         self.state.pipettors.append(p)
@@ -374,16 +378,51 @@ class Session:
 
     # ---- analysis -------------------------------------------------------
     def run_analysis(self):
+        note = ""
+        if self.result is None and self.options.manual_circuits:
+            self.options.manual_circuits.clear()
+            self.moved.clear()
+            note = "The device list changed, so the circuit moves were cleared."
         self.result = PowerEngine(self.drd, self.options).analyze(self.state)
         self.result.issues.extend(self.cpr_issues())
+        if note:
+            self.result.warnings.append(note)
+            self.result.report += f"\n{note}\n"
+        if self.options.manual_circuits:
+            self.options.manual_circuits = {l.key: c.num for c in self.result.circuits
+                                            for l in c.loads}
         return self.result
 
-    def pin_load(self, load_key, circuit_num):
-        self.options.manual_circuits[load_key] = int(circuit_num)
+    # ---- circuit edits (Circuits table) ---------------------------------
+    def _layout(self):
+        if self.result is None:
+            raise RuntimeError("Run the analysis first.")
+        if not self.options.manual_circuits:
+            self.options.manual_circuits = {l.key: c.num for c in self.result.circuits
+                                            for l in c.loads}
+        return self.options.manual_circuits
+
+    def move_loads(self, load_keys, circuit):
+        """circuit: a circuit number, or "new" for a new circuit at the end."""
+        layout = self._layout()
+        num = max(layout.values(), default=0) + 1 if circuit == "new" else int(circuit)
+        for k in load_keys:
+            layout[k] = num
+            self.moved.add(k)
         return self.run_analysis()
+
+    def swap_loads(self, a, b):
+        layout = self._layout()
+        layout[a], layout[b] = layout[b], layout[a]
+        self.moved.update((a, b))
+        return self.run_analysis()
+
+    def pin_load(self, load_key, circuit_num):
+        return self.move_loads([load_key], circuit_num)
 
     def clear_pins(self):
         self.options.manual_circuits.clear()
+        self.moved.clear()
         return self.run_analysis()
 
     def can_export(self):

@@ -24,7 +24,7 @@ import copy
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .drd import DRD, HHS_FAMILY, HHS_CONTROL_BOX, norm_part
+from .drd import DRD, HHS_FAMILY, HHS_CONTROL_BOX, PIPETTOR_VARIANTS, norm_part
 
 SRC_ORDER = "Sales Order"
 SRC_CUSTOMER = "Customer-supplied"
@@ -78,10 +78,15 @@ class PipettorChoice:
     type: str = "STAR"               # STAR / VANTAGE
     power: str = "C13"               # C13 / C19 / L14-20 / L21-20
     amperage: Optional[float] = None
+    variant: str = ""                # StyleGuide §6 name (STARlet, STAR-V 2.0, ...)
+
+    @property
+    def name(self):
+        return self.variant or self.model
 
     def label(self):
         a = f", {self.amperage:g}A" if self.amperage else ""
-        return f"{self.type} ({self.power}{a})"
+        return f"{self.variant or self.type} ({self.power}{a})"
 
 
 @dataclass
@@ -119,14 +124,16 @@ class ReviewState:
 # --------------------------------------------------------------------------
 # Pipettor defaults (DRD §1 + project decisions)
 # --------------------------------------------------------------------------
-def default_pipettor(drd: DRD, model: str, power: str = "") -> PipettorChoice:
+def default_pipettor(drd: DRD, model: str, power: str = "", variant: str = "") -> PipettorChoice:
     rec = drd.pipettors.get(model, {})
     ptype = rec.get("type") or ("VANTAGE" if "vantage" in model.lower() else "STAR")
+    if variant not in PIPETTOR_VARIANTS.get(ptype, []):
+        variant = ""
     if ptype == "STAR":
-        return PipettorChoice(model, "STAR", power or "C13", rec.get("amperage") or 6.3)
+        return PipettorChoice(model, "STAR", power or "C13", rec.get("amperage") or 6.3, variant)
     power = power or "L14-20"
     amp = 10.0 if power == "C19" else None      # single-phase C19 = 10A; L14/L21 dedicated
-    return PipettorChoice(model, "VANTAGE", power, amp)
+    return PipettorChoice(model, "VANTAGE", power, amp, variant)
 
 
 # --------------------------------------------------------------------------

@@ -211,7 +211,7 @@ class PowerEngine:
             amps = p.amperage
             if p.type == "VANTAGE" and p.power in ("L14-20", "L21-20"):
                 amps = None
-            u = Unit(pid, p.model, self.drd.pipettors.get(p.model, {}), "pipettor",
+            u = Unit(pid, p.name, self.drd.pipettors.get(p.model, {}), "pipettor",
                      "pipettor", amps, p.power, "", "Pipettor picker", pip=p, plugs=1)
             if p.type == "STAR" and not amps:
                 self.issues.append(f"{p.model}: enter the STAR amperage in the pipettor picker.")
@@ -662,12 +662,11 @@ class PowerEngine:
                 loads.append(Load(u.id, u, amps, u.plugs))
         return loads
 
-    def _merge_circuits(self, circuits, manual):
+    def _merge_circuits(self, circuits):
         rating = float(self._rating())
-        locked = {n for n, c in circuits.items() if any(l.key in manual for l in c.loads)}
         while True:
             best = None
-            nums = [n for n in sorted(circuits) if n not in locked and not circuits[n].dedicated]
+            nums = [n for n in sorted(circuits) if not circuits[n].dedicated]
             for i, a in enumerate(nums):
                 for b in nums[i + 1:]:
                     tot = circuits[a].load + circuits[b].load
@@ -683,50 +682,106 @@ class PowerEngine:
             circuits[a].loads.extend(circuits[b].loads)
             circuits[a].cap = rating
             del circuits[b]
-        # renumber 1..n keeping order
+        self._renumber(circuits)
+
+    def _new_circuit(self, num):
+        rating = self._rating()
+        outlet = "120V NEMA 5-20R" if rating == 20 else "120V NEMA 5-15R"
+        return Circuit(num, f"{rating}A", outlet, rating * 0.8)
+
+    def _make_dedicated(self, c, u):
+        rating = self._rating()
+        c.dedicated = True
+        if u.pip.power == "C19":
+            c.cap = float(rating)
+            c.rating, c.outlet = f"{rating}A", f"120V {'NEMA 5-20R' if rating == 20 else 'NEMA 5-15R'}"
+        else:
+            c.rating, c.outlet, c.cap = "20A", f"208V {u.pip.power}R", 20.0
+
+    def _is_dedicated_pip(self, u):
+        return u.pip.type == "VANTAGE" and (u.pip.power != "C19" or self.opt.isolate_vantage)
+
+    @staticmethod
+    def _renumber(circuits):
         for new_num, old in enumerate(sorted(circuits), start=1):
             if new_num != old:
                 c = circuits.pop(old)
                 c.num = new_num
                 circuits[new_num] = c
 
-    def _assign_circuits(self):
-        rating = self._rating()
-        cap = self._rating() * 0.8
-        outlet = "120V NEMA 5-20R" if rating == 20 else "120V NEMA 5-15R"
-        loads = self._loads()
-        pc_loads = [l for l in loads if l.unit is self.main_pc]
-        others = [l for l in loads if l.unit is not self.main_pc]
-        manual = {k: int(v) for k, v in (self.opt.manual_circuits or {}).items()}
-
+    def _fixed_circuits(self, loads, manual):
+        """User-edited layout: every load stays on the circuit it was moved to."""
         circuits = {}
 
         def get(num):
             if num not in circuits:
-                circuits[num] = Circuit(num, f"{rating}A", outlet, cap)
+                circuits[num] = self._new_circuit(num)
             return circuits[num]
 
-        # manual placements first
+        ded = set()
+        for u in self.units:
+            if u.role == "pipettor":
+                loads.append(Load(u.id, u, u.amperage or 0.0, 1))
+                if self._is_dedicated_pip(u):
+                    ded.add(u.id)
+        known = {l.key for l in loads}
+        gone = [k for k in manual if k not in known]
+        if gone:
+            self.warnings.append("Circuit moves dropped, these loads are no longer in the analysis: "
+                                 + ", ".join(gone))
         rest = []
-        for l in pc_loads + others:
+        for l in loads:
             if l.key in manual:
                 get(manual[l.key]).loads.append(l)
+                if l.key in ded:
+                    self._make_dedicated(circuits[manual[l.key]], l.unit)
             else:
                 rest.append(l)
-        if any(l.unit is self.main_pc for l in rest) and 1 not in circuits:
-            for l in [x for x in rest if x.unit is self.main_pc]:
+        for l in sorted(rest, key=lambda l: -l.amps):
+            if l.key in ded:
+                c = get(max(circuits, default=0) + 1)
+                self._make_dedicated(c, l.unit)
+            else:
+                fit = [n for n in sorted(circuits) if not circuits[n].dedicated
+                       and circuits[n].load + l.amps <= circuits[n].cap + 1e-9]
+                c = get(fit[0] if fit else max(circuits, default=0) + 1)
+            c.loads.append(l)
+            self.warnings.append(f"{l.key}: not in the edited circuit layout, placed automatically.")
+        self._renumber(circuits)
+        for c in circuits.values():
+            if c.dedicated and len(c.loads) > 1:
+                pip = next(l.key for l in c.loads if l.key in ded)
+                self.issues.append(f"Circuit {c.num} is dedicated to {pip}; move the other "
+                                   f"load(s) off it or move {pip} to its own circuit.")
+        return circuits
+
+    def _assign_circuits(self):
+        manual = {k: int(v) for k, v in (self.opt.manual_circuits or {}).items()}
+        if manual:
+            circuits = self._fixed_circuits(self._loads(), manual)
+        else:
+            circuits = self._auto_circuits()
+        return self._check_circuits([circuits[k] for k in sorted(circuits)])
+
+    def _auto_circuits(self):
+        loads = self._loads()
+        circuits = {}
+
+        def get(num):
+            if num not in circuits:
+                circuits[num] = self._new_circuit(num)
+            return circuits[num]
+
+        rest = []
+        for l in loads:
+            if l.unit is self.main_pc:
                 get(1).loads.append(l)
-                rest.remove(l)
+            else:
+                rest.append(l)
         # pipettor (STAR / C19 VANTAGE that is not isolated) packs like a load
         for u in self.units:
-            if u.role != "pipettor":
-                continue
-            if u.pip.type == "STAR" or (u.pip.power == "C19" and not self.opt.isolate_vantage):
-                l = Load(u.id, u, u.amperage or 0.0, 1)
-                if l.key in manual:
-                    get(manual[l.key]).loads.append(l)
-                else:
-                    rest.append(l)
+            if u.role == "pipettor" and not self._is_dedicated_pip(u):
+                rest.append(Load(u.id, u, u.amperage or 0.0, 1))
         # first-fit decreasing, grouped by kind, preferring circuits with <= 2 plugs
         parents = {u.parent for u in self.units if u.parent}
 
@@ -752,25 +807,19 @@ class PowerEngine:
             get(num).loads.append(l)
         # Going over 80% (approved): pack at 80% first, then merge the two
         # lightest circuits while the total stays within the rating. Circuits
-        # holding the main PC or a manual placement are merged last / never.
+        # holding the main PC are merged last.
         if self.opt.over_80_approved:
-            self._merge_circuits(circuits, manual)
+            self._merge_circuits(circuits)
         # dedicated / isolated VANTAGE circuits, numbered last
         for u in self.units:
-            if u.role != "pipettor" or u.pip.type != "VANTAGE":
+            if u.role != "pipettor" or not self._is_dedicated_pip(u):
                 continue
-            if u.pip.power == "C19" and not self.opt.isolate_vantage:
-                continue
-            num = manual.get(u.id) or (max(circuits) + 1 if circuits else 1)
-            c = get(num)
-            c.dedicated = True
-            if u.pip.power == "C19":
-                c.cap = float(rating)
-                c.rating, c.outlet = f"{rating}A", f"120V {'NEMA 5-20R' if rating == 20 else 'NEMA 5-15R'}"
-            else:
-                c.rating, c.outlet, c.cap = "20A", f"208V {u.pip.power}R", 20.0
+            c = get(max(circuits) + 1 if circuits else 1)
+            self._make_dedicated(c, u)
             c.loads.append(Load(u.id, u, u.amperage or 0.0, 1))
-        out = [circuits[k] for k in sorted(circuits)]
+        return circuits
+
+    def _check_circuits(self, out):
         for c in out:
             if c.load > c.cap + 1e-9 and not c.dedicated:
                 if c.load <= self._rating() + 1e-9 and not self.opt.over_80_approved:
@@ -813,7 +862,7 @@ class PowerEngine:
             "project_name": self.opt.project_name,
             "facility_circuit": f"{self._rating()}A",
             "pipettor": "+".join(p.pip.type for p in pips),
-            "pipettors": "; ".join(f"{p.id}={p.pip.model}|{p.pip.type}|{p.pip.power}|"
+            "pipettors": "; ".join(f"{p.id}={p.pip.name}|{p.pip.type}|{p.pip.power}|"
                                    f"{_fmt(p.amperage) if p.amperage else ''}" for p in pips),
             "vantage_phase": next((p.pip.power for p in pips if p.pip.type == "VANTAGE"), ""),
             "pc_type": self.main_pc.name,
@@ -839,7 +888,7 @@ class PowerEngine:
                 elif u.plugs == 0:
                     reason = "No facility power"
             rows.append(DeviceRow(
-                id=u.id, name=u.name, drd_name=u.name, part_number=u.part_number, qty=1,
+                id=u.id, name=u.name, drd_name=u.pip.model if u.pip else u.name, part_number=u.part_number, qty=1,
                 amperage=(u.load if u.role != "child" else None) if u.load or u.amperage else None,
                 plugs=u.plugs if powered else 0,
                 power_cable=u.power_cable, comm_cable=u.comm_cable,

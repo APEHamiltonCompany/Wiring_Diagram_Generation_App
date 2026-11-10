@@ -1,0 +1,132 @@
+# WireDiagram Power Distribution CSV
+# schema_version=2.0
+# Edit by hand or regenerate. Section markers are '# [SECTION]'. Other '#' lines are ignored. Mode 2 draws only the CONNECTIONS rows.
+
+# [META]
+key,value
+schema_version,2.0
+project_name,Bayer_SO-283791_V2
+facility_circuit,15A
+pipettor,VANTAGE
+pipettors,VANTAGE=STAR-V 2.0|VANTAGE|C19|10
+vantage_phase,C19
+pc_type,Standard PC
+main_pc_id,Standard PC #1
+hhs_mode,periphery
+over_80_approved,yes
+drd_version,1.1.1
+styleguide_version,2.2.3
+generated_by,WireDiagram App 2.1.0
+generated_on,2026-11-03 08:13
+
+# [DEVICES]
+id,name,drd_name,part_number,qty,amperage,plugs,power_cable,comm_cable,category,role,parent,section,width,height,circuit,source,powered,unpowered_reason,notes,connect_power_to,connect_comm_to
+VANTAGE,STAR-V 2.0,VANTAGEline,,1,10,1,C19,,pipettor,pipettor,,,,,1,Pipettor picker,yes,,,Circuit 1,
+Standard PC #1,Standard PC,Standard PC,,1,4.5,2,2x C13 to NEMA 5-15,,pc,powered,,section3,120,80,1,Customer-supplied,yes,,,Circuit 1,
+Standard PC #2,Standard PC,Standard PC,,1,4.5,2,2x C13 to NEMA 5-15,,pc,powered,,section3,120,80,2,Customer-supplied,yes,,,Circuit 2,
+XM30 Laptop,XM30 Laptop,XM30 Laptop,,1,1.7,1,C13 to NEMA 5-15,,pc,powered,,section3,110,60,9,Customer-supplied,yes,,,Circuit 9,
+NetGear Router,NetGear Router,NetGear Router,6611974-01,1,1.2,1,C13 to NEMA 5-15,Ethernet,hub,powered,,section4,120,50,3,Sales Order,yes,,,Circuit 3,
+Serial Hub,Serial Hub,Serial Hub,,1,,0,-,USB A to B,hub,none,,section4,140,50,,Customer-supplied,no,No facility power,,,
+USB Hub,USB Hub,USB Hub,,1,1.5,1,External power adapter,USB A 3.0 to B 3.0,hub,powered,,section4,170,50,2,Customer-supplied,yes,,,Circuit 2,
+Bionex HiG4,Bionex HiG4,Bionex HiG4,OTP-BINX-0003,1,15,1,C13 to NEMA 5-15,USB A M to USB B M / 5pin DIN to Estop,off_deck,powered,,section6,120,90,4,Saved part # rule,yes,,,Circuit 4,
+BioTek Cytation5,BioTek Cytation5,BioTek Cytation5,,1,1.2,1,4pin to barrel/C13 to NEMA 5-15,USB A M to USB B M,off_deck,powered,,section6,120,80,8,Customer-supplied,yes,,,Circuit 8,
+CytoFLEX Flow,CytoFLEX Flow,CytoFLEX Flow,,1,3.3,1,C13 to NEMA 5-15,USB 3.0 A to B,off_deck,powered,,custom,120,80,8,Custom device,yes,,,Circuit 8,
+Cytomat 2C450-LIN #1,Cytomat 2C450-LIN,Cytomat 2C450-LIN,OTP-TMOC-0175,1,11.3,1,C13 to NEMA 5-15,RS-232 D9 M to D9 F,off_deck,powered,,section6,140,80,6,Mapped by user,yes,,,Circuit 6,
+Cytomat 2C450-LIN #2,Cytomat 2C450-LIN,Cytomat 2C450-LIN,OTP-TMOC-0175,1,11.3,1,C13 to NEMA 5-15,RS-232 D9 M to D9 F,off_deck,powered,,section6,140,80,5,Mapped by user,yes,,,Circuit 5,
+Hamilton DeckWatch,Hamilton DeckWatch,Hamilton DeckWatch,10162477,1,,0,-,Ethernet (POE),off_deck,child,NetGear Router,section6,100,60,,Sales Order,no,Child of NetGear Router,,NetGear Router,
+Hamilton MFM Control Box,Hamilton MFM Control Box,Hamilton MFM Control Box,95145-01,1,2.5,1,Barrel to AC/DC block / C13 to NEMA 5-15,Turck 3P M to F / Turck 4P M to F / USB A M to USB B M,off_deck,powered,,section6,140,80,3,Sales Order,yes,,,Circuit 3,
+Hamilton Pre-Heat Module,Hamilton Pre-Heat Module,Hamilton Pre-Heat Module,188221,1,,0,-,-,off_deck,child,VANTAGE,section6,120,110,,Sales Order,no,Child of VANTAGE,,VANTAGE,
+HMotion,HMotion,HMotion,OTP-97091-22,1,3.2,1,C13 to NEMA 5-15,Ethernet COM,off_deck,powered,,section6,120,70,3,Sales Order,yes,,,Circuit 3,
+Lab Elite Decapper,Lab Elite Decapper,Lab Elite Decapper,HST-193600,1,1.8,1,C13 to NEMA 5-15,Ethernet COM,off_deck,powered,,section6,120,80,3,Sales Order,yes,,,Circuit 3,
+Labelite I.D. Reader,Labelite I.D. Reader,Labelite I.D. Reader,HST-193750,1,0.4,1,C13 to NEMA 5-15,USB A to B,off_deck,powered,,custom,120,80,3,Saved part # rule,yes,,,Circuit 3,
+Liconic LPX,Liconic LPX,Liconic LPX,OTP-LCNC-0966,1,4,1,C13 to NEMA 5-15,"RS-232 D9 M to D9 F, RS-232 Null Modem D9 F to D9 F",off_deck,powered,,section6,130,90,8,Mapped by user,yes,,,Circuit 8,
+Liconic STX-IC,Liconic STX-IC,Liconic STX-IC,OTP-LCNC-0031,1,10,1,C13 to NEMA 5-15,"RS-232 D9 M to D9 F, RS-232 D9 F Null Modem D9 F",off_deck,powered,,section6,140,80,7,Mapped by user,yes,,,Circuit 7,
+MTEC,MTEC,MTEC,OTP-8900030,1,5.5,1,C13 to NEMA 5-15,USB A M to USB B M,off_deck,powered,,section6,120,70,2,Sales Order,yes,,,Circuit 2,
+PAA CS-10 Carousel,PAA CS-10 Carousel,PAA CS-10 Carousel,OTP-PKAA-0203,1,0.9,1,C13 to NEMA 5-15,RS-232 D9 M to F,off_deck,powered,,custom,120,80,3,Saved part # rule,yes,,,Circuit 3,
+Porvair Ultraseal Cold-pro,Porvair Ultraseal Cold-pro,Porvair Ultraseal Cold-pro,OTP-PRVS-0022,1,1.6,1,C13 to NEMA 5-15,RS-232 DB9 M to F,off_deck,powered,,custom,120,80,3,Saved part # rule,yes,,,Circuit 3,
+XcytoMatic 30,XcytoMatic 30,XcytoMatic 30,,1,1.5,1,C13 to NEMA 5-15,USB 3.0 Micro to USB A,off_deck,powered,,section6,140,70,9,Customer-supplied,yes,,,Circuit 9,
+Hamilton Heater Shaker,Hamilton Heater Shaker,Hamilton Heater Shaker,199039,1,,0,-,USB A M to USB B M / RS-232 DB9,on_deck,child,VANTAGE,section5,100,60,,Saved part # rule,no,Child of VANTAGE,,VANTAGE,
+Inheco CPAC #1,Inheco CPAC,Inheco CPAC,OTP-7900070,1,,0,-,RS-232 DB15,on_deck,child,MTEC,section5,70,60,,Sales Order,no,Child of MTEC,,MTEC,
+Inheco CPAC #2,Inheco CPAC,Inheco CPAC,OTP-7900070,1,,0,-,RS-232 DB15,on_deck,child,MTEC,section5,70,60,,Sales Order,no,Child of MTEC,,MTEC,
+Inheco CPAC #3,Inheco CPAC,Inheco CPAC,OTP-7900070,1,,0,-,RS-232 DB15,on_deck,child,MTEC,section5,70,60,,Sales Order,no,Child of MTEC,,MTEC,
+Pelco Camera #1,Pelco Camera,Pelco Camera,10162477,1,,0,-,TCP,on_deck,child,Hamilton DeckWatch,section5,70,60,,Sales Order,no,Child of Hamilton DeckWatch,,Hamilton DeckWatch,
+Pelco Camera #2,Pelco Camera,Pelco Camera,10162477,1,,0,-,TCP,on_deck,child,Hamilton DeckWatch,section5,70,60,,Sales Order,no,Child of Hamilton DeckWatch,,Hamilton DeckWatch,
+XM30 Satellite,XM30 Satellite,XM30 Satellite,,1,,0,-,-,on_deck,child,XcytoMatic 30,section5,80,50,,Customer-supplied,no,Child of XcytoMatic 30,,XcytoMatic 30,
+
+# [CIRCUITS]
+circuit,rating,voltage_outlet,load_a,headroom_a,power_strip,devices
+1,15A,120V NEMA 5-15R,14.5,0.5,Yes,Standard PC #1; VANTAGE
+2,15A,120V NEMA 5-15R,11.5,3.5,Yes,Standard PC #2; USB Hub; MTEC
+3,15A,120V NEMA 5-15R,11.6,3.4,Yes,NetGear Router; Hamilton MFM Control Box; HMotion; Lab Elite Decapper; Labelite I.D. Reader; PAA CS-10 Carousel; Porvair Ultraseal Cold-pro
+4,15A,120V NEMA 5-15R,15,0,No,Bionex HiG4
+5,15A,120V NEMA 5-15R,11.3,3.7,No,Cytomat 2C450-LIN #2
+6,15A,120V NEMA 5-15R,11.3,3.7,No,Cytomat 2C450-LIN #1
+7,15A,120V NEMA 5-15R,10,5,No,Liconic STX-IC
+8,15A,120V NEMA 5-15R,8.5,6.5,Yes,BioTek Cytation5; CytoFLEX Flow; Liconic LPX
+9,15A,120V NEMA 5-15R,3.2,11.8,No,XM30 Laptop; XcytoMatic 30
+
+# [CONNECTIONS]
+source,source_port,target,target_port,type,label
+Hamilton Pre-Heat Module,,VANTAGE,High,periphery,TCC adapter
+Hamilton Heater Shaker,,VANTAGE,Medium,periphery,TCC adapter
+Hamilton Heater Shaker,,VANTAGE,USB A2,usb,USB A M to USB B M
+Hamilton DeckWatch,,NetGear Router,,ethernet,Ethernet (POE)
+Inheco CPAC #1,,MTEC,,serial,RS232 DB15
+Inheco CPAC #2,,MTEC,,serial,RS232 DB15
+Inheco CPAC #3,,MTEC,,serial,RS232 DB15
+Pelco Camera #1,,Hamilton DeckWatch,,ethernet,TCP
+Pelco Camera #2,,Hamilton DeckWatch,,ethernet,TCP
+XM30 Satellite,,XcytoMatic 30,,periphery,
+XM30 Laptop,,XcytoMatic 30,,usb,USB 3.0 Micro to USB A
+NetGear Router,,Standard PC #1,,ethernet,Ethernet
+Serial Hub,,Standard PC #1,,usb,USB A to B
+USB Hub,,Standard PC #1,,usb,USB A 3.0 to B 3.0
+NetGear Router,,VANTAGE,Ext RJ45,ethernet,Ethernet
+Standard PC #1,,VANTAGE,Ext USB B,usb,USB A to B
+Bionex HiG4,,USB Hub,,usb,USB A M to USB B M
+Bionex HiG4,,Standard PC #1,,periphery,5pin DIN to Estop
+BioTek Cytation5,,USB Hub,,usb,USB A M to USB B M
+CytoFLEX Flow,,USB Hub,,usb,USB 3.0 A to B
+Cytomat 2C450-LIN #1,,Serial Hub,,serial,RS-232 D9 M to D9 F
+Cytomat 2C450-LIN #2,,Serial Hub,,serial,RS-232 D9 M to D9 F
+Hamilton MFM Control Box,,Standard PC #1,,periphery,Turck 3P M to F
+Hamilton MFM Control Box,,Standard PC #1,,periphery,Turck 4P M to F
+Hamilton MFM Control Box,,USB Hub,,usb,USB A M to USB B M
+HMotion,,NetGear Router,,ethernet,Ethernet COM
+Lab Elite Decapper,,NetGear Router,,ethernet,Ethernet COM
+Labelite I.D. Reader,,USB Hub,,usb,USB A to B
+Liconic LPX,,Serial Hub,,serial,RS-232 D9 M to D9 F
+Liconic LPX,,Serial Hub,,serial,RS-232 Null Modem D9 F to D9 F
+Liconic STX-IC,,Serial Hub,,serial,RS-232 D9 M to D9 F
+Liconic STX-IC,,Serial Hub,,serial,RS-232 D9 F Null Modem D9 F
+MTEC,,USB Hub,,usb,USB A M to USB B M
+PAA CS-10 Carousel,,Serial Hub,,serial,RS-232 D9 M to F
+Porvair Ultraseal Cold-pro,,Serial Hub,,serial,RS-232 DB9 M to F
+Power Strip 1,,Circuit 1,,power,
+Power Strip 1,,Standard PC #1,,power,C13 to NEMA 5-15
+Power Strip 1,,Standard PC #1,,power,C13 to NEMA 5-15
+Power Strip 1,,VANTAGE,power,power,C19
+Power Strip 2,,Circuit 2,,power,
+Power Strip 2,,Standard PC #2,,power,C13 to NEMA 5-15
+Power Strip 2,,Standard PC #2,,power,C13 to NEMA 5-15
+Power Strip 2,,USB Hub,,power,External power adapter
+Power Strip 2,,MTEC,,power,C13 to NEMA 5-15
+Power Strip 3,,Circuit 3,,power,
+Power Strip 3,,NetGear Router,,power,C13 to NEMA 5-15
+Power Strip 3,,Hamilton MFM Control Box,,power,Barrel to AC/DC block
+Power Strip 3,,HMotion,,power,C13 to NEMA 5-15
+Power Strip 3,,Lab Elite Decapper,,power,C13 to NEMA 5-15
+Power Strip 3,,Labelite I.D. Reader,,power,C13 to NEMA 5-15
+Power Strip 3,,PAA CS-10 Carousel,,power,C13 to NEMA 5-15
+Power Strip 3,,Porvair Ultraseal Cold-pro,,power,C13 to NEMA 5-15
+Circuit 4,,Bionex HiG4,,power,C13 to NEMA 5-15
+Circuit 5,,Cytomat 2C450-LIN #2,,power,C13 to NEMA 5-15
+Circuit 6,,Cytomat 2C450-LIN #1,,power,C13 to NEMA 5-15
+Circuit 7,,Liconic STX-IC,,power,C13 to NEMA 5-15
+Power Strip 8,,Circuit 8,,power,
+Power Strip 8,,BioTek Cytation5,,power,4pin to barrel/C13 to NEMA 5-15
+Power Strip 8,,CytoFLEX Flow,,power,C13 to NEMA 5-15
+Power Strip 8,,Liconic LPX,,power,C13 to NEMA 5-15
+Circuit 9,,XM30 Laptop,,power,C13 to NEMA 5-15
+Circuit 9,,XcytoMatic 30,,power,C13 to NEMA 5-15
+
