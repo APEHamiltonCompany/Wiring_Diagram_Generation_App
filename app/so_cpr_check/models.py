@@ -43,6 +43,7 @@ class CprDevice:
     vendor: str
     model_name: str
     availability: str
+    quantity: int = 1
 
 
 @dataclass

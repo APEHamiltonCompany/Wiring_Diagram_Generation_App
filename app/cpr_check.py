@@ -17,6 +17,7 @@ from .so_cpr_check.compare import compare
 from .so_cpr_check.system_rules import PLATFORM_PATTERNS
 
 OTP_RE = re.compile(r"OTP-[A-Z0-9]+(?:-[A-Z0-9]+)+", re.I)
+PLAIN_PART_RE = re.compile(r"^[A-Z0-9][A-Z0-9.\-]*\d[A-Z0-9.\-]*$", re.I)
 
 POWERED_OPTION_RULES = [
     ("HEPA/UV/CAP", r"\bHEPA\b|\bUV\b|\bCAP\b"),
@@ -37,6 +38,13 @@ def normalize_otp(text):
 
 def _pn_key(s):
     return re.sub(r"[^A-Z0-9]", "", (s or "").upper())
+
+
+def plain_part_number(text):
+    text = (text or "").strip()
+    if PLAIN_PART_RE.match(text):
+        return text.upper()
+    return ""
 
 
 @dataclass
@@ -128,16 +136,20 @@ def check_data(cpr, so_lines, cpr_path=""):
     for device in cpr.devices:
         name = f"{device.vendor} {device.model_name}".strip()
         otps = normalize_otp(device.otp_number)
+        if not otps:
+            plain = plain_part_number(device.otp_number)
+            if plain:
+                otps = [plain]
         if otps:
             for otp in otps:
                 count = counts.setdefault(otp, CprDeviceCount(otp=otp, name=name,
                                                               availability=device.availability))
-                count.cpr_qty += 1
+                count.cpr_qty += getattr(device, 'quantity', 1) or 1
         else:
             key = "NOOTP:" + name.upper()
             count = counts.setdefault(key, CprDeviceCount(otp="", name=name,
                                                           availability=device.availability))
-            count.cpr_qty += 1
+            count.cpr_qty += getattr(device, 'quantity', 1) or 1
     for count in counts.values():
         if not count.otp:
             continue

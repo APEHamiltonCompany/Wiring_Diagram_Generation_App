@@ -130,7 +130,9 @@ class Session:
                                                   max(1, int(round(c.quantity * l.quantity)))))
         else:
             items = parse_xlsx(path)
-            self.so_lines = cc.so_lines_from_items(items)
+            self.so_lines = (so_reader.read_dynamics_export(path)
+                             if so_reader.is_dynamics_export(path)
+                             else cc.so_lines_from_items(items))
             lines = [rv.OrderLine(i.part_number or "", i.name or "", int(i.qty or 1)) for i in items]
         self.state = rv.sort_order(lines, self.drd, self.overrides)
         self.state.pipettors = keep_pips
@@ -249,6 +251,40 @@ class Session:
         self.result = None
 
     # ---- CPR check ------------------------------------------------------
+    def cpr_folder_mismatch(self, cpr_path):
+        if not self.order_path:
+            return False
+        a = os.path.normcase(os.path.dirname(os.path.abspath(self.order_path)))
+        b = os.path.normcase(os.path.dirname(os.path.abspath(cpr_path)))
+        return a != b
+
+    @staticmethod
+    def find_order_for_cpr(cpr_path):
+        d = os.path.dirname(os.path.abspath(cpr_path))
+        try:
+            names = sorted(os.listdir(d))
+        except OSError:
+            return ""
+        for n in names:
+            if n.startswith("~$") or not n.lower().endswith((".xlsx", ".xlsm")):
+                continue
+            p = os.path.join(d, n)
+            try:
+                if so_reader.is_confirmation(p):
+                    return p
+            except Exception:
+                continue
+        for n in names:
+            if n.startswith("~$") or not n.lower().endswith((".xlsx", ".xlsm")):
+                continue
+            p = os.path.join(d, n)
+            try:
+                if so_reader.is_dynamics_export(p):
+                    return p
+            except Exception:
+                continue
+        return ""
+
     def run_cpr_check(self, cpr_path):
         return self.apply_cpr_check(cc.run_check(cpr_path, self.so_lines))
 

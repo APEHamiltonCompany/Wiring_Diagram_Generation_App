@@ -176,5 +176,64 @@ class TestHamAustralia(unittest.TestCase):
         self.assertTrue(chk.upgrade)
 
 
+EXACT_DIR = os.environ.get("EXACT_296266_DIR") or r"C:\Users\Anthony.Zunino\OneDrive - Hamilton Company\Desktop\Projects\Project Specific Documents\Exact SO-296266"
+EXACT_SO = os.path.join(EXACT_DIR, "DynamicsExport_639298545560985631.xlsx")
+EXACT_CPR = os.path.join(EXACT_DIR, "CPR_Exact_Azenta_HHS_Tube_Rack___Centrifuge_v1.9.docx")
+
+
+@_require([EXACT_SO, EXACT_CPR])
+class TestExact296266(unittest.TestCase):
+    def test_dynamics_export_detection(self):
+        from app.so_cpr_check import so_reader
+        self.assertTrue(so_reader.is_dynamics_export(EXACT_SO))
+        self.assertFalse(so_reader.is_confirmation(EXACT_SO))
+        self.assertEqual(Session.find_order_for_cpr(EXACT_CPR), EXACT_SO)
+
+    def test_dynamics_export_lines(self):
+        s = new_session()
+        s.load_order(EXACT_SO)
+        misc = [l for l in s.so_lines if l.product_number == "APE MISC"]
+        self.assertTrue(any(abs(l.unit_price - 1100.0) < 0.01 and l.quantity == 8 for l in misc))
+
+    def test_cpr_parts_and_system(self):
+        from app.so_cpr_check.cpr_reader import read_cpr
+        cpr = read_cpr(EXACT_CPR)
+        self.assertEqual([p.sk_pn for p in cpr.parts],
+                         ["0207857-001", "0207857-002", "0207857-003", "0207857-004"])
+        self.assertEqual([p.price for p in cpr.parts], [1100.0, 3250.0, 3250.0, 14240.0])
+        self.assertEqual(sorted(cpr.spec_names),
+                         ["APE-111821-001", "APE-111821-002", "APE-111821-003", "APE-111821-004"])
+        self.assertEqual(cpr.system.family, "STAR")
+        self.assertTrue(cpr.system.upgrade)
+        self.assertEqual(cpr.system.serial_number, "G343")
+
+    def test_check_rows(self):
+        s = new_session()
+        s.load_order(EXACT_SO)
+        s.run_cpr_check(EXACT_CPR)
+        chk = s.cpr
+        custom = [r for r in chk.rows if r.type == "Custom Part"]
+        self.assertEqual(len(custom), 4)
+        self.assertEqual({r.status for r in custom}, {"Match"})
+        dev_rows = {r.cpr_sk_pn: r.status for r in chk.rows
+                    if r.type == "Device" and r.cpr_sk_pn}
+        self.assertEqual(dev_rows.get("OTP-AGLT-0025"), "Only in CPR")
+        self.assertEqual(dev_rows.get("199700"), "Match")
+        self.assertTrue(chk.upgrade)
+
+
+FIXTURE_DYNAMICS = os.path.join(ROOT, "tests", "fixtures", "Exact_SO-294012.xlsx")
+
+
+@_require([FIXTURE_DYNAMICS])
+class TestDynamicsFixture(unittest.TestCase):
+    def test_fixture_export(self):
+        from app.so_cpr_check import so_reader
+        self.assertTrue(so_reader.is_dynamics_export(FIXTURE_DYNAMICS))
+        lines = so_reader.read_dynamics_export(FIXTURE_DYNAMICS)
+        self.assertEqual(lines[0].product_number, "STAR-2")
+        self.assertIn("ISWAP", lines[0].config_description)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

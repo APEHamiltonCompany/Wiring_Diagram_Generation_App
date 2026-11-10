@@ -462,7 +462,7 @@ class ReviewTab(ttk.Frame):
         ttk.Button(rb2, text="Always ignore this part #", command=self._ignore).pack(side="left")
         pw.add(right, weight=2)
 
-        cprf = ttk.LabelFrame(self, text="SO vs CPR check (optional)", padding=4)
+        cprf = self.cprf = ttk.LabelFrame(self, text="SO vs CPR check (optional)", padding=4)
         cprf.pack(fill="x", pady=(0, 6))
         f, self.cprt = _scrolled_tree(cprf, ("Status", "Type", "CPR item", "CPR qty", "SO item",
                                              "SO qty", "Note"), (100, 70, 230, 60, 200, 60, 300),
@@ -535,6 +535,11 @@ class ReviewTab(ttk.Frame):
             self.pip.insert("end", f"{p.model} - {p.label()}")
         self.cprt.delete(*self.cprt.get_children())
         chk = self.s.cpr
+        title = "SO vs CPR check (optional)"
+        if chk is not None:
+            title += (f"  -  Order: {os.path.basename(self.s.order_path) or '(none)'}"
+                      f"  |  CPR: {os.path.basename(chk.cpr_path)}")
+        self.cprf.configure(text=title)
         if chk is not None:
             for r in chk.rows:
                 cpr_item = " ".join(x for x in (r.cpr_sk_pn, r.cpr_part_name) if x)
@@ -700,13 +705,40 @@ class ReviewTab(ttk.Frame):
         if not p or not os.path.exists(p):
             messagebox.showwarning("CPR", "Choose a CPR .docx file first.", parent=self)
             return
+        cpr_dir = os.path.basename(os.path.dirname(os.path.abspath(p)))
+        if not self.s.order_path or self.s.cpr_folder_mismatch(p):
+            so = self.s.find_order_for_cpr(p)
+            if self.s.order_path:
+                head = (f"The loaded order is from a different folder than the CPR.\n\n"
+                        f"Order: {os.path.basename(os.path.dirname(self.s.order_path))}/"
+                        f"{os.path.basename(self.s.order_path)}\n"
+                        f"CPR: {cpr_dir}/{os.path.basename(p)}\n\n")
+            else:
+                head = "No order is loaded.\n\n"
+            if so:
+                ans = messagebox.askyesnocancel(
+                    "Order / CPR mismatch",
+                    head + f"Load {os.path.basename(so)} from the CPR's folder first?\n\n"
+                    "Yes = load it, No = keep the current order, Cancel = stop.", parent=self)
+                if ans is None:
+                    return
+                if ans:
+                    self.path.set(so)
+                    self._load()
+                    if self.s.order_path != so:
+                        return
+            elif not messagebox.askokcancel("Order / CPR mismatch",
+                                            head + "No Sales Order Confirmation or Dynamics order-lines "
+                                            "export was found in the CPR's folder. Run the check anyway?", parent=self):
+                return
         try:
             msgs = self.s.run_cpr_check(p)
         except Exception as ex:
             _err(self, "Could not run the CPR check", ex)
             return
         self.refresh()
-        self.say(*msgs)
+        self.say(f"Order: {os.path.basename(self.s.order_path) or '(none)'} | "
+                 f"CPR: {os.path.basename(p)}", *msgs)
 
     def _resolve_qty(self):
         chk = self.s.cpr

@@ -5,6 +5,8 @@ import openpyxl
 from .models import SoComponent, SoLine
 
 CONFIRMATION_HEADERS = {'Line', 'Item number', 'Description', 'Estimated ship date', 'Qty', 'Unit', 'Net Price', 'Amount', 'Sales tax', 'Total'}
+DYNAMICS_REQUIRED = {'Product number', 'Product name', 'Quantity'}
+DYNAMICS_PRICE = ('Unit price', 'Net unit price')
 
 
 def _normalized(value):
@@ -45,6 +47,35 @@ def _line_number(value):
 def _is_header_row(row):
     normalized = [_normalized(value) for value in row]
     return 'Line' in normalized and 'Item number' in normalized and 'Net Price' in normalized
+
+
+def _dynamics_columns(row):
+    normalized = [_normalized(value) for value in row]
+    if not DYNAMICS_REQUIRED.issubset(normalized):
+        return None
+    if not any(name in normalized for name in DYNAMICS_PRICE):
+        return None
+    return {name: index for index, name in enumerate(normalized) if name}
+
+
+def is_dynamics_export(path):
+    try:
+        workbook = openpyxl.load_workbook(path, data_only=True)
+    except Exception:
+        return False
+    try:
+        for index, row in enumerate(workbook.active.iter_rows(values_only=True), start=1):
+            if index > 40:
+                break
+            if _dynamics_columns(row) is not None:
+                return True
+        return False
+    finally:
+        workbook.close()
+
+
+def is_sales_order(path):
+    return is_confirmation(path) or is_dynamics_export(path)
 
 
 def is_confirmation(path):
@@ -116,6 +147,47 @@ def read_so(path):
                     ))
                 elif description and not has_qty:
                     current.note = description
+        return lines
+    finally:
+        workbook.close()
+
+
+def read_dynamics_export(path):
+    workbook = openpyxl.load_workbook(path, data_only=True)
+    try:
+        sheet = workbook.active
+        columns = None
+        header_row = 0
+        for index, row in enumerate(sheet.iter_rows(values_only=True), start=1):
+            if index > 40:
+                break
+            columns = _dynamics_columns(row)
+            if columns is not None:
+                header_row = index
+                break
+        if columns is None:
+            raise ValueError(f'Not a Dynamics order-lines export (no Product number / Product name table found): {os.path.basename(path)}')
+        lines = []
+        for excel_row, values in enumerate(sheet.iter_rows(min_row=header_row + 1, values_only=True), start=header_row + 1):
+            product_cell = _cell_value(values, columns.get('Product number'))
+            item_cell = _cell_value(values, columns.get('Item number'))
+            if not product_cell and not item_cell:
+                continue
+            price_index = columns.get('Unit price')
+            if price_index is None or price_index >= len(values) or values[price_index] is None:
+                price_index = columns.get('Net unit price')
+            lines.append(SoLine(
+                row=excel_row,
+                product_number=item_cell or product_cell.split(' : ')[0].strip(),
+                product_name=_cell_value(values, columns.get('Product name')),
+                quantity=_cell_number(values, columns.get('Quantity')),
+                unit=_cell_value(values, columns.get('Unit')),
+                unit_price=_cell_number(values, price_index),
+                so_file=os.path.basename(path),
+                config_description=_cell_value(values, columns.get('Config description')),
+                line_number=len(lines) + 1,
+                config_number=_cell_value(values, columns.get('Config number')),
+            ))
         return lines
     finally:
         workbook.close()

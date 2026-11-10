@@ -5,8 +5,19 @@ import docx
 from .models import CprData, CprDevice, CprPart, CprOption, CprSystem
 
 SPEC_HEADING_RE = re.compile(r'Part\s*#\s*(\d+-\d+)')
+NEW_SPEC_HEADING_RE = re.compile(r'^\s*Part\s+(\d+)\s*[\u2014\u2013-]\s*(?:[^:]*:\s*)?(.+?)\s*$')
 PART_HEADER_MARKERS = ('SK Part Number', 'Price Per Each')
-PART_COLUMN_NAMES = ('Quantity', 'Part Name', 'SharePoint', 'SK Part', 'Price')
+PART_HEADER_MARKERS_ALT = ('SK Part #', 'Unit Price')
+PART_COLUMN_ALIASES = (
+    ('Quantity', ('Quantity', 'Qty')),
+    ('Part Name', ('Part Name',)),
+    ('SharePoint', ('SharePoint', 'APE Part')),
+    ('SK Part', ('SK Part',)),
+    ('Price', ('Price',)),
+)
+CHECKED_GLYPHS = ('\u2612', '\u2611')
+GLYPHS = ('\u2610', '\u2612', '\u2611')
+SYSTEM_STOP_RE = re.compile(r'Conceptual Layout|Custom Parts|^Part\s+\d+\s*[\u2014\u2013-]')
 
 
 def _full_text(element):
@@ -90,11 +101,16 @@ def _find_parts(doc):
         if not rows:
             continue
         header = rows[0]
-        if not all(any(marker in text for _, _, text in header) for marker in PART_HEADER_MARKERS):
+        if not any(all(any(marker in text for _, _, text in header) for marker in markers)
+                   for markers in (PART_HEADER_MARKERS, PART_HEADER_MARKERS_ALT)):
             continue
         columns = {}
-        for name in PART_COLUMN_NAMES:
-            columns[name] = next(((index, start, span) for index, (start, span, text) in enumerate(header) if name in text), None)
+        for name, aliases in PART_COLUMN_ALIASES:
+            columns[name] = None
+            for alias in aliases:
+                columns[name] = next(((index, start, span) for index, (start, span, text) in enumerate(header) if alias in text), None)
+                if columns[name] is not None:
+                    break
         parts = []
         for row in rows[1:]:
             def _get(name):
@@ -135,24 +151,41 @@ def _find_devices(doc):
         otp_number = kv.get('OTP Number') or kv.get('Base Device OTP #') or kv.get('OTP #', '')
         if not otp_number:
             continue
+        availability = kv.get('Device Availability', '')
+        if not availability and 'Customer Supplied' in kv:
+            availability = f"Customer Supplied: {kv['Customer Supplied']}"
+        quantity = 1
+        if 'OTP #' in kv and ('Customer Supplied' in kv or 'Device Category' in kv):
+            match = NUMBER_RE.search(kv.get('Quantity', ''))
+            if match is not None:
+                value = int(float(match.group()))
+                if value > 0:
+                    quantity = value
         devices.append(CprDevice(
             otp_number=otp_number,
             vendor=kv.get('Vendor') or kv.get('Manufacturer', ''),
             model_name=kv.get('Model Name', ''),
-            availability=kv.get('Device Availability', ''),
+            availability=availability,
+            quantity=quantity,
         ))
     return devices
 
 
 def _read_spec_names(doc):
     spec_names = {}
+    heading_names = {}
     current = None
     for child in doc.element.body.iterchildren():
         tag = child.tag.split('}')[-1]
         if tag == 'p':
-            match = SPEC_HEADING_RE.search(_full_text(child))
+            text = _full_text(child)
+            match = SPEC_HEADING_RE.search(text)
             if match:
                 current = 'APE-' + match.group(1)
+            else:
+                new_match = NEW_SPEC_HEADING_RE.match(text)
+                if new_match:
+                    heading_names[new_match.group(1)] = new_match.group(2)
         elif tag == 'tbl':
             if current is None:
                 continue
@@ -163,7 +196,7 @@ def _read_spec_names(doc):
                 if len(cells) >= 2 and cells[0] == 'Part Name':
                     spec_names[current] = cells[1]
                     break
-    return spec_names
+    return spec_names, heading_names
 
 
 def _clean_text(text):
@@ -171,16 +204,19 @@ def _clean_text(text):
 
 
 def _has_glyph(text):
-    return '\u2610' in text or '\u2612' in text
+    return any(glyph in text for glyph in GLYPHS)
 
 
 PLACEHOLDER_RE = re.compile(r'^\[.*\]$')
-GLYPH_ITEM_RE = re.compile(r'([\u2610\u2612])\s*([^\u2610\u2612]+)')
+PLACEHOLDER_VALUES = ('\u2014', '\u2013', '-', '\u00d7')
+GLYPH_ITEM_RE = re.compile(r'([\u2610\u2612\u2611])\s*([^\u2610\u2612\u2611]+)')
 
 
 def _value_text(value):
     value = value.strip()
     if not value or PLACEHOLDER_RE.match(value):
+        return ''
+    if all(char in PLACEHOLDER_VALUES for char in value):
         return ''
     return value
 
@@ -199,6 +235,90 @@ def _system_family(heading, options):
     if labels & {'STAR23', 'STARlet23', 'STARlet', 'STAR', 'STARplus'}:
         return 'STAR'
     return ''
+
+
+def _read_system_sections(doc):
+    children = list(doc.element.body.iterchildren())
+    heading = None
+    start = 0
+    for index, child in enumerate(children):
+        if child.tag.split('}')[-1] != 'p':
+            continue
+        text = _clean_text(_full_text(child))
+        if 'System Configuration' in text:
+            heading = text
+            start = index + 1
+            break
+    if heading is None:
+        return None
+    options = []
+    upgrade = False
+    serial_number = ''
+    sales_order = ''
+    parent = ''
+    group = ''
+    for child in children[start:]:
+        tag = child.tag.split('}')[-1]
+        if tag == 'p':
+            text = _clean_text(_full_text(child))
+            if not text:
+                continue
+            if SYSTEM_STOP_RE.search(text):
+                break
+            if text.endswith(':'):
+                group = f'{parent} - {text[:-1]}'
+            else:
+                parent = text
+                group = text
+            continue
+        if tag != 'tbl':
+            continue
+        rows = []
+        for tr in child:
+            if tr.tag.split('}')[-1] != 'tr':
+                continue
+            rows.append([_clean_text(cell) for cell in _tr_cells(tr)])
+        if group == 'Upgrade Status':
+            for row in rows:
+                for cell in row:
+                    if 'Upgrade' in cell and any(glyph in cell for glyph in CHECKED_GLYPHS):
+                        upgrade = True
+                for index in range(len(row) - 1):
+                    if row[index] == 'Serial Number':
+                        serial_number = _value_text(row[index + 1])
+                    elif row[index] in ('Sales Order Number', 'Sales Order #'):
+                        sales_order = _value_text(row[index + 1])
+            continue
+        for row_index, row in enumerate(rows):
+            if not any(row):
+                continue
+            if not any(_has_glyph(cell) for cell in row):
+                if len([cell for cell in row if cell]) == 2 or (row[0] and len(row) > 1):
+                    header_row = (row_index == 0 and len(rows) > 1 and rows[1][0]
+                                  and _has_glyph(rows[1][0])
+                                  and _value_text(row[1] if len(row) > 1 else ''))
+                    if header_row:
+                        continue
+                    options.append(CprOption(group, row[0].rstrip(':'), None,
+                                             _value_text(row[1] if len(row) > 1 else '')))
+                continue
+            items = GLYPH_ITEM_RE.findall(row[0])
+            if len(items) == 1 and len(row) > 1 and not _has_glyph(row[1]):
+                glyph, label = items[0]
+                options.append(CprOption(group, ' '.join(label.split()), glyph in CHECKED_GLYPHS,
+                                         _value_text(row[1])))
+                continue
+            for cell in row:
+                for glyph, label in GLYPH_ITEM_RE.findall(cell):
+                    options.append(CprOption(group, ' '.join(label.split()), glyph in CHECKED_GLYPHS))
+    return CprSystem(
+        family=_system_family(heading, options),
+        heading=heading,
+        upgrade=upgrade,
+        serial_number=serial_number,
+        sales_order=sales_order,
+        options=options,
+    )
 
 
 def _read_system(doc):
@@ -226,7 +346,7 @@ def _read_system(doc):
             if system_table is not None:
                 break
     if system_table is None:
-        return None
+        return _read_system_sections(doc)
     options = []
     group = ''
     slot_headers = None
@@ -242,7 +362,7 @@ def _read_system(doc):
             slot_headers = None
             continue
         if group == 'Is this an Upgrade to an existing system?' and _has_glyph(row[0]) and 'Yes' in row[0]:
-            upgrade = '\u2612' in row[0]
+            upgrade = any(glyph in row[0] for glyph in CHECKED_GLYPHS)
             for index in range(len(row) - 1):
                 if row[index] == 'Serial Number':
                     serial_number = _value_text(row[index + 1])
@@ -255,23 +375,23 @@ def _read_system(doc):
                 slot_headers = others
                 continue
         if slot_headers is not None and row[0] and not _has_glyph(row[0]):
-            if any(cell in ('\u2610', '\u2612') for cell in row[1:]) and all(cell in ('', '\u2610', '\u2612') for cell in row[1:]):
+            if any(cell in GLYPHS for cell in row[1:]) and all(cell in ('',) + GLYPHS for cell in row[1:]):
                 for index, cell in enumerate(row[1:]):
                     if cell and index < len(slot_headers):
-                        options.append(CprOption(group, f'{row[0]} {slot_headers[index]}', cell == '\u2612'))
+                        options.append(CprOption(group, f'{row[0]} {slot_headers[index]}', cell in CHECKED_GLYPHS))
                 continue
         if row[0] and not _has_glyph(row[0]) and not row[0].endswith(':'):
             found_items = []
             for cell in row[1:]:
                 if not cell:
                     continue
-                if cell[-1] not in ('\u2610', '\u2612'):
+                if cell[-1] not in GLYPHS:
                     found_items = None
                     break
                 found_items.append((cell[:-1].strip(), cell[-1]))
             if found_items:
                 for label, glyph in found_items:
-                    options.append(CprOption(group, f'{row[0]}: {label}', glyph == '\u2612'))
+                    options.append(CprOption(group, f'{row[0]}: {label}', glyph in CHECKED_GLYPHS))
                 continue
         start = 0
         if row[0].endswith(':') and not _has_glyph(row[0]):
@@ -287,7 +407,7 @@ def _read_system(doc):
                 continue
             items = GLYPH_ITEM_RE.findall(cell)
             for item_index, (glyph, label) in enumerate(items):
-                checked = glyph == '\u2612'
+                checked = glyph in CHECKED_GLYPHS
                 value = ''
                 if len(items) == 1 and label.endswith(':'):
                     label = label[:-1]
@@ -309,9 +429,18 @@ def _read_system(doc):
 
 def read_cpr(path):
     doc = docx.Document(path)
+    parts = _find_parts(doc)
+    spec_names, heading_names = _read_spec_names(doc)
+    for item_number, name in heading_names.items():
+        for part in parts:
+            key = part.sharepoint_id or part.sk_pn
+            if not key or key in spec_names:
+                continue
+            if key.endswith('-' + item_number):
+                spec_names[key] = name
     return CprData(
-        parts=_find_parts(doc),
+        parts=parts,
         devices=_find_devices(doc),
-        spec_names=_read_spec_names(doc),
+        spec_names=spec_names,
         system=_read_system(doc),
     )
