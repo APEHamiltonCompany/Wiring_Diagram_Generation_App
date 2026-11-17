@@ -74,6 +74,7 @@ class EngineOptions:
     main_pc: str = ""                      # DRD §3 main PC; "" = from the order, else Customer-supplied
     hhs_mode: str = "auto"
     isolate_vantage: bool = True           # keep a C19 VANTAGE on its own circuit
+    always_power_strip: bool = True
     project_name: str = ""
     manual_circuits: dict = field(default_factory=dict)   # load key -> circuit number
     styleguide_version: str = ""
@@ -120,6 +121,7 @@ class Circuit:
     cap: float
     loads: list = field(default_factory=list)
     dedicated: bool = False
+    force_strip: bool = False
 
     @property
     def load(self):
@@ -131,7 +133,7 @@ class Circuit:
 
     @property
     def power_strip(self):
-        return self.connections > 2
+        return (self.force_strip and bool(self.loads)) or self.connections > 2
 
 
 @dataclass
@@ -761,6 +763,8 @@ class PowerEngine:
             circuits = self._fixed_circuits(self._loads(), manual)
         else:
             circuits = self._auto_circuits()
+        for c in circuits.values():
+            c.force_strip = self.opt.always_power_strip and not c.dedicated
         return self._check_circuits([circuits[k] for k in sorted(circuits)])
 
     def _auto_circuits(self):

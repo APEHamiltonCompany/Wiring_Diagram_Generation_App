@@ -797,6 +797,7 @@ class AnalysisTab(ttk.Frame):
         self.hhs = tk.StringVar(value=HHS_MODE_LABELS["auto"])
         self.iso = tk.BooleanVar(value=True)
         self.over = tk.BooleanVar(value=False)
+        self.strip = tk.BooleanVar(value=True)
         ttk.Label(opt, text="Project:").grid(row=0, column=0, sticky="w")
         ttk.Entry(opt, textvariable=self.project, width=30).grid(row=0, column=1, sticky="w")
         ttk.Label(opt, text="Facility circuits:").grid(row=0, column=2, sticky="w", padx=(12, 0))
@@ -814,8 +815,10 @@ class AnalysisTab(ttk.Frame):
                         variable=self.iso).grid(row=2, column=0, columnspan=2, sticky="w")
         ttk.Checkbutton(opt, text="Approve going over 80% (up to 100% of rating)",
                         variable=self.over).grid(row=2, column=2, columnspan=2, sticky="w")
+        ttk.Checkbutton(opt, text="Power strip on every circuit (off = only when >2 connections)",
+                        variable=self.strip).grid(row=3, column=0, columnspan=4, sticky="w")
         bf = ttk.Frame(opt)
-        bf.grid(row=0, column=4, rowspan=3, sticky="ne", padx=(16, 0))
+        bf.grid(row=0, column=4, rowspan=4, sticky="ne", padx=(16, 0))
         ttk.Button(bf, text="Run analysis", command=self.run).pack(fill="x")
         self.btn_csv = ttk.Button(bf, text="Export CSV...", command=self._export, state="disabled")
         self.btn_csv.pack(fill="x", pady=2)
@@ -880,6 +883,7 @@ class AnalysisTab(ttk.Frame):
         o.hhs_mode = inv.get(self.hhs.get(), "auto")
         o.isolate_vantage = self.iso.get()
         o.over_80_approved = self.over.get()
+        o.always_power_strip = self.strip.get()
 
     def run(self):
         if not self.s.state.pipettors and not messagebox.askyesno(
@@ -1004,6 +1008,9 @@ class DiagramTab(ttk.Frame):
         ttk.Button(top, text="Browse...", command=self._browse).grid(row=1, column=2)
         ttk.Button(top, text="Generate .drawio...", command=self._gen).grid(row=0, column=3,
                                                                            rowspan=2, padx=12)
+        self.last = ""
+        self.btn_open = ttk.Button(top, text="Open diagram", command=self._open, state="disabled")
+        self.btn_open.grid(row=0, column=4, rowspan=2)
         f, self.txt = _scrolled_text(self, height=24)
         f.pack(fill="both", expand=True, pady=6)
         self.refresh_source()
@@ -1071,9 +1078,29 @@ class DiagramTab(ttk.Frame):
             if self.src.get() == "csv" and not csv_path:
                 raise RuntimeError("Choose a CSV first.")
             self.s.generate_diagram(p, csv_path)
-            messagebox.showinfo("Saved", f"Saved {p}\nOpen it in draw.io to review.", parent=self)
         except Exception as ex:
             _err(self, "Diagram not generated", ex)
+            return
+        self.last = p
+        self.btn_open.configure(state="normal")
+        if messagebox.askyesno("Saved", f"Saved {p}\n\nOpen it now?", parent=self):
+            self._open()
+
+    def _open(self):
+        if not self.last or not os.path.exists(self.last):
+            messagebox.showwarning("Open diagram", "Generate a diagram first.", parent=self)
+            return
+        try:
+            if hasattr(os, "startfile"):
+                os.startfile(self.last)
+            else:
+                import subprocess
+                import sys
+                subprocess.Popen(["open" if sys.platform == "darwin" else "xdg-open", self.last])
+        except OSError as ex:
+            messagebox.showerror("Could not open diagram",
+                                 f"{ex}\n\nIs draw.io installed and set as the app for .drawio "
+                                 f"files?\n\n{self.last}", parent=self)
 
 
 # ==========================================================================

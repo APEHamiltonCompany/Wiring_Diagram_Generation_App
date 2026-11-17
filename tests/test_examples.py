@@ -118,10 +118,16 @@ class TestAstraZeneca(Base):
         self.assertTrue(self.res.ok, self.res.issues)
         c = circuits(self.res)
         self.assertEqual(len(c), 3)
-        strip = [x for x in self.res.circuits if x.power_strip]
+        self.assertEqual([x.power_strip for x in self.res.circuits],
+                         [not x.dedicated for x in self.res.circuits])
+        self.assertEqual(self.res.hhs.get("mode"), "periphery")
+
+    def test_strips_only_when_needed(self):
+        self.s.options.always_power_strip = False
+        res = self.s.run_analysis()
+        strip = [x for x in res.circuits if x.power_strip]
         self.assertEqual(len(strip), 1)
         self.assertAlmostEqual(strip[0].load, 12.6, places=1)
-        self.assertEqual(self.res.hhs.get("mode"), "periphery")
 
     def test_80_percent_blocks_without_approval(self):
         self.s.options.over_80_approved = False
